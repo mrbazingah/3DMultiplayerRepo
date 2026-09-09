@@ -57,36 +57,12 @@ public class PlayerModelManager : NetworkBehaviour
         canSwap = team == GameManager.Team.Props;
     }
 
-    void Update()
+    public void DetectProp(Prop newDetectedProp)
     {
-        if (!IsOwner || !canSwap) { return; }
-        DetectItem();
-    }
+        if (!canSwap) { return; }
 
-    void DetectItem()
-    {
-        // Casts a ray from the camPivot to detect props in front of the player
-        if (Physics.Raycast(camPivot.position, camPivot.forward, out RaycastHit hit, detectionRange, propLayer))
-        {
-            Prop prop = hit.collider.GetComponent<Prop>();
-            if (prop != null)
-            {
-                detectedProp = prop;
-                Debug.Log("Detected prop");
-                return;
-            }
-        }
-
-        detectedProp = null;
-    }
-
-    public void OnInteract(InputValue value)
-    {
-        if (!IsOwner || detectedProp == null || !canSwap) { return; }
-
+        detectedProp = newDetectedProp;
         SwapModelServerRpc(detectedProp.propType);
-
-        Debug.Log("Interacted with prop");
     }
 
     // Server RPC to swap the player's model which triggers OnCurrentPropChanged() to update the model on all clients

@@ -1838,6 +1838,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3634093288290417978, guid: 2020a91466dc49e40a8787db3d5a0c6f, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3488210371
+      objectReference: {fileID: 0}
     - target: {fileID: 7104215864129461267, guid: 2020a91466dc49e40a8787db3d5a0c6f, type: 3}
       propertyPath: m_Name
       value: Doorway

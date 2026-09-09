@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4325585484412161707}
   m_Layer: 10
-  m_Name: 3rd Person
+  m_Name: Cam Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,6 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8181371411824404404}
+  - {fileID: 8822046312285536697}
   m_Father: {fileID: 585660874367823238}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1541010400190304697
@@ -240,6 +241,7 @@ GameObject:
   - component: {fileID: 5473899454916357313}
   - component: {fileID: 3093765351669244058}
   - component: {fileID: 7832588847785007772}
+  - component: {fileID: 7201181107607869916}
   - component: {fileID: 3748187051975546965}
   - component: {fileID: 1046686182426769148}
   - component: {fileID: -2791437134436670039}
@@ -266,7 +268,6 @@ Transform:
   m_Children:
   - {fileID: 8580793520493904009}
   - {fileID: 4325585484412161707}
-  - {fileID: 8822046312285536697}
   - {fileID: 3916864719562613418}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -390,7 +391,7 @@ MonoBehaviour:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 2
+    m_InternalValue: 1
 --- !u!114 &3093765351669244058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435,6 +436,24 @@ MonoBehaviour:
   maxAmmo: 30
   reloadDelay: 1
   ammoText: {fileID: 0}
+--- !u!114 &7201181107607869916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3338395985008094567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e538a56e36bd47d4f9f7f22bbc50ac76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteract
+  ShowTopMostFoldoutHeaderGroup: 1
+  interactLayer:
+    serializedVersion: 2
+    m_Bits: 2304
+  camPivot: {fileID: 4325585484412161707}
+  detectionRange: 5
 --- !u!114 &3748187051975546965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -571,13 +590,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3871668869778309697}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.338, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.062000006, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6542594980105343568}
-  m_Father: {fileID: 585660874367823238}
+  m_Father: {fileID: 4325585484412161707}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &6483407682183602331
 Camera:
@@ -618,7 +637,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 1911
+    m_Bits: 3959
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
