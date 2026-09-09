@@ -42,12 +42,15 @@ public class PlayerShooting : NetworkBehaviour
         NetworkVariable<GameManager.Team> team = myMovement.GetPlayerTeam();
         team.OnValueChanged += OnTeamChanged;
         SetCanShoot(team.Value);
+
+        ammoText.gameObject.SetActive(false);
     }
 
     void OnTeamChanged(GameManager.Team previousTeam, GameManager.Team newTeam)
     {
         SetCanShoot(newTeam);
         cam = myMovement.GetCurrentCam();
+        ammoText.gameObject.SetActive(true);
     }
 
     public void SetCanShoot(GameManager.Team team)
@@ -106,7 +109,7 @@ public class PlayerShooting : NetworkBehaviour
     {
         if (ammoText != null)
         {
-            ammoText.text = newValue + " / " + maxAmmo;
+            ammoText.text = newValue + "/" + maxAmmo;
         }
     }
 

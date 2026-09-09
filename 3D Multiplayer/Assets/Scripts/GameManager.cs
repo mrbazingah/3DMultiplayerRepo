@@ -34,8 +34,6 @@ public class GameManager : NetworkBehaviour
 
     public void RegisterPlayer(PlayerMovement player)
     {
-        Debug.Log(IsServer + player.gameObject.name + IsSpawned);
-
         if (player == null || playerList.Contains(player)) { return; }
 
         playerList.Add(player);
