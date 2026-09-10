@@ -22,17 +22,18 @@ public class PlayerHealth : NetworkBehaviour
             health.Value = defaultMaxHealth;
         }
 
-        uiManager.UpdateHealthText(health.Value.ToString());
-
         health.OnValueChanged += OnHealthChanged;
 
         NetworkVariable<GameManager.Team> team = myMovement.GetPlayerTeam();
         team.OnValueChanged += OnTeamChanged;
+        OnTeamChanged(team.Value, team.Value);
     }
 
     void OnTeamChanged(GameManager.Team previousTeam, GameManager.Team newTeam)
     {
-        uiManager.SetHealthTextActive(true);
+        if (!IsOwner) { return; }
+
+        uiManager.SetHealthTextActive(newTeam != GameManager.Team.None);
         uiManager.UpdateHealthText(health.Value.ToString());
     }
 

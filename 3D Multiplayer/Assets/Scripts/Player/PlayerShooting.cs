@@ -58,7 +58,6 @@ public class PlayerShooting : NetworkBehaviour
     public void SetCanShoot(GameManager.Team team)
     {
         canShoot = team == GameManager.Team.Hunters;
-        uiManager.SetAmmoTextActive(canShoot);
     }
 
     public void OnShoot(InputValue value)

@@ -59,7 +59,6 @@ public class PlayerMovement : NetworkBehaviour
     Rigidbody myRigidbody;
     Animator myAnimator;
     Collider myCollider;
-    PlayerUIManager myUiManager;
     PlayerModelManager myModelManager;
 
     public override void OnNetworkSpawn()
@@ -67,7 +66,6 @@ public class PlayerMovement : NetworkBehaviour
         myRigidbody = GetComponent<Rigidbody>();
         myAnimator = GetComponentInChildren<Animator>();
         myCollider = GetComponent<Collider>();
-        myUiManager = GetComponent<PlayerUIManager>();
         myModelManager = GetComponent<PlayerModelManager>();
 
         // Registers before the owner check since the server runs this for every player object and not just the ones it owns
@@ -145,8 +143,6 @@ public class PlayerMovement : NetworkBehaviour
 
         camPivot = isHunter ? firstPersonCam.transform : camPivot;
         currentCam = camPivot.GetComponent<Camera>();
-
-        myUiManager.SetHealthTextActive(team != GameManager.Team.None);
     }
 
     public void TeleportTo(Vector3 pos)
