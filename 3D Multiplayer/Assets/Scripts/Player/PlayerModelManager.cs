@@ -48,16 +48,20 @@ public class PlayerModelManager : NetworkBehaviour
         }
     }
 
+    public void SetCanSwap(GameManager.Team team)
+    {
+        canSwap = team == GameManager.Team.Props;
+
+        if (IsOwner)
+        {
+            myUiManager.SetLockRotField(canSwap, "Lock Rotation");
+        }
+    }
+
     // Updates canSwap when team changes
     void OnTeamChanged(GameManager.Team previousTeam, GameManager.Team newTeam)
     {
         SetCanSwap(newTeam);
-    }
-
-    public void SetCanSwap(GameManager.Team team)
-    {
-        canSwap = team == GameManager.Team.Props;
-        myUiManager.SetLockRotField(canSwap, "Lock Rotation");
     }
 
     public void DetectProp(Prop newDetectedProp)

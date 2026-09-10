@@ -143,9 +143,10 @@ public class PlayerMovement : NetworkBehaviour
         firstPersonCam.enabled = isHunter;
         thirdPersonCam.enabled = !isHunter;
 
-        // Keeps the existing pivot for props, otherwise the third person camera would pivot around itself instead of the player
         camPivot = isHunter ? firstPersonCam.transform : camPivot;
         currentCam = camPivot.GetComponent<Camera>();
+
+        myUiManager.SetHealthTextActive(team != GameManager.Team.None);
     }
 
     public void TeleportTo(Vector3 pos)
@@ -396,7 +397,6 @@ public class PlayerMovement : NetworkBehaviour
 
         Debug.Log("Game Started");
 
-        myUiManager.SetHealthTextActive(true);
         GameManager.Instance.StartGame();
     }
 

@@ -13,17 +13,20 @@ public class PlayerUIManager : NetworkBehaviour
     TextMeshProUGUI interactFieldText;
     TextMeshProUGUI lockRotFieldText;
 
-    public override void OnNetworkSpawn()
+    void Awake()
     {
         interactFieldText = interactField.GetComponent<TextMeshProUGUI>();
         lockRotFieldText = lockRotField.GetComponent<TextMeshProUGUI>();
-
-        playerCanvas.SetActive(IsOwner);
 
         SetAmmoTextActive(false);
         SetHealthTextActive(false);
         SetInteractField(false, "");
         SetLockRotField(false, "");
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        playerCanvas.SetActive(IsOwner);
     }
 
     public void SetHealthTextActive(bool isActive)
