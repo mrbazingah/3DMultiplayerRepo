@@ -389,12 +389,14 @@ public class PlayerMovement : NetworkBehaviour
         GameManager.Instance.StartGame();
     }
 
+    /*
     public void OnMenu(InputValue value)
     {
         if (!IsOwner) { return; }
 
         UIManager.Instance.OnMenuButton();
     }
+    */
 
     public override void OnNetworkDespawn()
     {

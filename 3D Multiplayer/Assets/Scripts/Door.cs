@@ -11,7 +11,7 @@ public class Door : NetworkBehaviour
     float openAngle1 = 90f;
     float openAngle2 = -90f;
     float closedAngle = 0f;
-    bool isOpen;
+    bool isOpen = false;
 
     Quaternion closedRotation;
     Vector3 closedForward;
@@ -48,5 +48,10 @@ public class Door : NetworkBehaviour
     {
         Quaternion targetRotation = closedRotation * Quaternion.Euler(0f, currentAngle.Value, 0f);
         doorHinge.localRotation = Quaternion.Lerp(doorHinge.localRotation, targetRotation, Time.deltaTime * lerpSpeed);
+    }
+
+    public bool GetIsOpen()
+    {
+        return isOpen;
     }
 }

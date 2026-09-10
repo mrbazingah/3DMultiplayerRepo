@@ -1,11 +1,11 @@
 using TMPro;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Netcode;
 using UnityEngine;
 
 public class PlayerHealth : NetworkBehaviour
 {
     [SerializeField] int defaultMaxHealth;
-    [SerializeField] TextMeshProUGUI healthText;
 
     NetworkVariable<int> health = new NetworkVariable<int>();
     NetworkVariable<int> maxHealth = new NetworkVariable<int>();
@@ -20,7 +20,8 @@ public class PlayerHealth : NetworkBehaviour
             health.Value = defaultMaxHealth;
         }
 
-        healthText.text = health.Value.ToString();
+        uiManager.UpdateHealthText(health.Value.ToString());
+
         health.OnValueChanged += OnHealthChanged;
     }
 

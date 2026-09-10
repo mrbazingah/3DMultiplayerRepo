@@ -1,5 +1,4 @@
 using System.Collections;
-using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -44,14 +43,17 @@ public class PlayerShooting : NetworkBehaviour
         team.OnValueChanged += OnTeamChanged;
         SetCanShoot(team.Value);
 
-        //ammoText.gameObject.SetActive(false);
+        if (team.Value == GameManager.Team.Hunters)
+        {
+            cam = myMovement.GetCurrentCam();
+        }
     }
 
     void OnTeamChanged(GameManager.Team previousTeam, GameManager.Team newTeam)
     {
         SetCanShoot(newTeam);
         cam = myMovement.GetCurrentCam();
-        //ammoText.gameObject.SetActive(true);
+        uiManager.SetAmmoTextActive(true);
     }
 
     public void SetCanShoot(GameManager.Team team)
@@ -103,12 +105,7 @@ public class PlayerShooting : NetworkBehaviour
 
     void OnAmmoChanged(int oldValue, int newValue)
     {
-        UpdateAmmoText(newValue.ToString());
-    }
-
-    void UpdateAmmoText(string newValue)
-    {
-        uiManager.UpdateAmmoText(newValue, maxAmmo.ToString());
+        uiManager.UpdateAmmoText(newValue.ToString(), maxAmmo.ToString());
     }
 
     public void OnReload(InputValue value)
@@ -122,7 +119,7 @@ public class PlayerShooting : NetworkBehaviour
     {
         isReloading = true;
 
-        UpdateAmmoText("...");
+        uiManager.UpdateAmmoText("...", "");
 
         // Might want to change delay to server side
         yield return new WaitForSeconds(reloadDelay);
