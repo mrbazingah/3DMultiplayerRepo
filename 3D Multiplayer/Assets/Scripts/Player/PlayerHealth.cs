@@ -1,5 +1,3 @@
-using TMPro;
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -11,9 +9,13 @@ public class PlayerHealth : NetworkBehaviour
     NetworkVariable<int> maxHealth = new NetworkVariable<int>();
 
     PlayerUIManager uiManager;
+    PlayerMovement myMovement;
 
     public override void OnNetworkSpawn()
     {
+        myMovement = GetComponent<PlayerMovement>();
+        uiManager = GetComponent<PlayerUIManager>();
+
         if (IsServer)
         {
             maxHealth.Value = defaultMaxHealth;
@@ -23,6 +25,15 @@ public class PlayerHealth : NetworkBehaviour
         uiManager.UpdateHealthText(health.Value.ToString());
 
         health.OnValueChanged += OnHealthChanged;
+
+        NetworkVariable<GameManager.Team> team = myMovement.GetPlayerTeam();
+        team.OnValueChanged += OnTeamChanged;
+    }
+
+    void OnTeamChanged(GameManager.Team previousTeam, GameManager.Team newTeam)
+    {
+        uiManager.SetHealthTextActive(true);
+        uiManager.UpdateHealthText(health.Value.ToString());
     }
 
     // Called on the server when the prop changes, keeps the same health percentage on the new max

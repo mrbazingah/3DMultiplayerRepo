@@ -8,18 +8,22 @@ public class PlayerUIManager : NetworkBehaviour
     [SerializeField] TextMeshProUGUI ammoText;
     [SerializeField] GameObject playerCanvas;
     [SerializeField] GameObject interactField;
+    [SerializeField] GameObject lockRotField;
 
     TextMeshProUGUI interactFieldText;
+    TextMeshProUGUI lockRotFieldText;
 
     public override void OnNetworkSpawn()
     {
         interactFieldText = interactField.GetComponent<TextMeshProUGUI>();
+        lockRotFieldText = lockRotField.GetComponent<TextMeshProUGUI>();
 
         playerCanvas.SetActive(IsOwner);
 
         SetAmmoTextActive(false);
         SetHealthTextActive(false);
         SetInteractField(false, "");
+        SetLockRotField(false, "");
     }
 
     public void SetHealthTextActive(bool isActive)
@@ -47,5 +51,11 @@ public class PlayerUIManager : NetworkBehaviour
     {
         interactField.SetActive(isActive);
         interactFieldText.text = "[E] " + action;
+    }
+
+    public void SetLockRotField(bool isActive, string action)
+    {
+        lockRotField.SetActive(isActive);
+        lockRotFieldText.text = "[R] " + action;
     }
 }

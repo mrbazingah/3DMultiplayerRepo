@@ -59,12 +59,16 @@ public class PlayerMovement : NetworkBehaviour
     Rigidbody myRigidbody;
     Animator myAnimator;
     Collider myCollider;
+    PlayerUIManager myUiManager;
+    PlayerModelManager myModelManager;
 
     public override void OnNetworkSpawn()
     {
         myRigidbody = GetComponent<Rigidbody>();
         myAnimator = GetComponentInChildren<Animator>();
         myCollider = GetComponent<Collider>();
+        myUiManager = GetComponent<PlayerUIManager>();
+        myModelManager = GetComponent<PlayerModelManager>();
 
         // Registers before the owner check since the server runs this for every player object and not just the ones it owns
         if (IsServer && GameManager.Instance != null)
@@ -112,6 +116,12 @@ public class PlayerMovement : NetworkBehaviour
 
         rotationY = transform.rotation.eulerAngles.y;
         currentSpeed = walkSpeed;
+
+        if (IsOwner)
+        {
+            // Makes sure local player model has correct layer
+            myModelManager.SetLayerRecursively(gameObject, LayerMask.NameToLayer("Player Visuals"));
+        }
     }
 
     public void SetPlayerTeam(GameManager.Team newTeam)
@@ -386,6 +396,7 @@ public class PlayerMovement : NetworkBehaviour
 
         Debug.Log("Game Started");
 
+        myUiManager.SetHealthTextActive(true);
         GameManager.Instance.StartGame();
     }
 

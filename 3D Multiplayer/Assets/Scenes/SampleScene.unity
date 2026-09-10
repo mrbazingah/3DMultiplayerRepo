@@ -510,6 +510,18 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 2520307137
       objectReference: {fileID: 0}
+    - target: {fileID: 4437228456396373941, guid: f2cd2d35d98501441950a3756ef02927, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4437228456396373941, guid: f2cd2d35d98501441950a3756ef02927, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3812113970
+      objectReference: {fileID: 0}
+    - target: {fileID: 4437228456396373941, guid: f2cd2d35d98501441950a3756ef02927, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4872360333038844779, guid: f2cd2d35d98501441950a3756ef02927, type: 3}
       propertyPath: m_InScenePlaced
       value: 1
@@ -525,6 +537,10 @@ PrefabInstance:
     - target: {fileID: 4970383978516060593, guid: f2cd2d35d98501441950a3756ef02927, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 4016818314
+      objectReference: {fileID: 0}
+    - target: {fileID: 5337229058549698622, guid: f2cd2d35d98501441950a3756ef02927, type: 3}
+      propertyPath: m_Convex
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5405514954830186150, guid: f2cd2d35d98501441950a3756ef02927, type: 3}
       propertyPath: m_InScenePlaced
@@ -732,6 +748,10 @@ PrefabInstance:
     - target: {fileID: 726914133611281733, guid: b7ad3901fb0cf874090fe3d2cef9065f, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 1829411508
+      objectReference: {fileID: 0}
+    - target: {fileID: 1477382102278075737, guid: b7ad3901fb0cf874090fe3d2cef9065f, type: 3}
+      propertyPath: hunterValue
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1477382102278075737, guid: b7ad3901fb0cf874090fe3d2cef9065f, type: 3}
       propertyPath: mapSpawnTransform

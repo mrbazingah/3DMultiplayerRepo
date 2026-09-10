@@ -22,6 +22,7 @@ public class PlayerModelManager : NetworkBehaviour
     PlayerHealth myHealth;
     Collider myCollider;
     Rigidbody myRigidbody;
+    PlayerUIManager myUiManager;
 
     public override void OnNetworkSpawn()
     {
@@ -30,6 +31,7 @@ public class PlayerModelManager : NetworkBehaviour
         myHealth = GetComponent<PlayerHealth>();
         myCollider = GetComponent<Collider>();
         myRigidbody = GetComponent<Rigidbody>();
+        myUiManager = GetComponent<PlayerUIManager>();
 
         // Subscribes to network variable changes
         currentPropType.OnValueChanged += OnCurrentPropTypeChanged;
@@ -55,6 +57,7 @@ public class PlayerModelManager : NetworkBehaviour
     public void SetCanSwap(GameManager.Team team)
     {
         canSwap = team == GameManager.Team.Props;
+        myUiManager.SetLockRotField(canSwap, "Lock Rotation");
     }
 
     public void DetectProp(Prop newDetectedProp)
@@ -135,7 +138,7 @@ public class PlayerModelManager : NetworkBehaviour
     }
 
     // Sets layer on each child of an object
-    void SetLayerRecursively(GameObject obj, int layer)
+    public void SetLayerRecursively(GameObject obj, int layer)
     {
         obj.layer = layer;
 
