@@ -6,10 +6,11 @@ public class PlayerHealth : NetworkBehaviour
 {
     [SerializeField] int defaultMaxHealth;
     [SerializeField] TextMeshProUGUI healthText;
-    [SerializeField] GameObject playerCanvas;
 
     NetworkVariable<int> health = new NetworkVariable<int>();
     NetworkVariable<int> maxHealth = new NetworkVariable<int>();
+
+    PlayerUIManager uiManager;
 
     public override void OnNetworkSpawn()
     {
@@ -19,7 +20,6 @@ public class PlayerHealth : NetworkBehaviour
             health.Value = defaultMaxHealth;
         }
 
-        playerCanvas.gameObject.SetActive(IsOwner);
         healthText.text = health.Value.ToString();
         health.OnValueChanged += OnHealthChanged;
     }
@@ -53,7 +53,7 @@ public class PlayerHealth : NetworkBehaviour
 
     void OnHealthChanged(int oldValue, int newValue)
     {
-        healthText.text = newValue.ToString();
+        uiManager.UpdateHealthText(newValue.ToString());
     }
 
     void Die()

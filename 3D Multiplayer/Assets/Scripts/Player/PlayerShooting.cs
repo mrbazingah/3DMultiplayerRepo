@@ -15,7 +15,6 @@ public class PlayerShooting : NetworkBehaviour
     [Header("Reload")]
     [SerializeField] int maxAmmo;
     [SerializeField] float reloadDelay;
-    [SerializeField] TextMeshProUGUI ammoText;
 
     NetworkVariable<int> ammo = new NetworkVariable<int>();
 
@@ -26,10 +25,12 @@ public class PlayerShooting : NetworkBehaviour
     Camera cam;
 
     PlayerMovement myMovement;
+    PlayerUIManager uiManager;
 
     public override void OnNetworkSpawn()
     {
         myMovement = GetComponent<PlayerMovement>();
+        uiManager = GetComponent<PlayerUIManager>();
 
         if (IsServer)
         {
@@ -43,14 +44,14 @@ public class PlayerShooting : NetworkBehaviour
         team.OnValueChanged += OnTeamChanged;
         SetCanShoot(team.Value);
 
-        ammoText.gameObject.SetActive(false);
+        //ammoText.gameObject.SetActive(false);
     }
 
     void OnTeamChanged(GameManager.Team previousTeam, GameManager.Team newTeam)
     {
         SetCanShoot(newTeam);
         cam = myMovement.GetCurrentCam();
-        ammoText.gameObject.SetActive(true);
+        //ammoText.gameObject.SetActive(true);
     }
 
     public void SetCanShoot(GameManager.Team team)
@@ -107,10 +108,7 @@ public class PlayerShooting : NetworkBehaviour
 
     void UpdateAmmoText(string newValue)
     {
-        if (ammoText != null)
-        {
-            ammoText.text = newValue + "/" + maxAmmo;
-        }
+        uiManager.UpdateAmmoText(newValue, maxAmmo.ToString());
     }
 
     public void OnReload(InputValue value)
