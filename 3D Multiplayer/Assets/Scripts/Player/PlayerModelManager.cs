@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,10 +13,20 @@ public class PlayerModelManager : NetworkBehaviour
     [SerializeField] GameObject currentPropModel;
     [SerializeField] bool canSwap;
 
+    [Header("Spine Lean")]
+    [SerializeField] Animator rigAnimator;
+    [SerializeField] Transform[] spineBones;
+    [SerializeField] float[] spineWeights = { 0.3f, 0.3f, 0.4f };
+    [SerializeField] float spineSmoothSpeed = 12f;
+    [SerializeField] bool invertSpineLean;
+
     NetworkVariable<Prop.PropType> currentPropType = new NetworkVariable<Prop.PropType>();
 
     NetworkVariable<bool> lockRotation = new NetworkVariable<bool>();
     NetworkVariable<Quaternion> savedRotation = new NetworkVariable<Quaternion>();
+
+    Quaternion[] spineRestRotations;
+    float smoothedSpinePitch;
 
     PropRegistry propRegistry;
     PlayerMovement myMovement;
@@ -33,6 +44,8 @@ public class PlayerModelManager : NetworkBehaviour
         myRigidbody = GetComponent<Rigidbody>();
         myUiManager = GetComponent<PlayerUIManager>();
 
+        SetupSpineBones();
+
         // Subscribes to network variable changes
         currentPropType.OnValueChanged += OnCurrentPropTypeChanged;
 
@@ -45,6 +58,46 @@ public class PlayerModelManager : NetworkBehaviour
         {
             // Makes sure local player model has correct layer
             SetLayerRecursively(defaultVisuals, LayerMask.NameToLayer("Player Visuals"));
+        }
+    }
+
+    void SetupSpineBones()
+    {
+        // Humanoid rigs expose the bones through the animator, generic rigs have to be assigned in the inspector
+        if (spineBones == null || spineBones.Length == 0)
+        {
+            if (rigAnimator == null)
+            {
+                rigAnimator = GetComponentInChildren<Animator>();
+            }
+
+            if (rigAnimator == null || !rigAnimator.isHuman)
+            {
+                Debug.LogWarning("No humanoid rig found, assign spine bones manually for spine lean");
+                return;
+            }
+
+            List<Transform> found = new List<Transform>();
+            AddSpineBone(found, HumanBodyBones.Spine);
+            AddSpineBone(found, HumanBodyBones.Chest);
+            AddSpineBone(found, HumanBodyBones.UpperChest);
+            spineBones = found.ToArray();
+        }
+
+        // Every frame's rotation is built from the rest pose instead of the previous frame's, otherwise the lean drifts
+        spineRestRotations = new Quaternion[spineBones.Length];
+        for (int i = 0; i < spineBones.Length; i++)
+        {
+            spineRestRotations[i] = spineBones[i].localRotation;
+        }
+    }
+
+    void AddSpineBone(List<Transform> bones, HumanBodyBones bone)
+    {
+        Transform boneTransform = rigAnimator.GetBoneTransform(bone);
+        if (boneTransform != null)
+        {
+            bones.Add(boneTransform);
         }
     }
 
@@ -160,7 +213,7 @@ public class PlayerModelManager : NetworkBehaviour
 
         Debug.Log($"New: {newLowPoint} Previous: {previousLowPoint}");
 
-        float distance =  previousLowPoint - newLowPoint;
+        float distance = previousLowPoint - newLowPoint;
 
         myRigidbody.position += new Vector3(0, distance, 0);
     }
@@ -199,6 +252,9 @@ public class PlayerModelManager : NetworkBehaviour
     void LateUpdate()
     {
         LockRotation();
+
+        // Runs after LockRotation() so the model root is already facing where it should be this frame
+        ApplySpineLean();
     }
 
     // Only reads the network variables and applies them to the local model, all writes go through ToggleLockServerRpc()
@@ -215,6 +271,45 @@ public class PlayerModelManager : NetworkBehaviour
         {
             defaultVisuals.transform.rotation = targetRotation;
         }
+    }
+
+    void ApplySpineLean()
+    {
+        if (spineRestRotations == null) { return; }
+
+        // The humanoid mesh is hidden while a prop model is active so there is nothing to bend
+        if (currentPropType.Value != Prop.PropType.None) { return; }
+
+        float target = myMovement.GetSpinePitch().Value;
+        if (invertSpineLean)
+        {
+            target = -target;
+        }
+
+        // Smooths toward the target so the send threshold isn't visible as steps
+        smoothedSpinePitch = Mathf.Lerp(smoothedSpinePitch, target, Time.deltaTime * spineSmoothSpeed);
+
+        for (int i = 0; i < spineBones.Length; i++)
+        {
+            Transform bone = spineBones[i];
+            if (bone == null || bone.parent == null) { continue; }
+
+            float angle = smoothedSpinePitch * GetSpineWeight(i);
+
+            // Imported bones rarely have a usable local axis, so the model's right vector is converted into the bone's parent space
+            Vector3 axis = bone.parent.InverseTransformDirection(defaultVisuals.transform.right);
+            bone.localRotation = Quaternion.AngleAxis(angle, axis) * spineRestRotations[i];
+        }
+    }
+
+    float GetSpineWeight(int index)
+    {
+        if (spineWeights == null || spineWeights.Length != spineBones.Length)
+        {
+            return 1f / spineBones.Length;
+        }
+
+        return spineWeights[index];
     }
 
     public override void OnNetworkDespawn()

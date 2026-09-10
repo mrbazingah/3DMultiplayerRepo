@@ -33,9 +33,22 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] float zoomSpeed;
     [SerializeField] float minZoom;
     [SerializeField] float maxZoom;
+
+    [Header("Spine Lean")]
+    [SerializeField] float spinePitchMultiplier = 1.125f;
+    [SerializeField] float spineMinPitch = -90f;
+    [SerializeField] float spineMaxPitch = 90f;
+    [SerializeField] float spinePitchSendThreshold = 1.5f;
+
     [Header("Other")]
     [SerializeField] PlayerInput playerInput;
     [SerializeField] NetworkVariable<GameManager.Team> playerTeam;
+
+    NetworkVariable<float> spinePitch = new NetworkVariable<float>(
+        0f,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Owner
+    );
 
     bool isRunning;
     bool isCrouching;
@@ -47,6 +60,7 @@ public class PlayerMovement : NetworkBehaviour
     float coyoteCounter;
     float desiredCamDistance;
     float currentCamDistance;
+    float lastSentSpinePitch;
 
     Vector3 moveDirection;
     Vector3 camOffsetDirection;
@@ -196,7 +210,7 @@ public class PlayerMovement : NetworkBehaviour
 
         moveDirection = (forward * movementInput.y) + (right * movementInput.x);
 
-        //myAnimator.SetBool("isWalking", moveDirection.magnitude > 0);
+        myAnimator.SetBool("isWalking", moveDirection.magnitude > 0);
 
         Vector3 targetVelocity = moveDirection * currentSpeed;
 
@@ -316,6 +330,8 @@ public class PlayerMovement : NetworkBehaviour
         camPivot.localRotation = Quaternion.Euler(rotationX, 0, 0);
         rotationY += (lookInput.x * lookSpeed);
 
+        PublishSpinePitch();
+
         // Resets input so the camera stops moving when there's no new input this frame
         lookInput = Vector2.zero;
 
@@ -323,6 +339,17 @@ public class PlayerMovement : NetworkBehaviour
 
         // Runs after the pivot has rotated so the cast points where the camera actually ends up this frame
         CameraCollision();
+    }
+
+    void PublishSpinePitch()
+    {
+        float target = Mathf.Clamp(rotationX * spinePitchMultiplier, spineMinPitch, spineMaxPitch);
+
+        // Writing every frame would send a packet per frame for a change nobody can see
+        if (Mathf.Abs(target - lastSentSpinePitch) < spinePitchSendThreshold) { return; }
+
+        spinePitch.Value = target;
+        lastSentSpinePitch = target;
     }
 
     void CameraZoom()
@@ -384,6 +411,11 @@ public class PlayerMovement : NetworkBehaviour
     public NetworkVariable<GameManager.Team> GetPlayerTeam()
     {
         return playerTeam;
+    }
+
+    public NetworkVariable<float> GetSpinePitch()
+    {
+        return spinePitch;
     }
 
     // Change to in game menu once lobbies are implemented  
