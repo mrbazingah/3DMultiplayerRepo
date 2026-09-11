@@ -16,9 +16,9 @@ public class PlayerShooting : NetworkBehaviour
     [SerializeField] float reloadDelay;
 
     NetworkVariable<int> ammo = new NetworkVariable<int>();
+    NetworkVariable<bool> isReloading = new NetworkVariable<bool>();
 
     bool isShooting;
-    bool isReloading;
     bool canShoot;
 
     Camera cam;
@@ -70,11 +70,12 @@ public class PlayerShooting : NetworkBehaviour
 
     public void OnShoot(InputValue value)
     {
-        Debug.Log("Shoot 1"); 
+        if (ammo.Value <= 0)
+        {
+            StartCoroutine(ReloadRoutine());
+        }
 
-        if (!IsOwner || isShooting || isReloading || !canShoot || ammo.Value <= 0) { return; }
-
-        Debug.Log("Shoot 2");
+        if (!IsOwner || isShooting || isReloading.Value || !canShoot || ammo.Value <= 0) { return; }
 
         StartCoroutine(ShootingDelay());
     }
@@ -87,18 +88,12 @@ public class PlayerShooting : NetworkBehaviour
         yield return new WaitForSeconds(shootDelay);
 
         isShooting = false;
-
-        Debug.Log("Shoot 3");
     }
 
     [Rpc(SendTo.Server)]
     void ShootServerRpc(Vector3 origin, Vector3 direction)
     {
-        Debug.Log("Shoot 4");
-
-        if (ammo.Value <= 0 || isReloading) { return; }
-
-        Debug.Log("Shoot 5");
+        if (ammo.Value <= 0 || isReloading.Value) { return; }
 
         ammo.Value--;
 
@@ -127,29 +122,29 @@ public class PlayerShooting : NetworkBehaviour
 
     public void OnReload(InputValue value)
     {
-        if (!IsOwner || isReloading || isShooting || !canShoot || ammo.Value == maxAmmo) { return; }
+        if (!IsOwner || isReloading.Value || isShooting || !canShoot || ammo.Value == maxAmmo) { return; }
 
-        StartCoroutine(ReloadingDelay());
+        ReloadServerRpc();
     }
 
-    IEnumerator ReloadingDelay()
+    [Rpc(SendTo.Server)]
+    void ReloadServerRpc()
     {
-        isReloading = true;
+        StartCoroutine(ReloadRoutine());
+    }
+
+    IEnumerator ReloadRoutine()
+    {
+        isReloading.Value = true;
 
         myUiManager.UpdateAmmoText("...", maxAmmo.ToString());
 
         // Might want to change delay to server side
         yield return new WaitForSeconds(reloadDelay);
 
-        ReloadServerRpc();
-
-        isReloading = false;
-    }
-
-    [Rpc(SendTo.Server)]
-    void ReloadServerRpc()
-    {
         ammo.Value = maxAmmo;
+
+        isReloading.Value = false;
     }
 
     public override void OnNetworkDespawn()

@@ -250,11 +250,11 @@ public class PlayerMovement : NetworkBehaviour
         // Stops the same window being used for a second jump before landing
         coyoteCounter = 0;
 
-        StartCoroutine(JumpDelay());
+        StartCoroutine(JumpRoutine());
     }
 
     // Prevent double jumps
-    IEnumerator JumpDelay()
+    IEnumerator JumpRoutine()
     {
         isJumping = true;
 
