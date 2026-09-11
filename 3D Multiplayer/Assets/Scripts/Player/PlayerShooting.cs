@@ -25,11 +25,15 @@ public class PlayerShooting : NetworkBehaviour
 
     PlayerMovement myMovement;
     PlayerUIManager uiManager;
+    PlayerModelManager myModelManager;
+    Animator myAnimator;
 
     public override void OnNetworkSpawn()
     {
         myMovement = GetComponent<PlayerMovement>();
         uiManager = GetComponent<PlayerUIManager>();
+        myModelManager = GetComponent<PlayerModelManager>();
+        myAnimator = GetComponentInChildren<Animator>();
 
         if (IsServer)
         {
@@ -58,6 +62,8 @@ public class PlayerShooting : NetworkBehaviour
     public void SetCanShoot(GameManager.Team team)
     {
         canShoot = team == GameManager.Team.Hunters;
+        myModelManager.SetGunModelsActive(IsOwner && canShoot, !IsOwner && canShoot);
+        myAnimator.SetBool("gunEquipped", canShoot);
     }
 
     public void OnShoot(InputValue value)

@@ -53,9 +53,10 @@ public class PlayerHealth : NetworkBehaviour
 
     public void TakeDamage(int dmg)
     {
-        if (!IsServer) { return; }
-
-        health.Value -= dmg;
+        if (IsServer)
+        {
+            health.Value -= dmg;
+        }
 
         if (health.Value <= 0)
         {

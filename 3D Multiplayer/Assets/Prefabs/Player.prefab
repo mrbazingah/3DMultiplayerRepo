@@ -469,7 +469,8 @@ MonoBehaviour:
   detectedProp: {fileID: 0}
   currentPropModel: {fileID: 0}
   canSwap: 0
-  gunModel: {fileID: 5435195909078092899}
+  ownerGunModel: {fileID: 5435195909078092899}
+  clientGunModel: {fileID: 2515376572803398896}
   rigAnimator: {fileID: 8338238641119675433}
   spineBones:
   - {fileID: 2681515756582625431}
@@ -1556,12 +1557,15 @@ PrefabInstance:
       value: PFB_Basic_Goblin
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 6092498372706289020, guid: 044a6c749f52fff4fa7f6eee255d74f6, type: 3}
-    - {fileID: 6932165107470516031, guid: 044a6c749f52fff4fa7f6eee255d74f6, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 044a6c749f52fff4fa7f6eee255d74f6, type: 3}
+--- !u!1 &2515376572803398896 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4962577942216384696, guid: 044a6c749f52fff4fa7f6eee255d74f6, type: 3}
+  m_PrefabInstance: {fileID: 7365346859595209800}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2681515756582625431 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4827963999843679455, guid: 044a6c749f52fff4fa7f6eee255d74f6, type: 3}

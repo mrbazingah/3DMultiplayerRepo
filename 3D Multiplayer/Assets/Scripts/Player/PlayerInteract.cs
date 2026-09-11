@@ -51,7 +51,7 @@ public class PlayerInteract : NetworkBehaviour
         }
         else if (detectedObject != null && detectedObject.TryGetComponent(out Prop prop))
         {
-            myModelManager.DetectProp(prop);
+            myModelManager.SwapModel(prop);
         }
     }
 

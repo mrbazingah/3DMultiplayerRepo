@@ -13,7 +13,8 @@ public class PlayerModelManager : NetworkBehaviour
     [SerializeField] GameObject currentPropModel;
     [SerializeField] bool canSwap;
     [Space]
-    [SerializeField] GameObject gunModel;
+    [SerializeField] GameObject ownerGunModel;
+    [SerializeField] GameObject clientGunModel;
 
     [Header("Spine Lean")]
     [SerializeField] Animator rigAnimator;
@@ -61,6 +62,8 @@ public class PlayerModelManager : NetworkBehaviour
             // Makes sure local player model has correct layer
             SetLayerRecursively(defaultVisuals, LayerMask.NameToLayer("Player Visuals"));
         }
+
+        SetGunModelsActive(false, false);
     }
 
     void SetupSpineBones()
@@ -119,7 +122,13 @@ public class PlayerModelManager : NetworkBehaviour
         SetCanSwap(newTeam);
     }
 
-    public void DetectProp(Prop newDetectedProp)
+    public void SetGunModelsActive(bool ownerActive, bool clientActive)
+    {
+        ownerGunModel.SetActive(ownerActive);
+        clientGunModel.SetActive(clientActive);
+    }
+
+    public void SwapModel(Prop newDetectedProp)
     {
         if (!canSwap) { return; }
 
@@ -199,7 +208,7 @@ public class PlayerModelManager : NetworkBehaviour
     // Sets layer on each child of an object
     public void SetLayerRecursively(GameObject obj, int layer)
     {
-        if (obj == gunModel) { return; }
+        if (obj == ownerGunModel) { return; }
 
         obj.layer = layer;
 
@@ -238,6 +247,9 @@ public class PlayerModelManager : NetworkBehaviour
         // Assigns prop's model or player's model before locking it
         Transform modelTransform = currentPropModel != null ? currentPropModel.transform : defaultVisuals.transform;
         ToggleLockServerRpc(modelTransform.rotation);
+
+        string action = lockRotation.Value ? "Unlock" : "Lock";
+        myUiManager.SetLockRotField(true, action + " rotation");
     }
 
     // Server RPC to toggle lock rotation and save the current rotation if locking
