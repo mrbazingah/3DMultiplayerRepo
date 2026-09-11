@@ -469,6 +469,7 @@ MonoBehaviour:
   detectedProp: {fileID: 0}
   currentPropModel: {fileID: 0}
   canSwap: 0
+  gunModel: {fileID: 5435195909078092899}
   rigAnimator: {fileID: 8338238641119675433}
   spineBones:
   - {fileID: 2681515756582625431}
@@ -1216,7 +1217,7 @@ Transform:
   m_GameObject: {fileID: 6919433444065622587}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.471, y: -0.138, z: 0.361}
+  m_LocalPosition: {x: 0.245, y: -0.165, z: 0.361}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1258,7 +1259,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 6, y: 6}
+  m_SizeDelta: {x: 15, y: 15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8264373916158759606
 CanvasRenderer:
@@ -1448,18 +1449,6 @@ PrefabInstance:
       value: Pistol_D
       objectReference: {fileID: 0}
     - target: {fileID: 5693384977058778251, guid: 5f04650d3064895489cdb8f95e907c1b, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5693384977058778251, guid: 5f04650d3064895489cdb8f95e907c1b, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5693384977058778251, guid: 5f04650d3064895489cdb8f95e907c1b, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5693384977058778251, guid: 5f04650d3064895489cdb8f95e907c1b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -1507,6 +1496,11 @@ PrefabInstance:
 --- !u!4 &4622489053029324505 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5693384977058778251, guid: 5f04650d3064895489cdb8f95e907c1b, type: 3}
+  m_PrefabInstance: {fileID: 1091162167208811090}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5435195909078092899 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4920507860935382577, guid: 5f04650d3064895489cdb8f95e907c1b, type: 3}
   m_PrefabInstance: {fileID: 1091162167208811090}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7365346859595209800

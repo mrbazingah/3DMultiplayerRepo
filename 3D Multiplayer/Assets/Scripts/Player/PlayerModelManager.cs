@@ -12,6 +12,8 @@ public class PlayerModelManager : NetworkBehaviour
     [SerializeField] Prop detectedProp;
     [SerializeField] GameObject currentPropModel;
     [SerializeField] bool canSwap;
+    [Space]
+    [SerializeField] GameObject gunModel;
 
     [Header("Spine Lean")]
     [SerializeField] Animator rigAnimator;
@@ -197,6 +199,8 @@ public class PlayerModelManager : NetworkBehaviour
     // Sets layer on each child of an object
     public void SetLayerRecursively(GameObject obj, int layer)
     {
+        if (obj == gunModel) { return; }
+
         obj.layer = layer;
 
         foreach (Transform child in obj.transform)
