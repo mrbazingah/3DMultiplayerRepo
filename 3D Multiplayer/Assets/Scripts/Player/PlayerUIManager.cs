@@ -46,8 +46,7 @@ public class PlayerUIManager : NetworkBehaviour
 
     public void UpdateAmmoText(string newAmmo, string maxAmmo)
     {
-        string prefix = maxAmmo == "" ? "" : "/";
-        ammoText.text = newAmmo + prefix + maxAmmo;
+        ammoText.text = newAmmo + "/" + maxAmmo;
     }
 
     public void SetInteractField(bool isActive, string action)

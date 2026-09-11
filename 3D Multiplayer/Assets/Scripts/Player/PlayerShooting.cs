@@ -136,7 +136,7 @@ public class PlayerShooting : NetworkBehaviour
     {
         isReloading = true;
 
-        myUiManager.UpdateAmmoText("...", "");
+        myUiManager.UpdateAmmoText("...", maxAmmo.ToString());
 
         // Might want to change delay to server side
         yield return new WaitForSeconds(reloadDelay);
