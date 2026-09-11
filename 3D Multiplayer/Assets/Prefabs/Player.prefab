@@ -423,7 +423,7 @@ MonoBehaviour:
   rayDistance: 0.12
   gravity: 30
   coyoteTime: 0.2
-  lookSpeed: 0.5
+  lookSpeed: 0.3
   lookXLimit: 90
   firstPersonCam: {fileID: 6483407682183602331}
   thirdPersonCam: {fileID: 5984510200694350359}
@@ -500,7 +500,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   maxAmmo: 30
-  reloadDelay: 1
+  reloadDelay: 1.5
 --- !u!114 &7201181107607869916
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -30,7 +30,13 @@ public class Door : NetworkBehaviour
         if (!isOpen)
         {
             currentAngle.Value = closedAngle;
+            AudioManager.Instance.PlaySfx(AudioManager.Instance.doorCloseSfx, transform);
+
             return;
+        }
+        else
+        {
+            AudioManager.Instance.PlaySfx(AudioManager.Instance.doorOpenSfx, transform);
         }
 
         Vector3 doorToPlayer = playerPosition - doorHinge.position;

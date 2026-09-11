@@ -96,6 +96,7 @@ public class PlayerShooting : NetworkBehaviour
         if (ammo.Value <= 0 || isReloading.Value) { return; }
 
         ammo.Value--;
+        PlayShootSfxRpc();
 
         RaycastHit hit;
         if (Physics.Raycast(origin, direction, out hit, shootRange, targetLayer))
@@ -113,6 +114,12 @@ public class PlayerShooting : NetworkBehaviour
                 targetHealth.TakeDamage(damage);
             }
         }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    void PlayShootSfxRpc()
+    {
+        AudioManager.Instance.PlaySfx(AudioManager.Instance.shootSfx, transform);
     }
 
     void OnAmmoChanged(int oldValue, int newValue)
@@ -139,12 +146,19 @@ public class PlayerShooting : NetworkBehaviour
 
         myUiManager.UpdateAmmoText("...", maxAmmo.ToString());
 
+        PlayReloadSfxRpc();
+
         // Might want to change delay to server side
         yield return new WaitForSeconds(reloadDelay);
 
         ammo.Value = maxAmmo;
 
         isReloading.Value = false;
+    }
+
+    void PlayReloadSfxRpc()
+    {
+        AudioManager.Instance.PlaySfx(AudioManager.Instance.reloadSfx, transform);
     }
 
     public override void OnNetworkDespawn()

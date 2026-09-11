@@ -61,6 +61,7 @@ public class PlayerMovement : NetworkBehaviour
     float desiredCamDistance;
     float currentCamDistance;
     float lastSentSpinePitch;
+    float defaultAnimatorSpeed;
 
     Vector3 moveDirection;
     Vector3 camOffsetDirection;
@@ -128,6 +129,7 @@ public class PlayerMovement : NetworkBehaviour
 
         rotationY = transform.rotation.eulerAngles.y;
         currentSpeed = walkSpeed;
+        defaultAnimatorSpeed = myAnimator.speed;
 
         if (IsOwner)
         {
@@ -201,6 +203,9 @@ public class PlayerMovement : NetworkBehaviour
 
         isRunning = value.isPressed;
         currentSpeed = isRunning ? runSpeed : walkSpeed;
+
+        float speed = isRunning ? defaultAnimatorSpeed + (1 - walkSpeed / runSpeed) : defaultAnimatorSpeed;
+        myAnimator.speed = speed;
     }
 
     void Movement()
