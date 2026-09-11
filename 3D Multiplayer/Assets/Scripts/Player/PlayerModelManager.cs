@@ -340,4 +340,9 @@ public class PlayerModelManager : NetworkBehaviour
         Collider cmCol = currentPropModel != null ? currentPropModel.GetComponent<Collider>() : myMovement.GetComponent<Collider>();
         return cmCol;
     }
+
+    public GameObject GetDefaultVisuals()
+    {
+        return defaultVisuals;
+    }
 }

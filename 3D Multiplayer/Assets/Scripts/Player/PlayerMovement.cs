@@ -132,7 +132,8 @@ public class PlayerMovement : NetworkBehaviour
         if (IsOwner)
         {
             // Makes sure local player model has correct layer
-            myModelManager.SetLayerRecursively(gameObject, LayerMask.NameToLayer("Player Visuals"));
+            GameObject defaultVisuals = myModelManager.GetDefaultVisuals();
+            myModelManager.SetLayerRecursively(defaultVisuals, LayerMask.NameToLayer("Player Visuals"));
         }
     }
 

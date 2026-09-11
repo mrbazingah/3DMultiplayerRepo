@@ -24,14 +24,14 @@ public class PlayerShooting : NetworkBehaviour
     Camera cam;
 
     PlayerMovement myMovement;
-    PlayerUIManager uiManager;
+    PlayerUIManager myUiManager;
     PlayerModelManager myModelManager;
     Animator myAnimator;
 
     public override void OnNetworkSpawn()
     {
         myMovement = GetComponent<PlayerMovement>();
-        uiManager = GetComponent<PlayerUIManager>();
+        myUiManager = GetComponent<PlayerUIManager>();
         myModelManager = GetComponent<PlayerModelManager>();
         myAnimator = GetComponentInChildren<Animator>();
 
@@ -62,13 +62,19 @@ public class PlayerShooting : NetworkBehaviour
     public void SetCanShoot(GameManager.Team team)
     {
         canShoot = team == GameManager.Team.Hunters;
+        // Shows different gun models for owner and clients
         myModelManager.SetGunModelsActive(IsOwner && canShoot, !IsOwner && canShoot);
+        myUiManager.SetAmmoTextActive(IsOwner && canShoot);
         myAnimator.SetBool("gunEquipped", canShoot);
     }
 
     public void OnShoot(InputValue value)
     {
+        Debug.Log("Shoot 1"); 
+
         if (!IsOwner || isShooting || isReloading || !canShoot || ammo.Value <= 0) { return; }
+
+        Debug.Log("Shoot 2");
 
         StartCoroutine(ShootingDelay());
     }
@@ -81,12 +87,18 @@ public class PlayerShooting : NetworkBehaviour
         yield return new WaitForSeconds(shootDelay);
 
         isShooting = false;
+
+        Debug.Log("Shoot 3");
     }
 
     [Rpc(SendTo.Server)]
     void ShootServerRpc(Vector3 origin, Vector3 direction)
     {
+        Debug.Log("Shoot 4");
+
         if (ammo.Value <= 0 || isReloading) { return; }
+
+        Debug.Log("Shoot 5");
 
         ammo.Value--;
 
@@ -110,7 +122,7 @@ public class PlayerShooting : NetworkBehaviour
 
     void OnAmmoChanged(int oldValue, int newValue)
     {
-        uiManager.UpdateAmmoText(newValue.ToString(), maxAmmo.ToString());
+        myUiManager.UpdateAmmoText(newValue.ToString(), maxAmmo.ToString());
     }
 
     public void OnReload(InputValue value)
@@ -124,7 +136,7 @@ public class PlayerShooting : NetworkBehaviour
     {
         isReloading = true;
 
-        uiManager.UpdateAmmoText("...", "");
+        myUiManager.UpdateAmmoText("...", "");
 
         // Might want to change delay to server side
         yield return new WaitForSeconds(reloadDelay);
