@@ -44,3 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5859e5d9bb967654baf55ea25b29b520, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ConnectionManager
+  gameSceneName: Game Scene
+  mainMenuSceneName: Main Menu Scene
+  maxConnections: 8
+  roomCodeInputField: {fileID: 0}
