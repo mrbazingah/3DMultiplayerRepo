@@ -1,4 +1,5 @@
-using System.Collections;
+using System;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,6 +13,8 @@ public class ConnectionManager : MonoBehaviour
     [SerializeField] int maxConnections;
 
     bool isConnecting;
+
+    RelayManager relayManager;
 
     void Awake()
     {
@@ -29,9 +32,26 @@ public class ConnectionManager : MonoBehaviour
 
     void Start()
     {
-        if (!NetworkManager.Singleton) { return; }
+        relayManager = GetComponent<RelayManager>();
 
-        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        TryInitializeRelay();
+
+        if (NetworkManager.Singleton)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        }
+    }
+
+    async void TryInitializeRelay()
+    {
+        try
+        {
+            await relayManager.InitializeAsync();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to initialize relay: " + e);
+        }
     }
 
     public void HostGame()
@@ -39,26 +59,39 @@ public class ConnectionManager : MonoBehaviour
         if (isConnecting || !NetworkManager.Singleton) { return; }
 
         isConnecting = true;
-        StartCoroutine(HostGameRoutine());
+        HostGameWrapper();
     }
 
-    IEnumerator HostGameRoutine()
+    async void HostGameWrapper()
     {
+        try
+        {
+            await HostGameAsync();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to host game: " + e);
+            Abort();
+        }
+    }
+
+    async Task HostGameAsync()
+    {
+        await relayManager.InitializeAsync();
+
+        string code = await relayManager.CreateRelayAsync(maxConnections);
+        Debug.Log("Join code: " + code);
+
         AsyncOperation load = SceneManager.LoadSceneAsync(gameSceneName);
-        yield return load;
+        while (!load.isDone)
+        {
+            await Task.Yield();
+        }
 
-        bool hostStarted = NetworkManager.Singleton.StartHost();
-
-        if (!hostStarted)
+        if (!NetworkManager.Singleton.StartHost())
         {
             Debug.LogError("Failed to start host.");
-            
-            isConnecting = false;
-            NetworkManager.Singleton.Shutdown();
-
-            SceneManager.LoadScene(mainMenuSceneName);
-
-            yield break;
+            Abort();
         }
     }
 
@@ -66,21 +99,43 @@ public class ConnectionManager : MonoBehaviour
     {
         if (isConnecting || !NetworkManager.Singleton) { return; }
 
-        SceneManager.LoadScene(gameSceneName);
-
         isConnecting = true;
+        JoinGameWrapper(roomCode);
+    }
 
-        bool clientStarted = NetworkManager.Singleton.StartClient();
-        if (!clientStarted)
+    async void JoinGameWrapper(string roomCode)
+    {
+        try
+        {
+            await JoinGameAsync(roomCode);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to join game: " + e);
+            Abort();
+        }
+    }
+
+    async Task JoinGameAsync(string roomCode)
+    {
+        await relayManager.InitializeAsync();
+        await relayManager.JoinRelayAsync(roomCode);
+
+        if (!NetworkManager.Singleton.StartClient())
         {
             Debug.LogError("Failed to start client.");
+            Abort();
+        }
+    }
 
-            isConnecting = false;
-            NetworkManager.Singleton.Shutdown();
+    void Abort()
+    {
+        isConnecting = false;
+        NetworkManager.Singleton.Shutdown();
 
+        if (SceneManager.GetActiveScene().name != mainMenuSceneName)
+        {
             SceneManager.LoadScene(mainMenuSceneName);
-
-            return;
         }
     }
 

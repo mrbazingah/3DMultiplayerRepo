@@ -323,7 +323,7 @@ public class PlayerMovement : NetworkBehaviour
     public void OnZoom(InputValue value)
     {
         // Only props can zoom since hunters are in first person
-        if (!IsOwner || playerTeam.Value != GameManager.Team.Props) { return; }
+        if (!IsOwner || playerTeam.Value == GameManager.Team.Hunters) { return; }
 
         zoomInput = value.Get<Vector2>();
     }
