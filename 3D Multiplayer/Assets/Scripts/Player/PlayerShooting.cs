@@ -1,5 +1,6 @@
 using System.Collections;
 using Unity.Netcode;
+using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -45,24 +46,33 @@ public class PlayerShooting : NetworkBehaviour
 
         NetworkVariable<GameManager.Team> team = myMovement.GetPlayerTeam();
         team.OnValueChanged += OnTeamChanged;
-        SetCanShoot(team.Value);
 
         if (team.Value == GameManager.Team.Hunters)
         {
             cam = myMovement.GetCurrentCam();
+            SetCanShoot(true, true);
         }
     }
 
     void OnTeamChanged(GameManager.Team previousTeam, GameManager.Team newTeam)
     {
-        SetCanShoot(newTeam);
+        SetCanShoot(newTeam == GameManager.Team.Hunters, true);
         cam = myMovement.GetCurrentCam();
     }
 
-    public void SetCanShoot(GameManager.Team team)
+    public void SetCanShoot(bool newCanShoot, bool changeSetup = false)
     {
-        canShoot = team == GameManager.Team.Hunters;
+        canShoot = newCanShoot;
         // Shows different gun models for owner and clients
+        
+        if (changeSetup && canShoot)
+        {
+            UpdateGunModels();
+        }
+    }
+
+    void UpdateGunModels()
+    {
         myModelManager.SetGunModelsActive(IsOwner && canShoot, !IsOwner && canShoot);
         myUiManager.SetAmmoTextActive(IsOwner && canShoot);
         myAnimator.SetBool("gunEquipped", canShoot);

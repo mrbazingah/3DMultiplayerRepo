@@ -55,7 +55,7 @@ public class PlayerModelManager : NetworkBehaviour
         // Follows the team from PlayerMovement so canSwap stays correct on every client, and applies the current value for players who spawn with a team already set
         NetworkVariable<GameManager.Team> team = myMovement.GetPlayerTeam();
         team.OnValueChanged += OnTeamChanged;
-        SetCanSwap(team.Value);
+        SetCanSwap(team.Value == GameManager.Team.Props, true);
 
         if (IsOwner)
         {
@@ -106,11 +106,11 @@ public class PlayerModelManager : NetworkBehaviour
         }
     }
 
-    public void SetCanSwap(GameManager.Team team)
+    public void SetCanSwap(bool newCanSwap, bool changeSetup = false)
     {
-        canSwap = team == GameManager.Team.Props;
+        canSwap = newCanSwap;
 
-        if (IsOwner)
+        if (IsOwner && changeSetup && canSwap)
         {
             myUiManager.SetLockRotField(canSwap, "Lock Rotation");
         }
@@ -119,7 +119,7 @@ public class PlayerModelManager : NetworkBehaviour
     // Updates canSwap when team changes
     void OnTeamChanged(GameManager.Team previousTeam, GameManager.Team newTeam)
     {
-        SetCanSwap(newTeam);
+        SetCanSwap(newTeam == GameManager.Team.Props, true);
     }
 
     public void SetGunModelsActive(bool ownerActive, bool clientActive)

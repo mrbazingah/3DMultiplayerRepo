@@ -1,8 +1,8 @@
+using System.Collections;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class PlayerUIManager : NetworkBehaviour
 {
@@ -20,10 +20,14 @@ public class PlayerUIManager : NetworkBehaviour
     bool pauseMenuActive;
 
     PlayerMovement myMovement;
+    PlayerShooting myShooting;
+    PlayerModelManager myModelManager;
 
     void Awake()
     {
         myMovement = GetComponent<PlayerMovement>();
+        myShooting = GetComponent<PlayerShooting>();
+        myModelManager = GetComponent<PlayerModelManager>();
         interactFieldText = interactField.GetComponent<TextMeshProUGUI>();
         lockRotFieldText = lockRotField.GetComponent<TextMeshProUGUI>();
 
@@ -84,32 +88,40 @@ public class PlayerUIManager : NetworkBehaviour
         pauseMenuActive = !pauseMenuActive;
         pauseMenu.SetActive(pauseMenuActive);
         myMovement.SetCanMove(!pauseMenuActive);
+        myShooting.SetCanShoot(!pauseMenuActive);
+        myModelManager.SetCanSwap(!pauseMenuActive);
+    }
+
+    public void OnResumeButtonClicked()
+    {
+        if (!IsOwner) { return; }
+
+        OpenClosePauseMenu();
+    }
+
+    public void OnOptionsButtonClicked()
+    {
+        if (!IsOwner) { return; }
+
+        Debug.Log("Options Button Clicked");
     }
 
     public void OnMainMenuButtonClicked()
     {
         if (!IsOwner) { return; }
 
+        Debug.Log("Main Menu Button Clicked"); 
+
         string sceneName = ConnectionManager.Instance.mainMenuSceneName;
-        DisconnectClient();
-        SceneManager.LoadScene(sceneName);
+        ConnectionManager.Instance.LeaveGame(sceneName);
     }
 
     public void OnQuitButtonClicked()
     {
         if (!IsOwner) { return; }
 
-        DisconnectClient();
+        ConnectionManager.Instance.LeaveGame();
+
         Application.Quit();
-    }
-
-    void DisconnectClient()
-    {
-        NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
-
-        if (IsHost)
-        {
-            // Shutdown server and disconnect all clients
-        }
     }
 }

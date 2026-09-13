@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
@@ -132,11 +133,22 @@ public class ConnectionManager : MonoBehaviour
     void Abort()
     {
         isConnecting = false;
-        NetworkManager.Singleton.Shutdown();
+        LeaveGame();
 
         if (SceneManager.GetActiveScene().name != mainMenuSceneName)
         {
             SceneManager.LoadScene(mainMenuSceneName);
+        }
+    }
+
+    public void LeaveGame(string sceneName = null)
+    {
+        if (!NetworkManager.Singleton) { return; }
+        NetworkManager.Singleton.Shutdown();
+
+        if (sceneName != null)
+        {
+            SceneManager.LoadScene(sceneName);
         }
     }
 
