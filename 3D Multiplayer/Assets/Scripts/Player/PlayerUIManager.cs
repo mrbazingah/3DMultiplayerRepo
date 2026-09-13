@@ -72,7 +72,7 @@ public class PlayerUIManager : NetworkBehaviour
         lockRotFieldText.text = "[R] " + action;
     }
 
-    public void OnPauseGame(InputValue value)
+    public void OnPauseMenu(InputValue value)
     {
         if (!IsOwner) { return; }
 

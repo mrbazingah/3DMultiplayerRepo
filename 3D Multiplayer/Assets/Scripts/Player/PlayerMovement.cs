@@ -144,7 +144,7 @@ public class PlayerMovement : NetworkBehaviour
         canMove = b;
 
         Cursor.lockState = b ? CursorLockMode.Locked : CursorLockMode.None;
-        Cursor.visible = b;
+        Cursor.visible = !b;
     }
 
     public void SetPlayerTeam(GameManager.Team newTeam)
