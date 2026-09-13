@@ -44,8 +44,6 @@ public class GameManager : NetworkBehaviour
 
     public void UnregisterPlayer(PlayerMovement player)
     {
-        if (!IsServer) { return; }
-
         playerList.Remove(player);
     }
 
@@ -54,7 +52,7 @@ public class GameManager : NetworkBehaviour
         if (!IsServer /*|| playerList.Count < 2*/) { return; }
 
         AssignTeam();
-        SetPlayerPositions(mapSpawnTransform.position);
+        SetPlayerPositionsRpc(mapSpawnTransform.position);
     }
 
     void AssignTeam()
@@ -76,8 +74,15 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    void SetPlayerPositions(Vector3 pos)
+    [Rpc(SendTo.Everyone)]
+    void SetPlayerPositionsRpc(Vector3 pos)
     {
+        if (playerList.Count == 0)
+        {
+            Debug.LogWarning("No players registered in GameManager.");
+            return;
+        }
+
         foreach (PlayerMovement player in playerList)
         {
             if (player != null)

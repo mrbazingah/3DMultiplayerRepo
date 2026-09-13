@@ -84,7 +84,7 @@ public class PlayerMovement : NetworkBehaviour
         myModelManager = GetComponent<PlayerModelManager>();
 
         // Registers before the owner check since the server runs this for every player object and not just the ones it owns
-        if (IsServer && GameManager.Instance != null)
+        if (GameManager.Instance != null)
         {
             GameManager.Instance.RegisterPlayer(this);
         }
@@ -149,17 +149,16 @@ public class PlayerMovement : NetworkBehaviour
     void OnTeamChanged(GameManager.Team previous, GameManager.Team current)
     {
         if (!IsOwner) { return; }
-        ApplyTeamVisuals(current);
+        UpdateCamLogic(current);
     }
 
-    void ApplyTeamVisuals(GameManager.Team team)
+    void UpdateCamLogic(GameManager.Team team)
     {
         bool isHunter = team == GameManager.Team.Hunters;
         firstPersonCam.enabled = isHunter;
         thirdPersonCam.enabled = !isHunter;
 
-        camPivot = isHunter ? firstPersonCam.transform : camPivot;
-        currentCam = camPivot.GetComponent<Camera>();
+        currentCam = isHunter ? firstPersonCam : thirdPersonCam;
     }
 
     public void TeleportTo(Vector3 pos)

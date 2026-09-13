@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a7d7d213635327149b9f3dba222d06f6
+guid: 64d8e4296dbe59e4f8870f7c85c43993
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Mistical Spring DEMO VERSION
+  - Pixelta
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
