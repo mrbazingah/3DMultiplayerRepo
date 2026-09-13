@@ -30,19 +30,31 @@ public class Door : NetworkBehaviour
         if (!isOpen)
         {
             currentAngle.Value = closedAngle;
-            AudioManager.Instance.PlaySfx(AudioManager.Instance.doorCloseSfx, transform);
+            PlayDoorCloseSfxRpc();
 
             return;
         }
         else
         {
-            AudioManager.Instance.PlaySfx(AudioManager.Instance.doorOpenSfx, transform);
+            PlayDoorOpenSfxRpc();
         }
 
         Vector3 doorToPlayer = playerPosition - doorHinge.position;
         float angleToPlayer = Vector3.SignedAngle(closedForward, doorToPlayer, Vector3.up);
 
         currentAngle.Value = angleToPlayer > 0 ? openAngle2 : openAngle1;
+    }
+
+    [Rpc(SendTo.Everyone)]
+    void PlayDoorOpenSfxRpc()
+    {
+        AudioManager.Instance.PlaySfx(AudioManager.Instance.doorOpenSfx, transform);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    void PlayDoorCloseSfxRpc()
+    {
+        AudioManager.Instance.PlaySfx(AudioManager.Instance.doorCloseSfx, transform);
     }
 
     void Update()

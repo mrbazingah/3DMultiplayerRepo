@@ -53,6 +53,7 @@ public class PlayerMovement : NetworkBehaviour
     bool isRunning;
     bool isCrouching;
     bool isJumping;
+    bool canMove;
 
     float currentSpeed;
     float rotationX;
@@ -116,8 +117,7 @@ public class PlayerMovement : NetworkBehaviour
 
         myRigidbody.isKinematic = false;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        SetCanMove(true);
 
         // Stores where the camera sits in the prefab so zoom and collision can move it along the same line
         camOffsetDirection = thirdPersonCam.transform.localPosition.normalized;
@@ -137,6 +137,14 @@ public class PlayerMovement : NetworkBehaviour
             GameObject defaultVisuals = myModelManager.GetDefaultVisuals();
             myModelManager.SetLayerRecursively(defaultVisuals, LayerMask.NameToLayer("Player Visuals"));
         }
+    }
+
+    public void SetCanMove(bool b)
+    {
+        canMove = b;
+
+        Cursor.lockState = b ? CursorLockMode.Locked : CursorLockMode.None;
+        Cursor.visible = b;
     }
 
     public void SetPlayerTeam(GameManager.Team newTeam)
@@ -164,7 +172,7 @@ public class PlayerMovement : NetworkBehaviour
     public void TeleportTo(Vector3 pos)
     {
         // Server owns the position so the move happens here
-        if (!IsServer) { return; }
+        if (!IsOwner) { return; }
 
         if (myRigidbody != null)
         {
@@ -181,6 +189,7 @@ public class PlayerMovement : NetworkBehaviour
 
     void FixedUpdate()
     {
+        if (!canMove) { return; }
         Movement();
         ApplyGravity();
         CoyoteTime();
@@ -190,7 +199,7 @@ public class PlayerMovement : NetworkBehaviour
 
     public void OnMove(InputValue value)
     {
-        if (!IsOwner) { return; }
+        if (!IsOwner || !canMove) { return; }
 
         movementInput = value.Get<Vector2>();
     }
@@ -198,7 +207,7 @@ public class PlayerMovement : NetworkBehaviour
     // Pass through input
     public void OnRun(InputValue value)
     {
-        if (!IsOwner || isCrouching) { return; }
+        if (!IsOwner || !canMove || isCrouching) { return; }
 
         isRunning = value.isPressed;
         currentSpeed = isRunning ? runSpeed : walkSpeed;
@@ -226,7 +235,7 @@ public class PlayerMovement : NetworkBehaviour
     // Pass through input
     public void OnCrouch(InputValue value)
     {
-        if (!IsOwner) { return; }
+        if (!IsOwner || !canMove) { return; }
 
         isCrouching = value.isPressed;
         isRunning = false;
@@ -242,7 +251,7 @@ public class PlayerMovement : NetworkBehaviour
 
     public void OnJump(InputValue value)
     {
-        if (!IsOwner) { return; }
+        if (!IsOwner || !canMove) { return; }
 
         // Allows the jump if the player left the ground within the coyote window
         if (!value.isPressed || coyoteCounter <= 0 || isJumping) { return; }
@@ -314,7 +323,7 @@ public class PlayerMovement : NetworkBehaviour
 
     public void OnLook(InputValue value)
     {
-        if (!IsOwner) { return; }
+        if (!IsOwner || !canMove) { return; }
 
         lookInput = value.Get<Vector2>();
     }
@@ -322,7 +331,7 @@ public class PlayerMovement : NetworkBehaviour
     public void OnZoom(InputValue value)
     {
         // Only props can zoom since hunters are in first person
-        if (!IsOwner || playerTeam.Value == GameManager.Team.Hunters) { return; }
+        if (!IsOwner || !canMove || playerTeam.Value == GameManager.Team.Hunters) { return; }
 
         zoomInput = value.Get<Vector2>();
     }
@@ -426,7 +435,7 @@ public class PlayerMovement : NetworkBehaviour
     // Change to in game menu once lobbies are implemented  
     public void OnStartGame(InputValue value)
     {
-        if (!IsOwner || !IsServer) { return; }
+        if (!IsOwner || !IsServer || !canMove) { return; }
 
         Debug.Log("Game Started");
 

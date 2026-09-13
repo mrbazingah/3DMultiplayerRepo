@@ -8,8 +8,9 @@ public class ConnectionManager : MonoBehaviour
 {
     public static ConnectionManager Instance { get; private set; }
 
-    [SerializeField] string gameSceneName;
-    [SerializeField] string mainMenuSceneName;
+    [field:SerializeField] public string gameSceneName { get; private set; }
+    [field:SerializeField] public string mainMenuSceneName { get; private set; }
+
     [SerializeField] int maxConnections;
 
     bool isConnecting;
@@ -59,10 +60,10 @@ public class ConnectionManager : MonoBehaviour
         if (isConnecting || !NetworkManager.Singleton) { return; }
 
         isConnecting = true;
-        HostGameWrapper();
+        TryHostGame();
     }
 
-    async void HostGameWrapper()
+    async void TryHostGame()
     {
         try
         {
@@ -100,10 +101,10 @@ public class ConnectionManager : MonoBehaviour
         if (isConnecting || !NetworkManager.Singleton) { return; }
 
         isConnecting = true;
-        JoinGameWrapper(roomCode);
+        TryJoinGame(roomCode);
     }
 
-    async void JoinGameWrapper(string roomCode)
+    async void TryJoinGame(string roomCode)
     {
         try
         {

@@ -156,6 +156,7 @@ public class PlayerShooting : NetworkBehaviour
         isReloading.Value = false;
     }
 
+    [Rpc(SendTo.Everyone)]
     void PlayReloadSfxRpc()
     {
         AudioManager.Instance.PlaySfx(AudioManager.Instance.reloadSfx, transform);

@@ -1,6 +1,8 @@
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerUIManager : NetworkBehaviour
 {
@@ -9,12 +11,19 @@ public class PlayerUIManager : NetworkBehaviour
     [SerializeField] GameObject playerCanvas;
     [SerializeField] GameObject interactField;
     [SerializeField] GameObject lockRotField;
+    [Space]
+    [SerializeField] GameObject pauseMenu;
 
     TextMeshProUGUI interactFieldText;
     TextMeshProUGUI lockRotFieldText;
 
+    bool pauseMenuActive;
+
+    PlayerMovement myMovement;
+
     void Awake()
     {
+        myMovement = GetComponent<PlayerMovement>();
         interactFieldText = interactField.GetComponent<TextMeshProUGUI>();
         lockRotFieldText = lockRotField.GetComponent<TextMeshProUGUI>();
 
@@ -22,6 +31,8 @@ public class PlayerUIManager : NetworkBehaviour
         SetHealthTextActive(false);
         SetInteractField(false, "");
         SetLockRotField(false, "");
+
+        pauseMenu.SetActive(false);
     }
 
     public override void OnNetworkSpawn()
@@ -59,5 +70,46 @@ public class PlayerUIManager : NetworkBehaviour
     {
         lockRotField.SetActive(isActive);
         lockRotFieldText.text = "[R] " + action;
+    }
+
+    public void OnPauseGame(InputValue value)
+    {
+        if (!IsOwner) { return; }
+
+        OpenClosePauseMenu();
+    }
+
+    void OpenClosePauseMenu()
+    {
+        pauseMenuActive = !pauseMenuActive;
+        pauseMenu.SetActive(pauseMenuActive);
+        myMovement.SetCanMove(!pauseMenuActive);
+    }
+
+    public void OnMainMenuButtonClicked()
+    {
+        if (!IsOwner) { return; }
+
+        string sceneName = ConnectionManager.Instance.mainMenuSceneName;
+        DisconnectClient();
+        SceneManager.LoadScene(sceneName);
+    }
+
+    public void OnQuitButtonClicked()
+    {
+        if (!IsOwner) { return; }
+
+        DisconnectClient();
+        Application.Quit();
+    }
+
+    void DisconnectClient()
+    {
+        NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
+
+        if (IsHost)
+        {
+            // Shutdown server and disconnect all clients
+        }
     }
 }
