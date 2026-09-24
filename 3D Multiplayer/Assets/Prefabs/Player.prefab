@@ -1065,7 +1065,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3124374088
+  GlobalObjectIdHash: 613867139
   InScenePlacedSourceGlobalObjectIdHash: 613867139
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -1198,7 +1198,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   interactLayer:
     serializedVersion: 2
-    m_Bits: 2304
+    m_Bits: 6400
   camPivot: {fileID: 4325585484412161707}
   detectionRange: 5
 --- !u!114 &3748187051975546965

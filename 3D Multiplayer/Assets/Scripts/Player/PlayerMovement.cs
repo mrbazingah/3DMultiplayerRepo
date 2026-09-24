@@ -432,25 +432,6 @@ public class PlayerMovement : NetworkBehaviour
         return spinePitch;
     }
 
-    // Change to in game menu once lobbies are implemented  
-    public void OnStartGame(InputValue value)
-    {
-        if (!IsOwner || !IsServer || !canMove) { return; }
-
-        Debug.Log("Game Started");
-
-        GameManager.Instance.StartGame();
-    }
-
-    /*
-    public void OnMenu(InputValue value)
-    {
-        if (!IsOwner) { return; }
-
-        UIManager.Instance.OnMenuButton();
-    }
-    */
-
     public override void OnNetworkDespawn()
     {
         if (IsServer && GameManager.Instance != null)

@@ -22,6 +22,7 @@ public class PlayerUIManager : NetworkBehaviour
     PlayerMovement myMovement;
     PlayerShooting myShooting;
     PlayerModelManager myModelManager;
+    LobbyUIManager lobbyUIManager;
 
     void Awake()
     {
@@ -30,6 +31,7 @@ public class PlayerUIManager : NetworkBehaviour
         myModelManager = GetComponent<PlayerModelManager>();
         interactFieldText = interactField.GetComponent<TextMeshProUGUI>();
         lockRotFieldText = lockRotField.GetComponent<TextMeshProUGUI>();
+        lobbyUIManager = FindFirstObjectByType<LobbyUIManager>();
 
         SetAmmoTextActive(false);
         SetHealthTextActive(false);
@@ -76,9 +78,15 @@ public class PlayerUIManager : NetworkBehaviour
         lockRotFieldText.text = "[R] " + action;
     }
 
-    public void OnPauseMenu(InputValue value)
+    public void OnEscape(InputValue value)
     {
         if (!IsOwner) { return; }
+
+        if (lobbyUIManager.GetIsOpen())
+        {
+            lobbyUIManager.OpenCloseUiCanvas();
+            return;
+        }
 
         OpenClosePauseMenu();
     }

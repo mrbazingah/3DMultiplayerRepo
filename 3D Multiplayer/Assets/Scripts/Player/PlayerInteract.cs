@@ -34,7 +34,11 @@ public class PlayerInteract : NetworkBehaviour
         {
             myUiManager.SetInteractField(true, "Swap");
         }
-        else
+        else if (detectedObject != null && detectedObject.layer == LayerMask.NameToLayer("LobbyUI") && myMovement.GetPlayerTeam().Value == GameManager.Team.None)
+        {
+            myUiManager.SetInteractField(true, "Interact");
+        }
+        else if (detectedObject == null)
         {
             myUiManager.SetInteractField(false, "");
         }
@@ -52,6 +56,10 @@ public class PlayerInteract : NetworkBehaviour
         else if (detectedObject != null && detectedObject.TryGetComponent(out Prop prop))
         {
             myModelManager.SwapModel(prop);
+        }
+        else if (detectedObject != null && detectedObject.TryGetComponent(out LobbyUIManager lobbyUi))
+        {
+            lobbyUi.OpenCloseUiCanvas(myMovement);
         }
     }
 
