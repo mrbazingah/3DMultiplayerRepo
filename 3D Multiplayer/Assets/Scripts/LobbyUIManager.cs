@@ -32,11 +32,11 @@ public class LobbyUIManager : NetworkBehaviour
         startGameButtonObject.SetActive(IsServer && IsOwner);
     }
 
-    public void OpenCloseUiCanvas(PlayerMovement newMovement = null)
+    public void OpenCloseUiCanvas(GameObject newMovement = null)
     {
         if (playerMovement == null)
         {
-            playerMovement = newMovement;
+            playerMovement = newMovement.GetComponent<PlayerMovement>();
         }
 
         isOpen = !isOpen;
@@ -51,6 +51,7 @@ public class LobbyUIManager : NetworkBehaviour
 
         Debug.Log("Game Started");
 
+        OpenCloseUiCanvas();
         GameManager.Instance.StartGame();
     }
 

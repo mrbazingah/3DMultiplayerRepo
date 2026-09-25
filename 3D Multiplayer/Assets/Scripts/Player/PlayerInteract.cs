@@ -59,7 +59,7 @@ public class PlayerInteract : NetworkBehaviour
         }
         else if (detectedObject != null && detectedObject.TryGetComponent(out LobbyUIManager lobbyUi))
         {
-            lobbyUi.OpenCloseUiCanvas(myMovement);
+            lobbyUi.OpenCloseUiCanvas(gameObject);
         }
     }
 

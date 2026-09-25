@@ -189,7 +189,6 @@ public class PlayerMovement : NetworkBehaviour
 
     void FixedUpdate()
     {
-        if (!canMove) { return; }
         Movement();
         ApplyGravity();
         CoyoteTime();

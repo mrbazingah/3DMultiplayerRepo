@@ -63,8 +63,8 @@ public class PlayerShooting : NetworkBehaviour
     public void SetCanShoot(bool newCanShoot, bool changeSetup = false)
     {
         canShoot = newCanShoot;
+
         // Shows different gun models for owner and clients
-        
         if (changeSetup && canShoot)
         {
             UpdateGunModels();

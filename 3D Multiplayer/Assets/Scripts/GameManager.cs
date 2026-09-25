@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : NetworkBehaviour
 {
@@ -23,6 +24,15 @@ public class GameManager : NetworkBehaviour
             gameObject.SetActive(false);
             Destroy(gameObject);
         }
+    }
+
+    void Update()
+    {
+        if (NetworkManager.Singleton == null)
+        {
+            Debug.LogError("No Network Manager found");
+            SceneManager.LoadScene("Main Menu Scene");
+        }    
     }
 
     public enum Team
