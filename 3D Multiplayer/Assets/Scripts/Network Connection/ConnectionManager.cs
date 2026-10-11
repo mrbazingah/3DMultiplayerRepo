@@ -42,6 +42,7 @@ public class ConnectionManager : MonoBehaviour
         if (NetworkManager.Singleton)
         {
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
         }
     }
 
@@ -173,10 +174,16 @@ public class ConnectionManager : MonoBehaviour
         isConnecting = false;
     }
 
+    void OnClientDisconnected(ulong clientId)
+    {
+
+    }
+
     void OnDestroy()
     {
         if (!NetworkManager.Singleton) { return; }
 
         NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+        NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;  
     }
 }
