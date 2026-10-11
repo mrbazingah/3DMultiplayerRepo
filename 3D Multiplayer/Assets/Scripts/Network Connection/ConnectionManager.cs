@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Threading.Tasks;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,6 +14,8 @@ public class ConnectionManager : MonoBehaviour
     [field: SerializeField] public string mainMenuSceneName { get; private set; }
 
     [SerializeField] int maxConnections;
+    [SerializeField] GameObject errorMessageObject;
+    [SerializeField] TextMeshProUGUI errorMessageText;
 
     bool isConnecting;
     bool isLeaving;
@@ -44,6 +47,8 @@ public class ConnectionManager : MonoBehaviour
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
         }
+
+        errorMessageObject.SetActive(false);
     }
 
     async void TryInitializeRelay()
@@ -164,6 +169,10 @@ public class ConnectionManager : MonoBehaviour
             SceneManager.LoadScene(sceneName);
         }
 
+        // A player kicked mid-game still has the cursor locked from SetCanMove(true), which would leave the menu unclickable
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         isLeaving = false;
     }
 
@@ -176,7 +185,21 @@ public class ConnectionManager : MonoBehaviour
 
     void OnClientDisconnected(ulong clientId)
     {
+        if (isLeaving) { return; }
 
+        // The server gets this every time any client leaves, the host should stay in the game
+        if (NetworkManager.Singleton.IsServer) { return; }
+
+        errorMessageObject.SetActive(true);
+
+        // Only reached on a client that lost the host, or one whose connection attempt timed out
+        isConnecting = false;
+        LeaveGame(mainMenuSceneName);
+    }
+
+    public void CloseErrorMessage()
+    {
+        errorMessageObject.SetActive(false);
     }
 
     void OnDestroy()
@@ -184,6 +207,6 @@ public class ConnectionManager : MonoBehaviour
         if (!NetworkManager.Singleton) { return; }
 
         NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
-        NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;  
+        NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
     }
 }
