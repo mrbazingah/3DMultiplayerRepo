@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class MenuUIManager : MonoBehaviour
 {
@@ -21,12 +22,22 @@ public class MenuUIManager : MonoBehaviour
         codePanel.SetActive(true);
     }
 
+    public void OnEnter(InputValue value)
+    {
+        Debug.Log("Enter clicked");
+        OnCodeSubmitButtonClicked();
+    }
+
     public void OnCodeSubmitButtonClicked()
     {
         string code = codeInputField.text;
         if (!string.IsNullOrEmpty(code))
         {
             ConnectionManager.Instance.JoinGame(code);
+        }
+        else
+        {
+            Debug.LogWarning("Room code is empty. Please enter a valid code.");
         }
     }
 

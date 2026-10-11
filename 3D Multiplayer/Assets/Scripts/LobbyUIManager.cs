@@ -23,7 +23,7 @@ public class LobbyUIManager : NetworkBehaviour
         if (relayManager != null)
         {
             roomCode = relayManager.JoinCode;
-            roomCodeText.text = "Room code: " + roomCode;
+            roomCodeText.text = roomCode;
         }
     }
 
