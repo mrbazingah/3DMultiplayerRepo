@@ -9,12 +9,13 @@ public class ConnectionManager : MonoBehaviour
 {
     public static ConnectionManager Instance { get; private set; }
 
-    [field:SerializeField] public string gameSceneName { get; private set; }
-    [field:SerializeField] public string mainMenuSceneName { get; private set; }
+    [field: SerializeField] public string gameSceneName { get; private set; }
+    [field: SerializeField] public string mainMenuSceneName { get; private set; }
 
     [SerializeField] int maxConnections;
 
     bool isConnecting;
+    bool isLeaving;
 
     RelayManager relayManager;
 
@@ -133,23 +134,36 @@ public class ConnectionManager : MonoBehaviour
     void Abort()
     {
         isConnecting = false;
-        LeaveGame();
-
-        if (SceneManager.GetActiveScene().name != mainMenuSceneName)
-        {
-            SceneManager.LoadScene(mainMenuSceneName);
-        }
+        LeaveGame(mainMenuSceneName);
     }
 
+    // Runs here and not on the player since this object survives both the shutdown and the scene load
     public void LeaveGame(string sceneName = null)
     {
-        if (!NetworkManager.Singleton) { return; }
-        NetworkManager.Singleton.Shutdown();
+        // Stops a double click starting two shutdowns
+        if (isLeaving) { return; }
 
-        if (sceneName != null)
+        StartCoroutine(LeaveGameRoutine(sceneName));
+    }
+
+    IEnumerator LeaveGameRoutine(string sceneName)
+    {
+        isLeaving = true;
+
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.Shutdown();
+
+            // Loading the scene mid-shutdown can throw while network objects are still being despawned
+            yield return new WaitUntil(() => NetworkManager.Singleton == null || !NetworkManager.Singleton.ShutdownInProgress);
+        }
+
+        if (sceneName != null && SceneManager.GetActiveScene().name != sceneName)
         {
             SceneManager.LoadScene(sceneName);
         }
+
+        isLeaving = false;
     }
 
     void OnClientConnected(ulong clientId)

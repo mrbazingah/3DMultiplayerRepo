@@ -1,4 +1,3 @@
-using System.Collections;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -20,15 +19,11 @@ public class PlayerUIManager : NetworkBehaviour
     bool pauseMenuActive;
 
     PlayerMovement myMovement;
-    PlayerShooting myShooting;
-    PlayerModelManager myModelManager;
     LobbyUIManager lobbyUIManager;
 
     void Awake()
     {
         myMovement = GetComponent<PlayerMovement>();
-        myShooting = GetComponent<PlayerShooting>();
-        myModelManager = GetComponent<PlayerModelManager>();
         interactFieldText = interactField.GetComponent<TextMeshProUGUI>();
         lockRotFieldText = lockRotField.GetComponent<TextMeshProUGUI>();
         lobbyUIManager = FindFirstObjectByType<LobbyUIManager>();
@@ -82,9 +77,9 @@ public class PlayerUIManager : NetworkBehaviour
     {
         if (!IsOwner) { return; }
 
-        if (lobbyUIManager.GetIsOpen())
+        if (lobbyUIManager != null && lobbyUIManager.GetIsOpen())
         {
-            lobbyUIManager.OpenCloseUiCanvas();
+            lobbyUIManager.OpenCloseCanvas(gameObject);
             return;
         }
 
@@ -95,9 +90,9 @@ public class PlayerUIManager : NetworkBehaviour
     {
         pauseMenuActive = !pauseMenuActive;
         pauseMenu.SetActive(pauseMenuActive);
+
+        // Only blocks input, what each team is allowed to do stays with PlayerShooting and PlayerModelManager
         myMovement.SetCanMove(!pauseMenuActive);
-        myShooting.SetCanShoot(!pauseMenuActive);
-        myModelManager.SetCanSwap(!pauseMenuActive);
     }
 
     public void OnResumeButtonClicked()
@@ -118,7 +113,7 @@ public class PlayerUIManager : NetworkBehaviour
     {
         if (!IsOwner) { return; }
 
-        Debug.Log("Main Menu Button Clicked"); 
+        Debug.Log("Main Menu Button Clicked");
 
         string sceneName = ConnectionManager.Instance.mainMenuSceneName;
         ConnectionManager.Instance.LeaveGame(sceneName);

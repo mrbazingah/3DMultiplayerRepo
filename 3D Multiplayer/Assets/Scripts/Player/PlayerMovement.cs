@@ -117,6 +117,10 @@ public class PlayerMovement : NetworkBehaviour
 
         myRigidbody.isKinematic = false;
 
+        // Set before SetCanMove() so clearing held input always has the real default to reset to
+        defaultAnimatorSpeed = myAnimator.speed;
+        currentSpeed = walkSpeed;
+
         SetCanMove(true);
 
         // Stores where the camera sits in the prefab so zoom and collision can move it along the same line
@@ -128,15 +132,10 @@ public class PlayerMovement : NetworkBehaviour
         OnTeamChanged(playerTeam.Value, playerTeam.Value); // Applies the current value since OnValueChanged only fires on a change
 
         rotationY = transform.rotation.eulerAngles.y;
-        currentSpeed = walkSpeed;
-        defaultAnimatorSpeed = myAnimator.speed;
 
-        if (IsOwner)
-        {
-            // Makes sure local player model has correct layer
-            GameObject defaultVisuals = myModelManager.GetDefaultVisuals();
-            myModelManager.SetLayerRecursively(defaultVisuals, LayerMask.NameToLayer("Player Visuals"));
-        }
+        // Makes sure local player model has correct layer
+        GameObject defaultVisuals = myModelManager.GetDefaultVisuals();
+        myModelManager.SetLayerRecursively(defaultVisuals, LayerMask.NameToLayer("Player Visuals"));
     }
 
     public void SetCanMove(bool b)
@@ -145,6 +144,43 @@ public class PlayerMovement : NetworkBehaviour
 
         Cursor.lockState = b ? CursorLockMode.Locked : CursorLockMode.None;
         Cursor.visible = !b;
+
+        if (!b)
+        {
+            ClearHeldInput();
+        }
+    }
+
+    // Release events are ignored while canMove is false, so anything held when pausing would otherwise stay held after resuming
+    void ClearHeldInput()
+    {
+        movementInput = Vector2.zero;
+        lookInput = Vector2.zero;
+        zoomInput = Vector2.zero;
+
+        isRunning = false;
+        isCrouching = false;
+        currentSpeed = walkSpeed;
+
+        if (myAnimator != null)
+        {
+            myAnimator.speed = defaultAnimatorSpeed;
+        }
+
+        if (playerTeam.Value == GameManager.Team.Hunters)
+        {
+            CapsuleCollider capsule = GetComponent<CapsuleCollider>();
+            if (capsule != null)
+            {
+                capsule.height = defaultHeight;
+            }
+        }
+    }
+
+    // Shared check for shooting, swapping and locking so pausing or the lobby screen blocks all of them in one place
+    public bool IsInputBlocked()
+    {
+        return !canMove;
     }
 
     public void SetPlayerTeam(GameManager.Team newTeam)
@@ -171,7 +207,7 @@ public class PlayerMovement : NetworkBehaviour
 
     public void TeleportTo(Vector3 pos)
     {
-        // Server owns the position so the move happens here
+        // The owner has authority over its own rigidbody so the move happens here
         if (!IsOwner) { return; }
 
         if (myRigidbody != null)

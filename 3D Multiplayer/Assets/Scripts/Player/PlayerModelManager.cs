@@ -51,11 +51,12 @@ public class PlayerModelManager : NetworkBehaviour
 
         // Subscribes to network variable changes
         currentPropType.OnValueChanged += OnCurrentPropTypeChanged;
+        lockRotation.OnValueChanged += OnLockRotationChanged;
 
         // Follows the team from PlayerMovement so canSwap stays correct on every client, and applies the current value for players who spawn with a team already set
         NetworkVariable<GameManager.Team> team = myMovement.GetPlayerTeam();
         team.OnValueChanged += OnTeamChanged;
-        SetCanSwap(team.Value == GameManager.Team.Props, true);
+        SetCanSwap(team.Value == GameManager.Team.Props);
 
         if (IsOwner)
         {
@@ -63,7 +64,7 @@ public class PlayerModelManager : NetworkBehaviour
             SetLayerRecursively(defaultVisuals, LayerMask.NameToLayer("Player Visuals"));
         }
 
-        SetGunModelsActive(false, false);
+        // Gun model visibility is handled by PlayerShooting.SetCanShoot(), hiding them here could undo it depending on spawn order
     }
 
     void SetupSpineBones()
@@ -106,20 +107,22 @@ public class PlayerModelManager : NetworkBehaviour
         }
     }
 
-    public void SetCanSwap(bool newCanSwap, bool changeSetup = false)
+    // Only the team decides this, pausing goes through PlayerMovement.IsInputBlocked() instead
+    void SetCanSwap(bool newCanSwap)
     {
         canSwap = newCanSwap;
 
-        if (IsOwner && changeSetup && canSwap)
+        // Updates both ways so the lock prompt gets hidden again if the player stops being a prop
+        if (IsOwner)
         {
-            myUiManager.SetLockRotField(canSwap, "Lock Rotation");
+            myUiManager.SetLockRotField(canSwap, GetLockText(lockRotation.Value));
         }
     }
 
     // Updates canSwap when team changes
     void OnTeamChanged(GameManager.Team previousTeam, GameManager.Team newTeam)
     {
-        SetCanSwap(newTeam == GameManager.Team.Props, true);
+        SetCanSwap(newTeam == GameManager.Team.Props);
     }
 
     public void SetGunModelsActive(bool ownerActive, bool clientActive)
@@ -130,7 +133,7 @@ public class PlayerModelManager : NetworkBehaviour
 
     public void SwapModel(Prop newDetectedProp)
     {
-        if (!canSwap) { return; }
+        if (!canSwap || myMovement.IsInputBlocked()) { return; }
 
         detectedProp = newDetectedProp;
         SwapModelServerRpc(detectedProp.propType);
@@ -140,6 +143,9 @@ public class PlayerModelManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     void SwapModelServerRpc(Prop.PropType propType)
     {
+        // Checks the team on the server too since canSwap only exists on the client
+        if (myMovement.GetPlayerTeam().Value != GameManager.Team.Props) { return; }
+
         // Stops model swap if the prop prefab isn't found in the registry
         if (propRegistry.GetPrefab(propType) == null && propType != Prop.PropType.None) { return; }
 
@@ -233,7 +239,7 @@ public class PlayerModelManager : NetworkBehaviour
 
     public void OnDiscard(InputValue value)
     {
-        if (!IsOwner || !canSwap) { return; }
+        if (!IsOwner || !canSwap || myMovement.IsInputBlocked()) { return; }
 
         SwapModelServerRpc(Prop.PropType.None);
 
@@ -242,26 +248,39 @@ public class PlayerModelManager : NetworkBehaviour
 
     public void OnLock(InputValue value)
     {
-        if (!IsOwner || !canSwap) { return; }
+        if (!IsOwner || !canSwap || myMovement.IsInputBlocked()) { return; }
 
         // Assigns prop's model or player's model before locking it
         Transform modelTransform = currentPropModel != null ? currentPropModel.transform : defaultVisuals.transform;
         ToggleLockServerRpc(modelTransform.rotation);
 
-        string action = lockRotation.Value ? "Unlock" : "Lock";
-        myUiManager.SetLockRotField(true, action + " rotation");
+        // The prompt text is updated in OnLockRotationChanged(), reading lockRotation here would give the value from before the toggle
     }
 
     // Server RPC to toggle lock rotation and save the current rotation if locking
     [Rpc(SendTo.Server)]
     void ToggleLockServerRpc(Quaternion currentRotation)
     {
+        if (myMovement.GetPlayerTeam().Value != GameManager.Team.Props) { return; }
+
         lockRotation.Value = !lockRotation.Value;
 
         if (lockRotation.Value)
         {
             savedRotation.Value = currentRotation;
         }
+    }
+
+    void OnLockRotationChanged(bool previous, bool current)
+    {
+        if (!IsOwner || !canSwap) { return; }
+
+        myUiManager.SetLockRotField(true, GetLockText(current));
+    }
+
+    string GetLockText(bool isLocked)
+    {
+        return isLocked ? "Unlock rotation" : "Lock rotation";
     }
 
     // Runs on every client and not just the owner, otherwise other players wouldn't see the locked rotation or the snap back
@@ -331,6 +350,7 @@ public class PlayerModelManager : NetworkBehaviour
     public override void OnNetworkDespawn()
     {
         currentPropType.OnValueChanged -= OnCurrentPropTypeChanged;
+        lockRotation.OnValueChanged -= OnLockRotationChanged;
         myMovement.GetPlayerTeam().OnValueChanged -= OnTeamChanged;
     }
 
