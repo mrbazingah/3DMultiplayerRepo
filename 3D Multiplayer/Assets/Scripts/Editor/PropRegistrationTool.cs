@@ -12,12 +12,16 @@ using UnityEngine.SceneManagement;
 // Tools > Prop Registration Tool
 //
 // Scans everything under a root object (default "Map") in the open scene and finds prop
-// prefabs that aren't registered yet. For each one you tick, Register will:
+// prefabs that aren't registered yet. For each one in the list, Register will:
 //   1. add NetworkObject + Prop to the prefab asset and set the whole prefab to the Prop layer
 //   2. move the prefab asset into the props folder
 //   3. add a new value to the Prop.PropType enum in Prop.cs
 //   4. add an entry for it to the PropRegistry prefab
 // It also lists prefabs that already have a Prop script but are missing from the registry.
+//
+// Unticking a row skips that prefab on every future scan. Ticking a row in the skipped list
+// includes it on every future scan, even if it's static or matches a skip word. Both choices
+// are saved in ProjectSettings/PropRegistrationChoices.asset.
 public class PropRegistrationTool : EditorWindow
 {
     const string PropLayerName = "Prop";
@@ -36,15 +40,16 @@ public class PropRegistrationTool : EditorWindow
 
     readonly List<NewProp> newProps = new List<NewProp>();
     readonly List<UnregisteredProp> unregisteredProps = new List<UnregisteredProp>();
-    readonly List<string> skipped = new List<string>();
+    readonly List<SkippedItem> skipped = new List<SkippedItem>();
+    readonly Dictionary<string, int> instanceCounts = new Dictionary<string, int>();
     bool hasScanned;
-    bool showSkipped;
+    bool showSkipped = true;
     Vector2 scroll;
 
     class NewProp
     {
-        public bool include = true;
         public string path;
+        public string guid;
         public GameObject prefab;
         public int instanceCount;
         public string typeName;
@@ -54,13 +59,25 @@ public class PropRegistrationTool : EditorWindow
 
     class UnregisteredProp
     {
-        public bool include = true;
         public string path;
+        public string guid;
         public GameObject prefab;
         public Prop.PropType type;
+        public int instanceCount;
         public int maxHealth;
         public float yOffset;
     }
+
+    class SkippedItem
+    {
+        public string name;
+        public string reason;
+        public GameObject prefab;
+        public string guid; // null if it can't be ticked
+        public int count = 1;
+    }
+
+    static PropRegistrationChoices Choices => PropRegistrationChoices.instance;
 
     [MenuItem("Tools/Prop Registration Tool")]
     static void Open()
@@ -80,10 +97,18 @@ public class PropRegistrationTool : EditorWindow
         addNetworkObject = EditorGUILayout.Toggle(new GUIContent("Add NetworkObject", "Add a NetworkObject to prefabs that don't have one"), addNetworkObject);
 
         EditorGUILayout.Space();
+        EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Scan", GUILayout.Height(25)))
         {
             Scan();
         }
+        if (GUILayout.Button(new GUIContent("Forget Ticked/Unticked", "Clear every remembered tick and untick"), GUILayout.Height(25), GUILayout.Width(160)) &&
+            EditorUtility.DisplayDialog("Prop Registration", "Forget every object you've unticked or ticked from the skipped list?", "Forget", "Cancel"))
+        {
+            Choices.Clear();
+            RescanLater();
+        }
+        EditorGUILayout.EndHorizontal();
 
         if (!hasScanned)
         {
@@ -121,9 +146,10 @@ public class PropRegistrationTool : EditorWindow
         showSkipped = EditorGUILayout.Foldout(showSkipped, $"Skipped Objects ({skipped.Count})", true);
         if (showSkipped)
         {
-            foreach (string line in skipped)
+            EditorGUILayout.LabelField("Tick an object to register it from now on.", EditorStyles.miniLabel);
+            foreach (SkippedItem item in skipped)
             {
-                EditorGUILayout.LabelField(line, EditorStyles.miniLabel);
+                DrawSkippedItem(item);
             }
         }
 
@@ -136,10 +162,10 @@ public class PropRegistrationTool : EditorWindow
             EditorGUILayout.HelpBox(error, MessageType.Error);
         }
 
-        bool anythingToDo = newProps.Any(p => p.include) || unregisteredProps.Any(p => p.include);
+        bool anythingToDo = newProps.Count > 0 || unregisteredProps.Count > 0;
         using (new EditorGUI.DisabledScope(errors.Count > 0 || !anythingToDo))
         {
-            if (GUILayout.Button("Register Selected", GUILayout.Height(30)))
+            if (GUILayout.Button("Register", GUILayout.Height(30)))
             {
                 Register();
             }
@@ -161,46 +187,90 @@ public class PropRegistrationTool : EditorWindow
     void DrawNewProp(NewProp prop)
     {
         EditorGUILayout.BeginHorizontal();
-        prop.include = EditorGUILayout.Toggle(prop.include, GUILayout.Width(16));
+        if (!EditorGUILayout.Toggle(true, GUILayout.Width(16)))
+        {
+            Choices.Skip(prop.guid);
+            RescanLater();
+        }
         using (new EditorGUI.DisabledScope(true))
         {
             EditorGUILayout.ObjectField(prop.prefab, typeof(GameObject), false, GUILayout.MinWidth(120));
         }
         EditorGUILayout.LabelField("x" + prop.instanceCount, GUILayout.Width(55));
-        using (new EditorGUI.DisabledScope(!prop.include))
-        {
-            prop.typeName = EditorGUILayout.TextField(prop.typeName, GUILayout.MinWidth(120));
-            prop.maxHealth = EditorGUILayout.IntField(prop.maxHealth, GUILayout.Width(50));
-            prop.yOffset = EditorGUILayout.FloatField(prop.yOffset, GUILayout.Width(50));
-        }
+        prop.typeName = EditorGUILayout.TextField(prop.typeName, GUILayout.MinWidth(120));
+        prop.maxHealth = EditorGUILayout.IntField(prop.maxHealth, GUILayout.Width(50));
+        prop.yOffset = EditorGUILayout.FloatField(prop.yOffset, GUILayout.Width(50));
         EditorGUILayout.EndHorizontal();
     }
 
     void DrawUnregisteredProp(UnregisteredProp prop)
     {
         EditorGUILayout.BeginHorizontal();
-        prop.include = EditorGUILayout.Toggle(prop.include, GUILayout.Width(16));
+        if (!EditorGUILayout.Toggle(true, GUILayout.Width(16)))
+        {
+            Choices.Skip(prop.guid);
+            RescanLater();
+        }
         using (new EditorGUI.DisabledScope(true))
         {
             EditorGUILayout.ObjectField(prop.prefab, typeof(GameObject), false, GUILayout.MinWidth(120));
         }
-        EditorGUILayout.LabelField("", GUILayout.Width(55));
+        EditorGUILayout.LabelField("x" + prop.instanceCount, GUILayout.Width(55));
         EditorGUILayout.LabelField(prop.type.ToString(), GUILayout.MinWidth(120));
-        using (new EditorGUI.DisabledScope(!prop.include))
-        {
-            prop.maxHealth = EditorGUILayout.IntField(prop.maxHealth, GUILayout.Width(50));
-            prop.yOffset = EditorGUILayout.FloatField(prop.yOffset, GUILayout.Width(50));
-        }
+        prop.maxHealth = EditorGUILayout.IntField(prop.maxHealth, GUILayout.Width(50));
+        prop.yOffset = EditorGUILayout.FloatField(prop.yOffset, GUILayout.Width(50));
         EditorGUILayout.EndHorizontal();
+    }
+
+    void DrawSkippedItem(SkippedItem item)
+    {
+        EditorGUILayout.BeginHorizontal();
+        using (new EditorGUI.DisabledScope(item.guid == null))
+        {
+            if (EditorGUILayout.Toggle(false, GUILayout.Width(16)))
+            {
+                Choices.Include(item.guid);
+                RescanLater();
+            }
+        }
+        if (item.prefab != null)
+        {
+            using (new EditorGUI.DisabledScope(true))
+            {
+                EditorGUILayout.ObjectField(item.prefab, typeof(GameObject), false, GUILayout.MinWidth(120));
+            }
+        }
+        else
+        {
+            EditorGUILayout.LabelField(item.name, GUILayout.MinWidth(120));
+        }
+        EditorGUILayout.LabelField(item.count > 1 ? "x" + item.count : "", GUILayout.Width(55));
+        EditorGUILayout.LabelField(item.reason, EditorStyles.miniLabel, GUILayout.MinWidth(120));
+        EditorGUILayout.EndHorizontal();
+    }
+
+    // Changing the lists in the middle of drawing them breaks the GUI layout, so rescan after this frame
+    void RescanLater()
+    {
+        EditorApplication.delayCall += () =>
+        {
+            Scan();
+            Repaint();
+        };
     }
 
     // ---------- Scanning ----------
 
     void Scan()
     {
+        // Keep whatever was typed into the rows when rescanning
+        Dictionary<string, NewProp> previousNew = newProps.ToDictionary(p => p.path);
+        Dictionary<string, UnregisteredProp> previousUnregistered = unregisteredProps.ToDictionary(p => p.path);
+
         newProps.Clear();
         unregisteredProps.Clear();
         skipped.Clear();
+        instanceCounts.Clear();
         hasScanned = false;
 
         if (registryPrefab == null)
@@ -230,16 +300,43 @@ public class PropRegistrationTool : EditorWindow
             }
         }
 
-        // Name new props after their prefab, keeping names unique against the enum and each other
+        FindUnregisteredProps(propPrefabPaths, newByPath, previousUnregistered);
+
+        // Name new props after their prefab, keeping names unique against the enum and each other.
+        // Names from the last scan go first so a generated name can't take one of them.
         HashSet<string> takenNames = new HashSet<string>(Enum.GetNames(typeof(Prop.PropType)), StringComparer.OrdinalIgnoreCase);
+        foreach (NewProp prop in newByPath.Values)
+        {
+            if (previousNew.TryGetValue(prop.path, out NewProp previous))
+            {
+                prop.typeName = previous.typeName;
+                prop.maxHealth = previous.maxHealth;
+                prop.yOffset = previous.yOffset;
+                takenNames.Add(prop.typeName);
+            }
+        }
         foreach (NewProp prop in newByPath.Values.OrderBy(p => p.prefab.name))
         {
-            prop.typeName = MakeUnique(DeriveTypeName(prop.prefab.name), takenNames);
-            takenNames.Add(prop.typeName);
+            prop.instanceCount = InstanceCount(prop.path);
+            if (prop.typeName == null)
+            {
+                prop.typeName = MakeUnique(DeriveTypeName(prop.prefab.name), takenNames);
+                takenNames.Add(prop.typeName);
+            }
             newProps.Add(prop);
         }
 
-        FindUnregisteredProps(propPrefabPaths);
+        // A prefab that's going to be registered doesn't need to show up as skipped too
+        HashSet<string> handled = new HashSet<string>(newProps.Select(p => p.guid).Concat(unregisteredProps.Select(p => p.guid)));
+        List<SkippedItem> sorted = skipped
+            .Where(item => item.guid == null || !handled.Contains(item.guid))
+            .OrderBy(item => item.guid == null)
+            .ThenBy(item => item.reason)
+            .ThenBy(item => item.name)
+            .ToList();
+        skipped.Clear();
+        skipped.AddRange(sorted);
+
         hasScanned = true;
     }
 
@@ -261,28 +358,32 @@ public class PropRegistrationTool : EditorWindow
     void Classify(GameObject go, Dictionary<string, NewProp> newByPath, HashSet<string> propPrefabPaths)
     {
         string label = GetHierarchyPath(go);
-
-        if (IsWallOrDoor(go))
-        {
-            skipped.Add($"{label}  (wall/door)");
-            return;
-        }
-
         bool isPrefabRoot = PrefabUtility.IsAnyPrefabInstanceRoot(go);
         string assetPath = isPrefabRoot ? PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(go) : null;
 
         if (isPrefabRoot && GetAssetType(assetPath) == PrefabAssetType.Model)
         {
-            skipped.Add($"{label}  (model/FBX dropped in directly, make a prefab of it first)");
+            AddSkipped(label, "model/FBX dropped in directly, make a prefab of it first", assetPath, false);
             return;
         }
 
-        // Rooms and plain grouping objects: look inside them instead
-        if (!isPrefabRoot || ContainsPrefabInstances(go))
+        // Rooms and plain grouping objects get looked inside instead. Only single prefabs can be ticked.
+        bool isContainer = !isPrefabRoot || ContainsPrefabInstances(go);
+        bool canTick = !isContainer && assetPath.StartsWith("Assets/");
+        bool included = canTick && Choices.IsIncluded(AssetDatabase.AssetPathToGUID(assetPath));
+
+        string skipWordReason = GetSkipWordReason(go);
+        if (skipWordReason != null && !included)
+        {
+            AddSkipped(label, skipWordReason, assetPath, canTick);
+            return;
+        }
+
+        if (isContainer)
         {
             if (!isPrefabRoot && go.transform.childCount == 0 && go.GetComponent<Renderer>() != null)
             {
-                skipped.Add($"{label}  (not a prefab)");
+                AddSkipped(label, "not a prefab", null, false);
             }
             foreach (Transform child in go.transform)
             {
@@ -291,45 +392,85 @@ public class PropRegistrationTool : EditorWindow
             return;
         }
 
+        instanceCounts[assetPath] = InstanceCount(assetPath) + 1;
+
+        // Prefabs that already have a Prop script are sorted out in FindUnregisteredProps
         if (go.GetComponent<Prop>() != null)
         {
             propPrefabPaths.Add(assetPath);
-            skipped.Add($"{label}  (already has Prop)");
             return;
         }
 
-        if (GameObjectUtility.GetStaticEditorFlags(go) != 0)
+        if (!canTick)
         {
-            skipped.Add($"{label}  (static)");
+            AddSkipped(label, "prefab is inside a package, can't edit it", assetPath, false);
             return;
         }
 
-        if (!assetPath.StartsWith("Assets/"))
+        if (Choices.IsSkipped(AssetDatabase.AssetPathToGUID(assetPath)))
         {
-            skipped.Add($"{label}  (prefab is inside a package, can't edit it)");
+            AddSkipped(label, "unticked by you", assetPath, true);
             return;
         }
 
-        if (!newByPath.TryGetValue(assetPath, out NewProp prop))
+        if (GameObjectUtility.GetStaticEditorFlags(go) != 0 && !included)
         {
-            prop = new NewProp
-            {
-                path = assetPath,
-                prefab = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath),
-                maxHealth = defaultMaxHealth,
-                yOffset = defaultYOffset,
-            };
-            newByPath.Add(assetPath, prop);
+            AddSkipped(label, "static", assetPath, true);
+            return;
         }
-        prop.instanceCount++;
+
+        if (!newByPath.ContainsKey(assetPath))
+        {
+            newByPath.Add(assetPath, CreateNewProp(assetPath));
+        }
     }
 
-    bool IsWallOrDoor(GameObject go)
+    NewProp CreateNewProp(string assetPath)
+    {
+        return new NewProp
+        {
+            path = assetPath,
+            guid = AssetDatabase.AssetPathToGUID(assetPath),
+            prefab = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath),
+            maxHealth = defaultMaxHealth,
+            yOffset = defaultYOffset,
+        };
+    }
+
+    int InstanceCount(string assetPath)
+    {
+        return instanceCounts.TryGetValue(assetPath, out int count) ? count : 0;
+    }
+
+    // Instances of the same prefab skipped for the same reason are grouped into one row
+    void AddSkipped(string label, string reason, string assetPath, bool canTick)
+    {
+        GameObject prefab = assetPath != null ? AssetDatabase.LoadAssetAtPath<GameObject>(assetPath) : null;
+        string name = prefab != null ? prefab.name : label;
+
+        SkippedItem existing = skipped.FirstOrDefault(item => item.reason == reason && item.name == name && item.prefab == prefab);
+        if (existing != null)
+        {
+            existing.count++;
+            return;
+        }
+
+        skipped.Add(new SkippedItem
+        {
+            name = name,
+            reason = reason,
+            prefab = prefab,
+            guid = canTick ? AssetDatabase.AssetPathToGUID(assetPath) : null,
+        });
+    }
+
+    // Returns why the object counts as a wall/door/skip word, or null if it doesn't
+    string GetSkipWordReason(GameObject go)
     {
         int doorLayer = LayerMask.NameToLayer(DoorLayerName);
         if (doorLayer != -1 && go.layer == doorLayer)
         {
-            return true;
+            return "on the Door layer";
         }
 
         string assetName = "";
@@ -348,10 +489,10 @@ public class PropRegistrationTool : EditorWindow
             if (go.name.IndexOf(trimmed, StringComparison.OrdinalIgnoreCase) >= 0 ||
                 assetName.IndexOf(trimmed, StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                return true;
+                return $"name contains \"{trimmed}\"";
             }
         }
-        return false;
+        return null;
     }
 
     // True if any child (at any depth) is itself an instance of a regular prefab, e.g. a room full of props
@@ -377,7 +518,7 @@ public class PropRegistrationTool : EditorWindow
         return asset == null ? PrefabAssetType.NotAPrefab : PrefabUtility.GetPrefabAssetType(asset);
     }
 
-    void FindUnregisteredProps(HashSet<string> propPrefabPaths)
+    void FindUnregisteredProps(HashSet<string> propPrefabPaths, Dictionary<string, NewProp> newByPath, Dictionary<string, UnregisteredProp> previousUnregistered)
     {
         if (AssetDatabase.IsValidFolder(propsFolder))
         {
@@ -396,29 +537,57 @@ public class PropRegistrationTool : EditorWindow
             {
                 continue;
             }
+
+            string guid = AssetDatabase.AssetPathToGUID(path);
+
+            // Ticking one of these treats it like a new prop, so it gets a name and a new enum value
             if (prop.propType == Prop.PropType.None)
             {
-                skipped.Add($"{path}  (has Prop but its type is None)");
+                if (Choices.IsIncluded(guid))
+                {
+                    if (!newByPath.ContainsKey(path))
+                    {
+                        newByPath.Add(path, CreateNewProp(path));
+                    }
+                }
+                else
+                {
+                    AddSkipped(path, "has Prop script but its type is None", path, true);
+                }
                 continue;
             }
             if (registeredTypes.Contains((int)prop.propType))
             {
+                AddSkipped(path, "already registered", path, false);
+                continue;
+            }
+            if (Choices.IsSkipped(guid))
+            {
+                AddSkipped(path, "unticked by you", path, true);
                 continue;
             }
             if (unregisteredProps.Any(p => p.type == prop.propType))
             {
-                skipped.Add($"{path}  (another prefab already uses type {prop.propType})");
+                AddSkipped(path, $"another prefab already uses type {prop.propType}", path, false);
                 continue;
             }
 
-            unregisteredProps.Add(new UnregisteredProp
+            UnregisteredProp entry = new UnregisteredProp
             {
                 path = path,
+                guid = guid,
                 prefab = prefab,
                 type = prop.propType,
+                instanceCount = InstanceCount(path),
                 maxHealth = defaultMaxHealth,
                 yOffset = defaultYOffset,
-            });
+            };
+            if (previousUnregistered.TryGetValue(path, out UnregisteredProp previous))
+            {
+                entry.maxHealth = previous.maxHealth;
+                entry.yOffset = previous.yOffset;
+            }
+            unregisteredProps.Add(entry);
         }
     }
 
@@ -495,7 +664,7 @@ public class PropRegistrationTool : EditorWindow
         HashSet<string> existing = new HashSet<string>(Enum.GetNames(typeof(Prop.PropType)), StringComparer.OrdinalIgnoreCase);
         HashSet<string> used = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (NewProp prop in newProps.Where(p => p.include))
+        foreach (NewProp prop in newProps)
         {
             if (string.IsNullOrEmpty(prop.typeName) || !IdentifierRegex.IsMatch(prop.typeName))
             {
@@ -517,8 +686,8 @@ public class PropRegistrationTool : EditorWindow
 
     void Register()
     {
-        List<NewProp> toAdd = newProps.Where(p => p.include).ToList();
-        List<UnregisteredProp> toRegister = unregisteredProps.Where(p => p.include).ToList();
+        List<NewProp> toAdd = newProps.ToList();
+        List<UnregisteredProp> toRegister = unregisteredProps.ToList();
 
         int propLayer = LayerMask.NameToLayer(PropLayerName);
         if (propLayer == -1)
