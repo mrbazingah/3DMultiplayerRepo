@@ -10,15 +10,24 @@ public class ConnectionManager : MonoBehaviour
 {
     public static ConnectionManager Instance { get; private set; }
 
+    [Header("Connection")]
     [field: SerializeField] public string gameSceneName { get; private set; }
     [field: SerializeField] public string mainMenuSceneName { get; private set; }
-
     [SerializeField] int maxConnections;
+
+    [Header("Error UI")]
     [SerializeField] GameObject errorMessageObject;
     [SerializeField] TextMeshProUGUI errorMessageText;
 
+    [Header("Loading Screen UI")]
+    [SerializeField] GameObject loadingScreenObject;
+    [SerializeField] TextMeshProUGUI loadingScreenText;
+    [SerializeField] float textDelay;
+
     bool isConnecting;
     bool isLeaving;
+    bool loadingScreenOpen;
+    bool isHosting;
 
     RelayManager relayManager;
 
@@ -49,6 +58,7 @@ public class ConnectionManager : MonoBehaviour
         }
 
         errorMessageObject.SetActive(false);
+        loadingScreenObject.SetActive(false);
     }
 
     async void TryInitializeRelay()
@@ -67,7 +77,10 @@ public class ConnectionManager : MonoBehaviour
     {
         if (isConnecting || !NetworkManager.Singleton) { return; }
 
+        isHosting = true;
         isConnecting = true;
+
+        SetLoadingScreenActive(true);
         TryHostGame();
     }
 
@@ -91,15 +104,13 @@ public class ConnectionManager : MonoBehaviour
         string code = await relayManager.CreateRelayAsync(maxConnections);
         Debug.Log("Join code: " + code);
 
-        AsyncOperation load = SceneManager.LoadSceneAsync(gameSceneName);
-        while (!load.isDone)
-        {
-            await Task.Yield();
-        }
+        await LoadSceneWithScreenAsync(gameSceneName);
 
         if (!NetworkManager.Singleton.StartHost())
         {
             Debug.LogError("Failed to start host.");
+            isHosting = false;
+
             Abort();
         }
     }
@@ -109,6 +120,8 @@ public class ConnectionManager : MonoBehaviour
         if (isConnecting || !NetworkManager.Singleton) { return; }
 
         isConnecting = true;
+
+        SetLoadingScreenActive(true);
         TryJoinGame(roomCode);
     }
 
@@ -143,11 +156,47 @@ public class ConnectionManager : MonoBehaviour
         LeaveGame(mainMenuSceneName);
     }
 
-    // Runs here and not on the player since this object survives both the shutdown and the scene load
-    public void LeaveGame(string sceneName = null)
+    public async void LeaveGame(string sceneName = null)
     {
         // Stops a double click starting two shutdowns
         if (isLeaving) { return; }
+
+        isLeaving = true;
+
+        try
+        {
+            // If Network Manager still exists, shut it down and wait for it to finish before loading the scene
+            if (NetworkManager.Singleton != null)
+            {
+                NetworkManager.Singleton.Shutdown();
+
+                while (NetworkManager.Singleton != null && NetworkManager.Singleton.ShutdownInProgress)
+                {
+                    await Task.Yield();
+                }
+            }
+
+            if (sceneName != null && SceneManager.GetActiveScene().name != sceneName)
+            {
+                await LoadSceneWithScreenAsync(sceneName);
+            }
+            else
+            {
+                // If no scene is specified, just hide the loading screen after shutdown
+                SetLoadingScreenActive(false);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to leave game: " + e);
+        }
+        finally
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            isLeaving = false;
+        }
 
         StartCoroutine(LeaveGameRoutine(sceneName));
     }
@@ -176,11 +225,77 @@ public class ConnectionManager : MonoBehaviour
         isLeaving = false;
     }
 
+    public void CloseErrorMessage()
+    {
+        errorMessageObject.SetActive(false);
+    }
+
+    async Task LoadSceneWithScreenAsync(string sceneName)
+    {
+        SetLoadingScreenActive(true);
+
+        try
+        {
+            AsyncOperation load = SceneManager.LoadSceneAsync(sceneName);
+
+            if (load == null)
+            {
+                throw new Exception("Failed to load scene: " + sceneName);
+            }
+
+            while (!load.isDone)
+            {
+                await Task.Yield();
+            }
+        }
+        finally
+        {
+            SetLoadingScreenActive(false);
+        }
+    }
+
+    void SetLoadingScreenActive(bool isOpen)
+    {
+        loadingScreenObject.SetActive(isOpen);   
+
+        if (!loadingScreenOpen && isOpen)
+        {
+            loadingScreenOpen = isOpen;
+            StartCoroutine(LoadingScreenRoutine());
+        }
+
+        loadingScreenOpen = isOpen;
+    }
+
+    IEnumerator LoadingScreenRoutine()
+    {
+        while (loadingScreenOpen)
+        {
+            string[] dots = { "", ".", "..", "..." };
+            foreach (string dot in dots)
+            {
+                string message;
+                if (isHosting)
+                {
+                    message = "Starting host";
+                }
+                else
+                {
+                    message = isConnecting ? "Connecting" : "Loading";
+                }
+
+                loadingScreenText.text = message + dot;
+                yield return new WaitForSeconds(textDelay);
+            }
+        }
+    }
+
     void OnClientConnected(ulong clientId)
     {
         if (clientId != NetworkManager.Singleton.LocalClientId) { return; }
 
         isConnecting = false;
+        SetLoadingScreenActive(false);
     }
 
     void OnClientDisconnected(ulong clientId)
@@ -195,11 +310,6 @@ public class ConnectionManager : MonoBehaviour
         // Only reached on a client that lost the host, or one whose connection attempt timed out
         isConnecting = false;
         LeaveGame(mainMenuSceneName);
-    }
-
-    public void CloseErrorMessage()
-    {
-        errorMessageObject.SetActive(false);
     }
 
     void OnDestroy()
