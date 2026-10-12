@@ -24,5 +24,17 @@ public class Prop : NetworkBehaviour
         Toiletbrush,
         Toothbrush_01,
         Toothbrush_02,
+        Beauty_01,
+        Beauty_02,
+        Beauty_04,
+        Beauty_05,
+        Beauty_06,
+        Beauty_07,
+        Beauty_08,
+        Beauty_09,
+        Beauty_10,
+        HomeSpeaker_01,
+        Soup,
+        Towel_01,
     }
 }

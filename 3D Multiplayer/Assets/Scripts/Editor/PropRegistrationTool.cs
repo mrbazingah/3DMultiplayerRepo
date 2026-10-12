@@ -28,7 +28,7 @@ public class PropRegistrationTool : EditorWindow
 
     string rootName = "Map";
     string propsFolder = "Assets/Prefabs/Props";
-    string excludedKeywords = "Wall, Door";
+    string excludedKeywords = "Wall, Door, Carpet, Shelve, Paint";
     int defaultMaxHealth = 20;
     float defaultYOffset = 0f;
     bool addNetworkObject = true;
