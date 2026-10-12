@@ -21,5 +21,8 @@ public class Prop : NetworkBehaviour
         Chest,
         Lamp_01,
         TrashCan_01,
+        Toiletbrush,
+        Toothbrush_01,
+        Toothbrush_02,
     }
 }
