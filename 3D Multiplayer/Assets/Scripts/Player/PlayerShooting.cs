@@ -123,6 +123,10 @@ public class PlayerShooting : NetworkBehaviour
                 targetHealth.TakeDamage(damage);
             }
         }
+        else
+        {
+            Debug.Log("Missed target");
+        }
     }
 
     [Rpc(SendTo.Everyone)]

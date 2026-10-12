@@ -1179,7 +1179,7 @@ MonoBehaviour:
   shootDelay: 0.1
   targetLayer:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 1088
   maxAmmo: 30
   reloadDelay: 1.5
 --- !u!114 &7201181107607869916
