@@ -192,6 +192,9 @@ public class PlayerModelManager : NetworkBehaviour
         Collider spawnedCollider = currentPropType.Value != Prop.PropType.None ? spawnedProp.GetComponent<Collider>() : myCollider;
         Collider previousCollider = currentPropModel != null ? currentPropModel.GetComponent<Collider>() : myCollider;
 
+        Collider propCollider = spawnedProp.GetComponent<Collider>();
+        propCollider.sharedMaterial = myCollider.sharedMaterial;
+
         AlignPlayerToGround(previousCollider, spawnedCollider);
 
         if (currentPropModel != null)
