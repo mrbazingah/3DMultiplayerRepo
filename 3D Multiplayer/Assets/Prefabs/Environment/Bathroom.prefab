@@ -201,6 +201,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1520181826991397014}
     m_Modifications:
+    - target: {fileID: 5744682541569856375, guid: f851d86f5f454c349abb7d2a780f7829, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744682541569856375, guid: f851d86f5f454c349abb7d2a780f7829, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 423935512
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744682541569856375, guid: f851d86f5f454c349abb7d2a780f7829, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8573305313201663480, guid: f851d86f5f454c349abb7d2a780f7829, type: 3}
       propertyPath: m_Name
       value: Prop_Towel_01
@@ -377,6 +389,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Prop_Beauty_01
       objectReference: {fileID: 0}
+    - target: {fileID: 2744832733223578347, guid: da1b48670e3e8b646bb1b7ea87537855, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2744832733223578347, guid: da1b48670e3e8b646bb1b7ea87537855, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1560918189
+      objectReference: {fileID: 0}
+    - target: {fileID: 2744832733223578347, guid: da1b48670e3e8b646bb1b7ea87537855, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -509,6 +533,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8263485866757425892, guid: b7148af1dcc6def4b8b7d6a09b0d5498, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8263485866757425892, guid: b7148af1dcc6def4b8b7d6a09b0d5498, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2592368879
+      objectReference: {fileID: 0}
+    - target: {fileID: 8263485866757425892, guid: b7148af1dcc6def4b8b7d6a09b0d5498, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -583,6 +619,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Prop_Toilet_02
       objectReference: {fileID: 0}
+    - target: {fileID: 6849773654558260055, guid: db33d25094d109346b90b5f2c993c8ba, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -645,6 +685,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Prop_Beauty_07
       objectReference: {fileID: 0}
+    - target: {fileID: 5127273132695213597, guid: f44d931be73253742af7f6eaeeabcd28, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5127273132695213597, guid: f44d931be73253742af7f6eaeeabcd28, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3034386698
+      objectReference: {fileID: 0}
+    - target: {fileID: 5127273132695213597, guid: f44d931be73253742af7f6eaeeabcd28, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -705,6 +757,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2890866363955996851, guid: d57b11d2a29f7e44bb2139f48d28d90e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3060808145675466523, guid: d57b11d2a29f7e44bb2139f48d28d90e, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3060808145675466523, guid: d57b11d2a29f7e44bb2139f48d28d90e, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2766603137
+      objectReference: {fileID: 0}
+    - target: {fileID: 3060808145675466523, guid: d57b11d2a29f7e44bb2139f48d28d90e, type: 3}
+      propertyPath: SceneMigrationSynchronization
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -798,6 +862,10 @@ PrefabInstance:
     - target: {fileID: 8241635809565340059, guid: a380938e4cc3a024c9f4aaf6b18082e8, type: 3}
       propertyPath: m_Name
       value: Prop_Shelve_12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8241635809565340059, guid: a380938e4cc3a024c9f4aaf6b18082e8, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 8241635809565340059, guid: a380938e4cc3a024c9f4aaf6b18082e8, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -962,6 +1030,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1520181826991397014}
     m_Modifications:
+    - target: {fileID: 2747815122014852460, guid: d90e7481f7d980849a493aff5d8565dd, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2747815122014852460, guid: d90e7481f7d980849a493aff5d8565dd, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2264329943
+      objectReference: {fileID: 0}
+    - target: {fileID: 2747815122014852460, guid: d90e7481f7d980849a493aff5d8565dd, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5870854190199985384, guid: d90e7481f7d980849a493aff5d8565dd, type: 3}
       propertyPath: m_Name
       value: Prop_Beauty_08
@@ -1068,6 +1148,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6223363613566199273, guid: 48f82f01890332642b6225abd5a2b0b9, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6223363613566199273, guid: 48f82f01890332642b6225abd5a2b0b9, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1907087691
+      objectReference: {fileID: 0}
+    - target: {fileID: 6223363613566199273, guid: 48f82f01890332642b6225abd5a2b0b9, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1161,6 +1253,10 @@ PrefabInstance:
       value: Prop_Sink_01
       objectReference: {fileID: 0}
     - target: {fileID: 5845557941774294338, guid: 05980c0f108ee0b48b6f5789a21ab200, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5845557941774294338, guid: 05980c0f108ee0b48b6f5789a21ab200, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -1226,6 +1322,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1520181826991397014}
     m_Modifications:
+    - target: {fileID: 1106662737226059935, guid: 83f324328aa642d4b95ca75262ab00ec, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1106662737226059935, guid: 83f324328aa642d4b95ca75262ab00ec, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1687143713
+      objectReference: {fileID: 0}
+    - target: {fileID: 1106662737226059935, guid: 83f324328aa642d4b95ca75262ab00ec, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8182100640299679608, guid: 83f324328aa642d4b95ca75262ab00ec, type: 3}
       propertyPath: m_Name
       value: Prop_Beauty_10
@@ -1332,6 +1440,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5823320931706259522, guid: 68d220a65d615a245bdaea7641253539, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5823320931706259522, guid: 68d220a65d615a245bdaea7641253539, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3241004097
+      objectReference: {fileID: 0}
+    - target: {fileID: 5823320931706259522, guid: 68d220a65d615a245bdaea7641253539, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1423,6 +1543,18 @@ PrefabInstance:
     - target: {fileID: 5310329695600108768, guid: da31803eeee04a6439edc36a95f4378e, type: 3}
       propertyPath: m_Name
       value: Prop_Beauty_06
+      objectReference: {fileID: 0}
+    - target: {fileID: 6987024454221812737, guid: da31803eeee04a6439edc36a95f4378e, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6987024454221812737, guid: da31803eeee04a6439edc36a95f4378e, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 177498952
+      objectReference: {fileID: 0}
+    - target: {fileID: 6987024454221812737, guid: da31803eeee04a6439edc36a95f4378e, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1583,6 +1715,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Prop_Bath_02
       objectReference: {fileID: 0}
+    - target: {fileID: 8019708711129882849, guid: 42de7c35d566d3b4c914d9598e027e26, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1639,6 +1775,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3517289443869762582, guid: c485c5b5b45a4854b98c3403d6b784a3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3751513302443003076, guid: c485c5b5b45a4854b98c3403d6b784a3, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3751513302443003076, guid: c485c5b5b45a4854b98c3403d6b784a3, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 812433096
+      objectReference: {fileID: 0}
+    - target: {fileID: 3751513302443003076, guid: c485c5b5b45a4854b98c3403d6b784a3, type: 3}
+      propertyPath: SceneMigrationSynchronization
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4288619479168384684, guid: c485c5b5b45a4854b98c3403d6b784a3, type: 3}
@@ -2224,6 +2372,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Prop_Brush_02
       objectReference: {fileID: 0}
+    - target: {fileID: 8696655757532213789, guid: c51bd935e4212404096fbc7958faee4a, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8696655757532213789, guid: c51bd935e4212404096fbc7958faee4a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 459200161
+      objectReference: {fileID: 0}
+    - target: {fileID: 8696655757532213789, guid: c51bd935e4212404096fbc7958faee4a, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2394,7 +2554,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7778461617091701906, guid: 0c706a1d88fef0e4c96341faa2a4ff23, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2412,6 +2573,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1520181826991397014}
     m_Modifications:
+    - target: {fileID: 5331444405168687719, guid: 02f5ce050695735468679fd5d4e9cdf4, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5331444405168687719, guid: 02f5ce050695735468679fd5d4e9cdf4, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 289056399
+      objectReference: {fileID: 0}
+    - target: {fileID: 5331444405168687719, guid: 02f5ce050695735468679fd5d4e9cdf4, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8418750209319363418, guid: 02f5ce050695735468679fd5d4e9cdf4, type: 3}
       propertyPath: m_Name
       value: Prop_Beauty_05
@@ -2477,6 +2650,10 @@ PrefabInstance:
     - target: {fileID: 5054236568831222900, guid: 62d48be5c4655ae4e8e5e2750e7d3c03, type: 3}
       propertyPath: m_Name
       value: Prop_Nightstand_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 5054236568831222900, guid: 62d48be5c4655ae4e8e5e2750e7d3c03, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 5054236568831222900, guid: 62d48be5c4655ae4e8e5e2750e7d3c03, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -2596,13 +2773,51 @@ PrefabInstance:
       propertyPath: m_Name
       value: Prop_ToiletBrush_01
       objectReference: {fileID: 0}
+    - target: {fileID: 1020223823490680294, guid: 1a993766383113d43b75c250fed3bedc, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6450013096290161488, guid: 1a993766383113d43b75c250fed3bedc, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6450013096290161488, guid: 1a993766383113d43b75c250fed3bedc, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 564292867
+      objectReference: {fileID: 0}
+    - target: {fileID: 6450013096290161488, guid: 1a993766383113d43b75c250fed3bedc, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1020223823490680294, guid: 1a993766383113d43b75c250fed3bedc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 388032606604914132}
   m_SourcePrefab: {fileID: 100100000, guid: 1a993766383113d43b75c250fed3bedc, type: 3}
 --- !u!4 &8100129488394322541 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 388224936688082780, guid: 1a993766383113d43b75c250fed3bedc, type: 3}
   m_PrefabInstance: {fileID: 8433606439239736625}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8872830648513550551 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1020223823490680294, guid: 1a993766383113d43b75c250fed3bedc, type: 3}
+  m_PrefabInstance: {fileID: 8433606439239736625}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &388032606604914132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8872830648513550551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 908545d2747672a40bb15191141cea47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Prop
+  ShowTopMostFoldoutHeaderGroup: 1
+  <propType>k__BackingField: 14

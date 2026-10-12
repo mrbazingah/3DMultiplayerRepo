@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2069178440889747888}
   - component: {fileID: 5823320931706259522}
   - component: {fileID: -1740041308761940935}
+  - component: {fileID: -7443852076354907111}
   m_Layer: 8
   m_Name: Prop_Brush_01
   m_TagString: Untagged
@@ -133,3 +134,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Prop
   ShowTopMostFoldoutHeaderGroup: 1
   <propType>k__BackingField: 15
+--- !u!64 &-7443852076354907111
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 556140282984196197}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -3285250395519265275, guid: 89921835a0e00044a95dcc0e3a2901f0, type: 3}
