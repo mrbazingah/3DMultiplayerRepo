@@ -36,5 +36,6 @@ public class Prop : NetworkBehaviour
         HomeSpeaker_01,
         Soup,
         Towel_01,
+        Homeplant_07,
     }
 }

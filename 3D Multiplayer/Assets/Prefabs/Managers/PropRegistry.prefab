@@ -157,3 +157,7 @@ MonoBehaviour:
     prefab: {fileID: 6846020616431503365, guid: c51bd935e4212404096fbc7958faee4a, type: 3}
     maxHealth: 5
     yOffset: 0
+  - type: 29
+    prefab: {fileID: 369948187675801988, guid: cc98aa33a8b15a64381c437a2624e579, type: 3}
+    maxHealth: 20
+    yOffset: 0

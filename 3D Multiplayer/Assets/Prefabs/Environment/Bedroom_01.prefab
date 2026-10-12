@@ -2581,6 +2581,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3419226242293208263}
     m_Modifications:
+    - target: {fileID: 5744682541569856375, guid: f851d86f5f454c349abb7d2a780f7829, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744682541569856375, guid: f851d86f5f454c349abb7d2a780f7829, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3869400661
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744682541569856375, guid: f851d86f5f454c349abb7d2a780f7829, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8573305313201663480, guid: f851d86f5f454c349abb7d2a780f7829, type: 3}
       propertyPath: m_Name
       value: Prop_Towel_01 (1)
@@ -2849,6 +2861,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6007858434179122681}
     m_Modifications:
+    - target: {fileID: 1940790147712165435, guid: 69a2d9274dc93b0439a77db4ac227150, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1940790147712165435, guid: 69a2d9274dc93b0439a77db4ac227150, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 4245766593
+      objectReference: {fileID: 0}
+    - target: {fileID: 1940790147712165435, guid: 69a2d9274dc93b0439a77db4ac227150, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6140051646450371985, guid: 69a2d9274dc93b0439a77db4ac227150, type: 3}
       propertyPath: m_Name
       value: Prop_HomeSpeaker_01
