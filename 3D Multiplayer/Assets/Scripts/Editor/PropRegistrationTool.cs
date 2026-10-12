@@ -13,7 +13,8 @@ using UnityEngine.SceneManagement;
 //
 // Scans everything under a root object (default "Map") in the open scene and finds prop
 // prefabs that aren't registered yet. For each one in the list, Register will:
-//   1. add NetworkObject + Prop to the prefab asset and set the whole prefab to the Prop layer
+//   1. add NetworkObject + Prop to the prefab asset and set the whole prefab to the Prop layer,
+//      and add a convex MeshCollider if the prefab has no collider on its root
 //   2. move the prefab asset into the props folder
 //   3. add a new value to the Prop.PropType enum in Prop.cs
 //   4. add an entry for it to the PropRegistry prefab
@@ -36,6 +37,7 @@ public class PropRegistrationTool : EditorWindow
     int defaultMaxHealth = 20;
     float defaultYOffset = 0f;
     bool addNetworkObject = true;
+    bool addMeshCollider = true;
     GameObject registryPrefab;
 
     readonly List<NewProp> newProps = new List<NewProp>();
@@ -95,6 +97,7 @@ public class PropRegistrationTool : EditorWindow
         defaultMaxHealth = EditorGUILayout.IntField("Default Max Health", defaultMaxHealth);
         defaultYOffset = EditorGUILayout.FloatField("Default Y Offset", defaultYOffset);
         addNetworkObject = EditorGUILayout.Toggle(new GUIContent("Add NetworkObject", "Add a NetworkObject to prefabs that don't have one"), addNetworkObject);
+        addMeshCollider = EditorGUILayout.Toggle(new GUIContent("Add MeshCollider If Missing", "Add a convex MeshCollider to props with no collider on their root object"), addMeshCollider);
 
         EditorGUILayout.Space();
         EditorGUILayout.BeginHorizontal();
@@ -726,7 +729,7 @@ public class PropRegistrationTool : EditorWindow
                 EditorUtility.DisplayProgressBar("Registering Props", prop.prefab.name, (float)i / Math.Max(1, toAdd.Count));
                 try
                 {
-                    SetUpPrefab(prop.path, nextValue, propLayer);
+                    SetUpPrefab(prop.path, nextValue, propLayer, log);
                     string finalPath = MoveToPropsFolder(prop.path, log);
                     registryEntries.Add((nextValue, finalPath, prop.maxHealth, prop.yOffset));
                     newEnumNames.Add(prop.typeName);
@@ -742,6 +745,10 @@ public class PropRegistrationTool : EditorWindow
 
             foreach (UnregisteredProp prop in toRegister)
             {
+                if (addMeshCollider)
+                {
+                    AddMeshColliderIfMissing(prop.path, log);
+                }
                 string finalPath = MoveToPropsFolder(prop.path, log);
                 registryEntries.Add(((int)prop.type, finalPath, prop.maxHealth, prop.yOffset));
                 log.AppendLine($"  + registry entry for existing {prop.type}  ({finalPath})");
@@ -769,7 +776,7 @@ public class PropRegistrationTool : EditorWindow
         hasScanned = false;
     }
 
-    void SetUpPrefab(string path, int propTypeValue, int propLayer)
+    void SetUpPrefab(string path, int propTypeValue, int propLayer, StringBuilder log)
     {
         GameObject root = PrefabUtility.LoadPrefabContents(path);
         try
@@ -795,12 +802,63 @@ public class PropRegistrationTool : EditorWindow
                 t.gameObject.layer = propLayer;
             }
 
+            if (addMeshCollider)
+            {
+                AddMeshColliderIfMissing(root, path, log);
+            }
+
             PrefabUtility.SaveAsPrefabAsset(root, path);
         }
         finally
         {
             PrefabUtility.UnloadPrefabContents(root);
         }
+    }
+
+    // For prefabs that otherwise aren't edited: only opens and saves the prefab if a collider is needed
+    static void AddMeshColliderIfMissing(string path, StringBuilder log)
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        if (prefab == null || prefab.GetComponent<Collider>() != null)
+        {
+            return;
+        }
+
+        GameObject root = PrefabUtility.LoadPrefabContents(path);
+        try
+        {
+            if (AddMeshColliderIfMissing(root, path, log))
+            {
+                PrefabUtility.SaveAsPrefabAsset(root, path);
+            }
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+    }
+
+    // The game reads the collider and the Prop from the same (root) object, so the collider goes there.
+    // Returns true if a collider was added.
+    static bool AddMeshColliderIfMissing(GameObject root, string path, StringBuilder log)
+    {
+        if (root.GetComponent<Collider>() != null)
+        {
+            return false;
+        }
+
+        MeshFilter meshFilter = root.GetComponent<MeshFilter>();
+        if (meshFilter == null || meshFilter.sharedMesh == null)
+        {
+            log.AppendLine($"  ! {path} has no collider and no mesh on its root object, add a collider by hand.");
+            return false;
+        }
+
+        MeshCollider meshCollider = root.AddComponent<MeshCollider>();
+        meshCollider.sharedMesh = meshFilter.sharedMesh;
+        meshCollider.convex = true;
+        log.AppendLine($"  + added convex MeshCollider to {path}");
+        return true;
     }
 
     // Moving keeps the asset's GUID, so everything that references the prefab keeps working
