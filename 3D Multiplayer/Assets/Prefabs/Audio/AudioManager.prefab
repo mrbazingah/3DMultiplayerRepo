@@ -48,6 +48,11 @@ MonoBehaviour:
   <reloadSfx>k__BackingField: {fileID: 8300000, guid: 19d7aec97d6d13b4b9791f302ef8af91, type: 3}
   <doorOpenSfx>k__BackingField: {fileID: 8300000, guid: e2869a429aa29204ab5a77054cf4fbfe, type: 3}
   <doorCloseSfx>k__BackingField: {fileID: 8300000, guid: b7cda0347a335a74f9568bb79c700de2, type: 3}
+  <swapPropSfx>k__BackingField: {fileID: 8300000, guid: 9d6f547874ec8344c82741466e4caeea, type: 3}
+  footstepsSfx:
+  - {fileID: 8300000, guid: 65ecd7285a549c94691667fe1c152bd2, type: 3}
+  - {fileID: 8300000, guid: 26eaab38e2ffc4245b1c998a78666d7e, type: 3}
+  - {fileID: 8300000, guid: afba5c2fc6ca9af4f80f4bf3f79fd168, type: 3}
   audioSourcePrefab: {fileID: 7322602462406592178, guid: 33913155e165f074fbffbbc692c11739, type: 3}
   sfxVolume: 0.5
   sfxDestroyDelay: 5

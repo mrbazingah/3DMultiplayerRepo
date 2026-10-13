@@ -2020,10 +2020,6 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 4156913340
       objectReference: {fileID: 0}
-    - target: {fileID: 2077787290444565726, guid: 403942812d5639f428f01ceff00abf6b, type: 3}
-      propertyPath: SceneMigrationSynchronization
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2967705409024881677, guid: 403942812d5639f428f01ceff00abf6b, type: 3}
       propertyPath: m_InScenePlaced
       value: 1

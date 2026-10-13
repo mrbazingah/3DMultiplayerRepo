@@ -209,9 +209,17 @@ public class PlayerModelManager : NetworkBehaviour
             currentPropModel = spawnedProp;
             SetLayerRecursively(currentPropModel, LayerMask.NameToLayer("Player Prop"));
 
+            PlaySwapPropSfxRpc();
+
             Collider newCol = GetCurrentModelCollider();
             myMovement.SetPlayerCollider(newCol);
         }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    void PlaySwapPropSfxRpc()
+    {
+        AudioManager.Instance.PlaySfx(AudioManager.Instance.swapPropSfx, transform);
     }
 
     // Sets layer on each child of an object
@@ -232,8 +240,6 @@ public class PlayerModelManager : NetworkBehaviour
     {
         float previousLowPoint = previousCollider.bounds.min.y;
         float newLowPoint = newCollider.bounds.min.y;
-
-        Debug.Log($"New: {newLowPoint} Previous: {previousLowPoint}");
 
         float distance = previousLowPoint - newLowPoint;
 

@@ -5,12 +5,14 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : NetworkBehaviour
 {
+    #region Variables
     [Header("Walking")]
     [SerializeField] float walkSpeed;
     [SerializeField] float runSpeed;
     [SerializeField] float crouchSpeed;
     [SerializeField] float crouchHeight;
     [SerializeField] float defaultHeight;
+    [SerializeField] float footstepSoundDelay;
 
     [Header("Jumping")]
     [SerializeField] float jumpForce;
@@ -54,6 +56,7 @@ public class PlayerMovement : NetworkBehaviour
     bool isCrouching;
     bool isJumping;
     bool canMove;
+    bool isWalking;
 
     float currentSpeed;
     float rotationX;
@@ -63,6 +66,7 @@ public class PlayerMovement : NetworkBehaviour
     float currentCamDistance;
     float lastSentSpinePitch;
     float defaultAnimatorSpeed;
+    float currentFootstepTime;
 
     Vector3 moveDirection;
     Vector3 camOffsetDirection;
@@ -76,6 +80,7 @@ public class PlayerMovement : NetworkBehaviour
     Animator myAnimator;
     Collider myCollider;
     PlayerModelManager myModelManager;
+    #endregion
 
     public override void OnNetworkSpawn()
     {
@@ -223,6 +228,11 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
+    void Update()
+    {
+        PlayFootstepSfxRpc();
+    }
+
     void FixedUpdate()
     {
         Movement();
@@ -259,12 +269,33 @@ public class PlayerMovement : NetworkBehaviour
 
         moveDirection = (forward * movementInput.y) + (right * movementInput.x);
 
-        myAnimator.SetBool("isWalking", moveDirection.magnitude > 0);
+        isWalking = moveDirection.magnitude > 0;
+        myAnimator.SetBool("isWalking", isWalking);
 
         Vector3 targetVelocity = moveDirection * currentSpeed;
 
         // Keeps the current y velocity so gravity and jumping aren't overwritten
         myRigidbody.linearVelocity = new Vector3(targetVelocity.x, myRigidbody.linearVelocity.y, targetVelocity.z);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    void PlayFootstepSfxRpc()
+    {
+        if (!isWalking) { return; }
+
+        float speedMultiplier = (walkSpeed / runSpeed) + 1f;
+
+        if (currentFootstepTime > 0)
+        {
+            currentFootstepTime -= Time.deltaTime;
+        }
+        else
+        {
+            AudioClip clip = AudioManager.Instance.GetFootstepSfx();
+            AudioManager.Instance.PlaySfx(clip, transform);
+
+            currentFootstepTime = isRunning ? footstepSoundDelay / speedMultiplier : footstepSoundDelay;
+        }
     }
 
     // Pass through input

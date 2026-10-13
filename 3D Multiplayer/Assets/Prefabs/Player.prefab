@@ -1097,6 +1097,7 @@ MonoBehaviour:
   crouchSpeed: 1.5
   crouchHeight: 0.6
   defaultHeight: 1.05
+  footstepSoundDelay: 0.36
   jumpForce: 8
   groundLayer:
     serializedVersion: 2
@@ -1127,7 +1128,7 @@ MonoBehaviour:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
+    m_InternalValue: 2
 --- !u!114 &3093765351669244058
 MonoBehaviour:
   m_ObjectHideFlags: 0

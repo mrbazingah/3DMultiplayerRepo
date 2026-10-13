@@ -13,6 +13,8 @@ public class GameManager : NetworkBehaviour
     [SerializeField] int hunterValue;
     [SerializeField] List<PlayerMovement> playerList = new List<PlayerMovement>();
 
+    bool gameStarted;
+
     void Awake()
     {
         if (Instance == null)
@@ -32,7 +34,12 @@ public class GameManager : NetworkBehaviour
         {
             Debug.LogError("No Network Manager found");
             SceneManager.LoadScene("Main Menu Scene");
-        }    
+        }  
+        
+        if (gameStarted)
+        {
+            // Do stuff
+        }
     }
 
     public enum Team
@@ -61,6 +68,8 @@ public class GameManager : NetworkBehaviour
     {
         if (!IsServer /*|| playerList.Count < 2*/) { return; }
 
+        gameStarted = true;
+        
         AssignTeam();
         SetPlayerPositionsRpc(mapSpawnTransform.position);
     }
@@ -80,6 +89,9 @@ public class GameManager : NetworkBehaviour
         int hunterCount = Mathf.Max(1, playerList.Count / hunterValue);
         for (int i = 0; i < playerList.Count; i++)
         {
+            // Skip players that already have a team assigned for debugging
+            if (playerList[i].GetPlayerTeam().Value != Team.None) { continue; }
+
             playerList[i].SetPlayerTeam(i < hunterCount ? Team.Hunters : Team.Props);
         }
     }

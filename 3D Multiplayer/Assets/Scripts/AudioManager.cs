@@ -1,5 +1,5 @@
-using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class AudioManager : MonoBehaviour
 {
@@ -9,10 +9,14 @@ public class AudioManager : MonoBehaviour
     [field:SerializeField] public AudioClip reloadSfx { get; private set; }
     [field:SerializeField] public AudioClip doorOpenSfx { get; private set; }
     [field:SerializeField] public AudioClip doorCloseSfx { get; private set; }
-
+    [field:SerializeField] public AudioClip swapPropSfx { get; private set; }
+    
+    [SerializeField] AudioClip[] footstepsSfx;
     [SerializeField] GameObject audioSourcePrefab;
     [SerializeField] float sfxVolume;
     [SerializeField] float sfxDestroyDelay;
+
+    List<AudioClip> footstepSfxBag = new List<AudioClip>();
 
     void Awake()
     {
@@ -35,5 +39,19 @@ public class AudioManager : MonoBehaviour
         audioSource.volume = sfxVolume;
         audioSource.Play();
         Destroy(audioSourceObject, sfxDestroyDelay);
+    }
+
+    public AudioClip GetFootstepSfx()
+    {
+        if (footstepSfxBag.Count == 0)
+        {
+            footstepSfxBag.AddRange(footstepsSfx);
+        }
+
+        int randomIndex = Random.Range(0, footstepSfxBag.Count);
+        AudioClip selectedClip = footstepSfxBag[randomIndex];
+        footstepSfxBag.RemoveAt(randomIndex);
+
+        return selectedClip;
     }
 }
