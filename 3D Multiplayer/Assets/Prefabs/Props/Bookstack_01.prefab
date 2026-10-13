@@ -70,7 +70,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1327219703
+  GlobalObjectIdHash: 1914948412
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -99,6 +99,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Prop
   ShowTopMostFoldoutHeaderGroup: 1
   <propType>k__BackingField: 4
+  outlines:
+  - {fileID: 2987494263278190237}
+  - {fileID: 403898522621435467}
 --- !u!114 &-6490401673566969384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,6 +210,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4313259606328027402, guid: bc21045d3561b68418c96017335c4a9f, type: 3}
   m_PrefabInstance: {fileID: 3240285804001557039}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2987494263278190237 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 397012695346726066, guid: bc21045d3561b68418c96017335c4a9f, type: 3}
+  m_PrefabInstance: {fileID: 3240285804001557039}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7235047184962128575
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -264,6 +272,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce7cad1a7b0c9a94ebe3e1de55ec3baa, type: 3}
+--- !u!1 &403898522621435467 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7057952622857966836, guid: ce7cad1a7b0c9a94ebe3e1de55ec3baa, type: 3}
+  m_PrefabInstance: {fileID: 7235047184962128575}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5287759346716051272 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3245380131280686583, guid: ce7cad1a7b0c9a94ebe3e1de55ec3baa, type: 3}

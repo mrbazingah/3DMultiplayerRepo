@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &904891973822976403
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5031376855116222794}
+  m_Layer: 10
+  m_Name: Footstep Spawn Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5031376855116222794
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904891973822976403}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 585660874367823238}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &917052917055561108
 GameObject:
   m_ObjectHideFlags: 0
@@ -973,6 +1004,7 @@ GameObject:
   - component: {fileID: 7201181107607869916}
   - component: {fileID: 3748187051975546965}
   - component: {fileID: -7886633999233391160}
+  - component: {fileID: 3742388957930426497}
   - component: {fileID: 1046686182426769148}
   - component: {fileID: -2791437134436670039}
   - component: {fileID: 5779055723811008047}
@@ -998,6 +1030,7 @@ Transform:
   m_Children:
   - {fileID: 8580793520493904009}
   - {fileID: 4325585484412161707}
+  - {fileID: 5031376855116222794}
   - {fileID: 3916864719562613418}
   - {fileID: 1221909890677858159}
   m_Father: {fileID: 0}
@@ -1234,6 +1267,27 @@ MonoBehaviour:
   interactField: {fileID: 6778488384193359273}
   lockRotField: {fileID: 917052917055561108}
   pauseMenu: {fileID: 4137790468873687625}
+--- !u!114 &3742388957930426497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3338395985008094567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 002f9ad539e2c414da5641e1da6d6ec0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFootstepManager
+  footstepPrefab: {fileID: 7910787655364205364, guid: bd0ef3450075eaf499ed00e6a1ab5cee, type: 3}
+  spawnPoint: {fileID: 5031376855116222794}
+  offset: 0.014
+  footstepTime: 0.36
+  maxFootstepCount: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 768
+  maxGroundDistance: 10
 --- !u!114 &1046686182426769148
 MonoBehaviour:
   m_ObjectHideFlags: 0

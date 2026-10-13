@@ -289,7 +289,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             currentFootstepTime -= Time.deltaTime;
         }
-        else
+        else if (currentFootstepTime <= 0)
         {
             AudioClip clip = AudioManager.Instance.GetFootstepSfx();
             AudioManager.Instance.PlaySfx(clip, transform);
@@ -370,7 +370,7 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    bool IsGrounded()
+    public bool IsGrounded()
     {
         if (myCollider == null) return false;
 
@@ -496,6 +496,26 @@ public class PlayerMovement : NetworkBehaviour
     public NetworkVariable<float> GetSpinePitch()
     {
         return spinePitch;
+    }
+
+    public bool GetIsWalking()
+    {
+        return isWalking;
+    }
+
+    public bool GetIsRunning()
+    {
+        return isRunning;
+    }
+
+    public float GetWalkSpeed()
+    {
+        return walkSpeed;
+    }
+
+    public float GetRunSpeed()
+    {
+        return runSpeed;
     }
 
     public override void OnNetworkDespawn()

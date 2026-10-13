@@ -5,6 +5,16 @@ public class Prop : NetworkBehaviour
 {
     [field:SerializeField] public PropType propType { get; private set; }
 
+    [SerializeField] GameObject[] outlines;
+
+    public void SetOutline(bool enabled)
+    {
+        foreach (GameObject outline in outlines)
+        {
+            outline.SetActive(enabled);
+        }
+    }
+
     public enum PropType
     {
         None,
