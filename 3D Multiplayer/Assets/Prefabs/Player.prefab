@@ -1113,11 +1113,11 @@ MonoBehaviour:
   playerAudioListener: {fileID: 6499311155699352634}
   camCollisionLayers:
     serializedVersion: 2
-    m_Bits: 567
+    m_Bits: 2615
   camCollisionRadius: 0.1
   camReturnSpeed: 15
   zoomSpeed: 30
-  minZoom: 0.5
+  minZoom: 0.005
   maxZoom: 2.5
   spinePitchMultiplier: 1.125
   spineMinPitch: -90
