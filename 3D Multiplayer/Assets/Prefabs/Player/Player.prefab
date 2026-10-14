@@ -1283,11 +1283,14 @@ MonoBehaviour:
   spawnPoint: {fileID: 5031376855116222794}
   offset: 0.014
   footstepTime: 0.36
-  maxFootstepCount: 10
+  maxFootstepCount: 20
+  maxVisableFootsteps: 7
   groundLayer:
     serializedVersion: 2
     m_Bits: 768
   maxGroundDistance: 10
+  abilityActive: 1
+  spawnedFootsteps: []
 --- !u!114 &1046686182426769148
 MonoBehaviour:
   m_ObjectHideFlags: 0

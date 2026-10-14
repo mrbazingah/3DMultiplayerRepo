@@ -8,10 +8,11 @@ public class PlayerFootstepManager : MonoBehaviour
     [SerializeField] float offset;
     [SerializeField] float footstepTime;
     [SerializeField] float maxFootstepCount;
+    [SerializeField] float maxVisableFootsteps;
     [SerializeField] LayerMask groundLayer;
     [SerializeField] float maxGroundDistance = 10f;
-
-    List<GameObject> spawnedFootsteps = new List<GameObject>();
+    [SerializeField] bool abilityActive;
+    [SerializeField] List<GameObject> spawnedFootsteps = new List<GameObject>();
 
     float currentFootstepTime;
 
@@ -23,6 +24,11 @@ public class PlayerFootstepManager : MonoBehaviour
     }
 
     void Update()
+    {
+        HandleFootsteps();
+    }
+
+    void HandleFootsteps()
     {
         if (myMovement == null || !myMovement.GetIsWalking()) { return; }
 
@@ -37,6 +43,12 @@ public class PlayerFootstepManager : MonoBehaviour
             SpawnFootstep();
 
             currentFootstepTime = myMovement.GetIsRunning() ? footstepTime / speedMultiplier : footstepTime;
+        }
+
+        for (int i = 0; i < spawnedFootsteps.Count; i++)
+        {
+            bool isVisible = i + maxVisableFootsteps < spawnedFootsteps.Count && abilityActive;
+            spawnedFootsteps[i].SetActive(isVisible);
         }
     }
 

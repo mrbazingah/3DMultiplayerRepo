@@ -8,8 +8,6 @@ public class PlayerInteract : NetworkBehaviour
     [SerializeField] Transform camPivot;
     [SerializeField] float detectionRange;
 
-    GameObject currentDetectedProp;
-
     PlayerModelManager myModelManager;
     PlayerUIManager myUiManager;
     PlayerMovement myMovement;
@@ -35,7 +33,6 @@ public class PlayerInteract : NetworkBehaviour
         else if (detectedObject != null && detectedObject.layer == LayerMask.NameToLayer("Prop") && myMovement.GetPlayerTeam().Value == GameManager.Team.Props)
         {
             myUiManager.SetInteractField(true, "Swap");
-            currentDetectedProp = detectedObject;
         }
         else if (detectedObject != null && detectedObject.layer == LayerMask.NameToLayer("LobbyUI") && myMovement.GetPlayerTeam().Value == GameManager.Team.None)
         {
@@ -44,17 +41,6 @@ public class PlayerInteract : NetworkBehaviour
         else if (detectedObject == null)
         {
             myUiManager.SetInteractField(false, "");
-        }
-
-        if (currentDetectedProp != null)
-        {
-            currentDetectedProp.GetComponent<Prop>().SetOutline(true);
-
-            if (detectedObject != currentDetectedProp)
-            {
-                currentDetectedProp.GetComponent<Prop>().SetOutline(false);
-                currentDetectedProp = null;
-            }
         }
     }
 
