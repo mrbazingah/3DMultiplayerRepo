@@ -1182,6 +1182,7 @@ MonoBehaviour:
   canSwap: 0
   ownerGunModel: {fileID: 5435195909078092899}
   clientGunModel: {fileID: 2515376572803398896}
+  silhouetteMat: {fileID: 2100000, guid: 10929b989147ea24ca40ba29af5b8350, type: 2}
   rigAnimator: {fileID: 8338238641119675433}
   spineBones:
   - {fileID: 2681515756582625431}
@@ -1278,7 +1279,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   footstepPrefab: {fileID: 7910787655364205364, guid: bd0ef3450075eaf499ed00e6a1ab5cee, type: 3}
   spawnPoint: {fileID: 5031376855116222794}
-  offset: 0.014
+  offset: 0.01
   footstepTime: 0.36
   maxFootstepCount: 20
   maxVisableFootsteps: 7

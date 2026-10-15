@@ -7,10 +7,12 @@ public class PlayerData : NetworkBehaviour
     [SerializeField] NetworkVariable<Color> playerColor;
 
     PlayerMovement myMovement;
+    PlayerModelManager myModelManager;
 
     public override void OnNetworkSpawn()
     {
         myMovement = GetComponent<PlayerMovement>();
+        myModelManager = GetComponent<PlayerModelManager>();
 
         playerTeam.OnValueChanged += OnTeamChanged;
         OnTeamChanged(playerTeam.Value, playerTeam.Value);
@@ -37,7 +39,9 @@ public class PlayerData : NetworkBehaviour
     void OnTeamChanged(GameManager.Team previous, GameManager.Team current)
     {
         if (!IsOwner) { return; }
+
         myMovement.UpdateCamLogic(current);
+        myModelManager.UpdatePlayerModelSilhouetteRpc();
     }
 
     void OnColorChanged(Color previous, Color current)

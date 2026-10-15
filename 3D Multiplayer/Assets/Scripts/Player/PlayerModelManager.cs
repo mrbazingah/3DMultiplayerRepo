@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,6 +16,8 @@ public class PlayerModelManager : NetworkBehaviour
     [Space]
     [SerializeField] GameObject ownerGunModel;
     [SerializeField] GameObject clientGunModel;
+    [Space]
+    [SerializeField] Material silhouetteMat;
 
     [Header("Spine Lean")]
     [SerializeField] Animator rigAnimator;
@@ -66,7 +69,17 @@ public class PlayerModelManager : NetworkBehaviour
             SetLayerRecursively(defaultVisuals, LayerMask.NameToLayer("Player Visuals"));
         }
 
-        // Gun model visibility is handled by PlayerShooting.SetCanShoot(), hiding them here could undo it depending on spawn order
+        UpdatePlayerModelSilhouetteRpc();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    public void UpdatePlayerModelSilhouetteRpc()
+    {
+        Renderer[] defaultRenderers = defaultVisuals.GetComponentsInChildren<Renderer>();
+        foreach (Renderer renderer in defaultRenderers)
+        {
+            UpdateSilhouette(renderer);
+        }
     }
 
     void SetupSpineBones()
@@ -215,6 +228,40 @@ public class PlayerModelManager : NetworkBehaviour
 
             Collider newCol = GetCurrentModelCollider();
             myMovement.SetPlayerCollider(newCol);
+
+            // Change silhouette color
+            Renderer modelRenderer = spawnedProp.GetComponent<Renderer>();
+            if (modelRenderer == null)
+            {
+                modelRenderer = spawnedProp.GetComponentInChildren<Renderer>();
+            }
+
+            UpdateSilhouette(modelRenderer);
+        }
+    }
+
+    void UpdateSilhouette(Renderer renderer)
+    {
+        if (renderer != null && myData != null)
+        {
+            if (!renderer.materials.Contains(silhouetteMat))
+            {
+                List<Material> materials = renderer.materials.ToList();
+                materials.Add(silhouetteMat);
+                renderer.SetSharedMaterials(materials);
+            }
+
+            foreach (Material mat in renderer.materials)
+            {
+                if (mat.HasProperty("_Silhouette_Color"))
+                {
+                    mat.SetColor("_Silhouette_Color", myData.GetPlayerColor().Value);
+                }
+                else
+                {
+                    mat.renderQueue = 2002;
+                }
+            }
         }
     }
 
