@@ -12,6 +12,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] int maxPlayerCount;
     [SerializeField] int hunterValue;
     [SerializeField] List<PlayerMovement> playerList = new List<PlayerMovement>();
+    [SerializeField] Color[] playerColors;
 
     bool gameStarted;
 
@@ -112,5 +113,10 @@ public class GameManager : NetworkBehaviour
                 player.TeleportTo(pos);
             }
         }
+    }
+
+    public Color[] GetPlayerColors()
+    {
+        return playerColors;
     }
 }

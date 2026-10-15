@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Netcode;
 
-public class PlayerFootstepManager : MonoBehaviour
+public class PlayerFootstepManager : NetworkBehaviour
 {
     [SerializeField] GameObject footstepPrefab;
     [SerializeField] Transform spawnPoint;
@@ -18,13 +19,16 @@ public class PlayerFootstepManager : MonoBehaviour
 
     PlayerMovement myMovement;
 
-    void Start()
+    public override void OnNetworkSpawn()
     {
         myMovement = GetComponent<PlayerMovement>();
+
     }
 
     void Update()
     {
+        if (!IsOwner) { return; }
+
         HandleFootsteps();
     }
 
@@ -40,26 +44,21 @@ public class PlayerFootstepManager : MonoBehaviour
         }
         else
         {
-            SpawnFootstep();
+            SpawnFootstepRpc(spawnPoint.position, transform.rotation);
 
             currentFootstepTime = myMovement.GetIsRunning() ? footstepTime / speedMultiplier : footstepTime;
         }
-
-        for (int i = 0; i < spawnedFootsteps.Count; i++)
-        {
-            bool isVisible = i + maxVisableFootsteps < spawnedFootsteps.Count && abilityActive;
-            spawnedFootsteps[i].SetActive(isVisible);
-        }
     }
 
-    void SpawnFootstep()
+    [Rpc(SendTo.Everyone)]
+    void SpawnFootstepRpc(Vector3 spawnPos, Quaternion spawnRot)
     {
-        if (!Physics.Raycast(spawnPoint.position, Vector3.down, out RaycastHit hit, maxGroundDistance, groundLayer, QueryTriggerInteraction.Ignore)) { return; }
+        if (!Physics.Raycast(spawnPos, Vector3.down, out RaycastHit hit, maxGroundDistance, groundLayer, QueryTriggerInteraction.Ignore)) { return; }
 
         // Lifts it slightly off the surface so it doesn't flicker into the ground, and tilts it to match slopes
         Vector3 position = hit.point + hit.normal * offset;
         position.y += offset;
-        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * transform.rotation;
+        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * spawnRot;
 
         GameObject spawned = Instantiate(footstepPrefab, position, rotation);
         spawnedFootsteps.Add(spawned);
@@ -69,5 +68,26 @@ public class PlayerFootstepManager : MonoBehaviour
             Destroy(spawnedFootsteps[0]);
             spawnedFootsteps.RemoveAt(0);
         }
+
+        UpdateFootstepVisibility();
+    }
+
+    void UpdateFootstepVisibility()
+    {
+        for (int i = 0; i < spawnedFootsteps.Count; i++)
+        {
+            bool isVisible = i + maxVisableFootsteps < spawnedFootsteps.Count && abilityActive;
+            spawnedFootsteps[i].SetActive(isVisible);
+        }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        foreach (GameObject footstep in spawnedFootsteps)
+        {
+            Destroy(footstep);
+        }
+
+        spawnedFootsteps.Clear();
     }
 }
