@@ -37,6 +37,7 @@ public class PlayerModelManager : NetworkBehaviour
     Collider myCollider;
     Rigidbody myRigidbody;
     PlayerUIManager myUiManager;
+    PlayerData myData;
 
     public override void OnNetworkSpawn()
     {
@@ -46,6 +47,7 @@ public class PlayerModelManager : NetworkBehaviour
         myCollider = GetComponent<Collider>();
         myRigidbody = GetComponent<Rigidbody>();
         myUiManager = GetComponent<PlayerUIManager>();
+        myData = GetComponent<PlayerData>();
 
         SetupSpineBones();
 
@@ -54,7 +56,7 @@ public class PlayerModelManager : NetworkBehaviour
         lockRotation.OnValueChanged += OnLockRotationChanged;
 
         // Follows the team from PlayerMovement so canSwap stays correct on every client, and applies the current value for players who spawn with a team already set
-        NetworkVariable<GameManager.Team> team = myMovement.GetPlayerTeam();
+        NetworkVariable<GameManager.Team> team = myData.GetPlayerTeam();
         team.OnValueChanged += OnTeamChanged;
         SetCanSwap(team.Value == GameManager.Team.Props);
 
@@ -144,7 +146,7 @@ public class PlayerModelManager : NetworkBehaviour
     void SwapModelServerRpc(Prop.PropType propType)
     {
         // Checks the team on the server too since canSwap only exists on the client
-        if (myMovement.GetPlayerTeam().Value != GameManager.Team.Props) { return; }
+        if (myData.GetPlayerTeam().Value != GameManager.Team.Props) { return; }
 
         // Stops model swap if the prop prefab isn't found in the registry
         if (propRegistry.GetPrefab(propType) == null && propType != Prop.PropType.None) { return; }
@@ -270,7 +272,7 @@ public class PlayerModelManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     void ToggleLockServerRpc(Quaternion currentRotation)
     {
-        if (myMovement.GetPlayerTeam().Value != GameManager.Team.Props) { return; }
+        if (myData.GetPlayerTeam().Value != GameManager.Team.Props) { return; }
 
         lockRotation.Value = !lockRotation.Value;
 
@@ -360,7 +362,7 @@ public class PlayerModelManager : NetworkBehaviour
     {
         currentPropType.OnValueChanged -= OnCurrentPropTypeChanged;
         lockRotation.OnValueChanged -= OnLockRotationChanged;
-        myMovement.GetPlayerTeam().OnValueChanged -= OnTeamChanged;
+        myData.GetPlayerTeam().OnValueChanged -= OnTeamChanged;
     }
 
     public Collider GetCurrentModelCollider()

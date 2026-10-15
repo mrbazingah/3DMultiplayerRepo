@@ -25,6 +25,7 @@ public class PlayerShooting : NetworkBehaviour
     PlayerUIManager myUiManager;
     PlayerModelManager myModelManager;
     Animator myAnimator;
+    PlayerData myData;
 
     public override void OnNetworkSpawn()
     {
@@ -32,6 +33,7 @@ public class PlayerShooting : NetworkBehaviour
         myUiManager = GetComponent<PlayerUIManager>();
         myModelManager = GetComponent<PlayerModelManager>();
         myAnimator = GetComponentInChildren<Animator>();
+        myData = GetComponent<PlayerData>();
 
         if (IsServer)
         {
@@ -43,7 +45,7 @@ public class PlayerShooting : NetworkBehaviour
         OnAmmoChanged(0, ammo.Value);
 
         // Applies the current team since OnValueChanged only fires on a change
-        NetworkVariable<GameManager.Team> team = myMovement.GetPlayerTeam();
+        NetworkVariable<GameManager.Team> team = myData.GetPlayerTeam();
         team.OnValueChanged += OnTeamChanged;
         SetCanShoot(team.Value == GameManager.Team.Hunters);
     }
@@ -101,7 +103,7 @@ public class PlayerShooting : NetworkBehaviour
     void ShootServerRpc(Vector3 origin, Vector3 direction)
     {
         // Checks the team on the server too since canShoot only exists on the client
-        if (myMovement.GetPlayerTeam().Value != GameManager.Team.Hunters) { return; }
+        if (myData.GetPlayerTeam().Value != GameManager.Team.Hunters) { return; }
         if (ammo.Value <= 0 || isReloading.Value) { return; }
 
         ammo.Value--;
@@ -113,12 +115,12 @@ public class PlayerShooting : NetworkBehaviour
             Debug.Log("Hit target");
 
             PlayerHealth targetHealth = hit.transform.GetComponentInParent<PlayerHealth>();
-            PlayerMovement targetMovement = hit.transform.GetComponentInParent<PlayerMovement>();
+            PlayerData targetData = hit.transform.GetComponentInParent<PlayerData>();
 
-            if (targetHealth != null && targetMovement != null)
+            if (targetHealth != null && targetData != null)
             {
                 // Stop damage if target is on the same team as the shooter
-                if (targetMovement.GetPlayerTeam().Value == myMovement.GetPlayerTeam().Value) { return; }
+                if (targetData.GetPlayerTeam().Value == myData.GetPlayerTeam().Value) { return; }
 
                 targetHealth.TakeDamage(damage);
             }
@@ -158,7 +160,7 @@ public class PlayerShooting : NetworkBehaviour
     [Rpc(SendTo.Server)]
     void ReloadServerRpc()
     {
-        if (myMovement.GetPlayerTeam().Value != GameManager.Team.Hunters) { return; }
+        if (myData.GetPlayerTeam().Value != GameManager.Team.Hunters) { return; }
 
         // Stops a second reload starting if the request arrives twice
         if (isReloading.Value || ammo.Value == maxAmmo) { return; }
@@ -190,6 +192,6 @@ public class PlayerShooting : NetworkBehaviour
     {
         ammo.OnValueChanged -= OnAmmoChanged;
         isReloading.OnValueChanged -= OnReloadingChanged;
-        myMovement.GetPlayerTeam().OnValueChanged -= OnTeamChanged;
+        myData.GetPlayerTeam().OnValueChanged -= OnTeamChanged;
     }
 }

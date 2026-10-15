@@ -44,7 +44,6 @@ public class PlayerMovement : NetworkBehaviour
 
     [Header("Other")]
     [SerializeField] PlayerInput playerInput;
-    [SerializeField] NetworkVariable<GameManager.Team> playerTeam;
 
     NetworkVariable<float> spinePitch = new NetworkVariable<float>(
         0f,
@@ -80,6 +79,7 @@ public class PlayerMovement : NetworkBehaviour
     Animator myAnimator;
     Collider myCollider;
     PlayerModelManager myModelManager;
+    PlayerData myData;
     #endregion
 
     public override void OnNetworkSpawn()
@@ -88,6 +88,7 @@ public class PlayerMovement : NetworkBehaviour
         myAnimator = GetComponentInChildren<Animator>();
         myCollider = GetComponent<Collider>();
         myModelManager = GetComponent<PlayerModelManager>();
+        myData = GetComponent<PlayerData>();
 
         // Registers before the owner check since the server runs this for every player object and not just the ones it owns
         if (GameManager.Instance != null)
@@ -133,9 +134,6 @@ public class PlayerMovement : NetworkBehaviour
         desiredCamDistance = thirdPersonCam.transform.localPosition.magnitude;
         currentCamDistance = desiredCamDistance;
 
-        playerTeam.OnValueChanged += OnTeamChanged;
-        OnTeamChanged(playerTeam.Value, playerTeam.Value); // Applies the current value since OnValueChanged only fires on a change
-
         rotationY = transform.rotation.eulerAngles.y;
 
         // Makes sure local player model has correct layer
@@ -172,7 +170,7 @@ public class PlayerMovement : NetworkBehaviour
             myAnimator.speed = defaultAnimatorSpeed;
         }
 
-        if (playerTeam.Value == GameManager.Team.Hunters)
+        if (myData.GetPlayerTeam().Value == GameManager.Team.Hunters)
         {
             CapsuleCollider capsule = GetComponent<CapsuleCollider>();
             if (capsule != null)
@@ -188,20 +186,7 @@ public class PlayerMovement : NetworkBehaviour
         return !canMove;
     }
 
-    public void SetPlayerTeam(GameManager.Team newTeam)
-    {
-        // Only the server can write the team, the change replicates to the clients through OnTeamChanged()
-        if (!IsServer) { return; }
-        playerTeam.Value = newTeam;
-    }
-
-    void OnTeamChanged(GameManager.Team previous, GameManager.Team current)
-    {
-        if (!IsOwner) { return; }
-        UpdateCamLogic(current);
-    }
-
-    void UpdateCamLogic(GameManager.Team team)
+    public void UpdateCamLogic(GameManager.Team team)
     {
         bool isHunter = team == GameManager.Team.Hunters;
         firstPersonCam.enabled = isHunter;
@@ -308,7 +293,7 @@ public class PlayerMovement : NetworkBehaviour
 
         currentSpeed = isCrouching ? crouchSpeed : walkSpeed;
 
-        if (playerTeam.Value == GameManager.Team.Hunters)
+        if (myData.GetPlayerTeam().Value == GameManager.Team.Hunters)
         {
             CapsuleCollider collider = GetComponent<CapsuleCollider>();
             collider.height = isCrouching ? crouchHeight : defaultHeight;
@@ -397,7 +382,7 @@ public class PlayerMovement : NetworkBehaviour
     public void OnZoom(InputValue value)
     {
         // Only props can zoom since hunters are in first person
-        if (!IsOwner || !canMove || playerTeam.Value == GameManager.Team.Hunters) { return; }
+        if (!IsOwner || !canMove || myData.GetPlayerTeam().Value == GameManager.Team.Hunters) { return; }
 
         zoomInput = value.Get<Vector2>();
     }
@@ -445,7 +430,7 @@ public class PlayerMovement : NetworkBehaviour
     void CameraCollision()
     {
         // Hunters are in first person so the camera sits on the pivot and has nothing to pull in
-        if (playerTeam.Value == GameManager.Team.Hunters) { return; }
+        if (myData.GetPlayerTeam().Value == GameManager.Team.Hunters) { return; }
 
         Vector3 direction = camPivot.TransformDirection(camOffsetDirection);
 
@@ -488,11 +473,6 @@ public class PlayerMovement : NetworkBehaviour
         return currentCam;
     }
 
-    public NetworkVariable<GameManager.Team> GetPlayerTeam()
-    {
-        return playerTeam;
-    }
-
     public NetworkVariable<float> GetSpinePitch()
     {
         return spinePitch;
@@ -524,7 +504,5 @@ public class PlayerMovement : NetworkBehaviour
         {
             GameManager.Instance.UnregisterPlayer(this);
         }
-
-        playerTeam.OnValueChanged -= OnTeamChanged;
     }
 }

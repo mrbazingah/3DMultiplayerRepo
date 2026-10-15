@@ -91,9 +91,9 @@ public class GameManager : NetworkBehaviour
         for (int i = 0; i < playerList.Count; i++)
         {
             // Skip players that already have a team assigned for debugging
-            if (playerList[i].GetPlayerTeam().Value != Team.None) { continue; }
+            if (playerList[i].GetComponent<PlayerData>().GetPlayerTeam().Value != Team.None) { continue; }
 
-            playerList[i].SetPlayerTeam(i < hunterCount ? Team.Hunters : Team.Props);
+            playerList[i].GetComponent<PlayerData>().SetPlayerTeam(i < hunterCount ? Team.Hunters : Team.Props);
         }
     }
 

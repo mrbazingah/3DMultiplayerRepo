@@ -11,12 +11,14 @@ public class PlayerInteract : NetworkBehaviour
     PlayerModelManager myModelManager;
     PlayerUIManager myUiManager;
     PlayerMovement myMovement;
+    PlayerData myData;
 
-    void Start()
+    public override void OnNetworkSpawn()
     {
         myModelManager = GetComponent<PlayerModelManager>();
         myUiManager = GetComponent<PlayerUIManager>();
         myMovement = GetComponent<PlayerMovement>();
+        myData = GetComponent<PlayerData>();
     }
 
     void Update()
@@ -30,11 +32,11 @@ public class PlayerInteract : NetworkBehaviour
             string action = isOpen ? "Close" : "Open";
             myUiManager.SetInteractField(true, action);
         }
-        else if (detectedObject != null && detectedObject.layer == LayerMask.NameToLayer("Prop") && myMovement.GetPlayerTeam().Value == GameManager.Team.Props)
+        else if (detectedObject != null && detectedObject.layer == LayerMask.NameToLayer("Prop") && myData.GetPlayerTeam().Value == GameManager.Team.Props)
         {
             myUiManager.SetInteractField(true, "Swap");
         }
-        else if (detectedObject != null && detectedObject.layer == LayerMask.NameToLayer("LobbyUI") && myMovement.GetPlayerTeam().Value == GameManager.Team.None)
+        else if (detectedObject != null && detectedObject.layer == LayerMask.NameToLayer("LobbyUI") && myData.GetPlayerTeam().Value == GameManager.Team.None)
         {
             myUiManager.SetInteractField(true, "Interact");
         }

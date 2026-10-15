@@ -1,6 +1,7 @@
-using UnityEngine;
 using System.Collections.Generic;
+using System.Drawing;
 using Unity.Netcode;
+using UnityEngine;
 
 public class PlayerFootstepManager : NetworkBehaviour
 {
@@ -18,10 +19,12 @@ public class PlayerFootstepManager : NetworkBehaviour
     float currentFootstepTime;
 
     PlayerMovement myMovement;
+    PlayerData myData;
 
     public override void OnNetworkSpawn()
     {
         myMovement = GetComponent<PlayerMovement>();
+        myData = GetComponent<PlayerData>();
 
     }
 
@@ -48,6 +51,35 @@ public class PlayerFootstepManager : NetworkBehaviour
 
             currentFootstepTime = myMovement.GetIsRunning() ? footstepTime / speedMultiplier : footstepTime;
         }
+
+        UpdateFootstepVisibilityRpc();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    void UpdateFootstepVisibilityRpc()
+    {
+        for (int i = 0; i < spawnedFootsteps.Count; i++)
+        {
+            bool isVisible = i + maxVisableFootsteps < spawnedFootsteps.Count && abilityActive;
+            spawnedFootsteps[i].SetActive(isVisible);
+
+            // Change color
+            MeshRenderer footstepRenderer = spawnedFootsteps[i].GetComponent<MeshRenderer>();
+            if (footstepRenderer != null && myData != null)
+            {
+                foreach (Material mat in footstepRenderer.materials)
+                {
+                    if (mat.HasProperty("_BaseColor"))
+                    {
+                        mat.SetColor("_BaseColor", myData.GetPlayerColor().Value);
+                    }
+                    if (mat.HasProperty("_Outline_Color"))
+                    {
+                        mat.SetColor("_Outline_Color", myData.GetPlayerColor().Value);
+                    }
+                }
+            }
+        }
     }
 
     [Rpc(SendTo.Everyone)]
@@ -63,21 +95,12 @@ public class PlayerFootstepManager : NetworkBehaviour
         GameObject spawned = Instantiate(footstepPrefab, position, rotation);
         spawnedFootsteps.Add(spawned);
 
+        
+
         if (spawnedFootsteps.Count > maxFootstepCount)
         {
             Destroy(spawnedFootsteps[0]);
             spawnedFootsteps.RemoveAt(0);
-        }
-
-        UpdateFootstepVisibility();
-    }
-
-    void UpdateFootstepVisibility()
-    {
-        for (int i = 0; i < spawnedFootsteps.Count; i++)
-        {
-            bool isVisible = i + maxVisableFootsteps < spawnedFootsteps.Count && abilityActive;
-            spawnedFootsteps[i].SetActive(isVisible);
         }
     }
 

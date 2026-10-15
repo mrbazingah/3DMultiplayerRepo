@@ -24,7 +24,6 @@ public class MenuUIManager : MonoBehaviour
 
     public void OnEnter(InputValue value)
     {
-        Debug.Log("Enter clicked");
         OnCodeSubmitButtonClicked();
     }
 

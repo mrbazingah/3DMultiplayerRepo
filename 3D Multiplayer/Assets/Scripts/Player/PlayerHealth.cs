@@ -10,11 +10,13 @@ public class PlayerHealth : NetworkBehaviour
 
     PlayerUIManager uiManager;
     PlayerMovement myMovement;
+    PlayerData myData;
 
     public override void OnNetworkSpawn()
     {
         myMovement = GetComponent<PlayerMovement>();
         uiManager = GetComponent<PlayerUIManager>();
+        myData = GetComponent<PlayerData>();
 
         if (IsServer)
         {
@@ -24,7 +26,7 @@ public class PlayerHealth : NetworkBehaviour
 
         health.OnValueChanged += OnHealthChanged;
 
-        NetworkVariable<GameManager.Team> team = myMovement.GetPlayerTeam();
+        NetworkVariable<GameManager.Team> team = myData.GetPlayerTeam();
         team.OnValueChanged += OnTeamChanged;
         OnTeamChanged(team.Value, team.Value);
     }

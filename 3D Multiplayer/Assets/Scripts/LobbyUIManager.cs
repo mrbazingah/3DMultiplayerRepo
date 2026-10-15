@@ -34,7 +34,7 @@ public class LobbyUIManager : NetworkBehaviour
 
     public void OpenCloseCanvas(GameObject newMovement = null)
     {
-        if (newMovement.TryGetComponent<PlayerMovement>(out PlayerMovement movement))
+        if (newMovement.TryGetComponent(out PlayerMovement movement))
         {
             playerMovement = movement;
         }
@@ -48,6 +48,14 @@ public class LobbyUIManager : NetworkBehaviour
         uiCanvas.SetActive(isOpen);
 
         playerMovement.SetCanMove(!isOpen);
+    }
+
+    public void OnColorButtonClicked(int colorIndex)
+    {
+        if (!IsOwner) { return; }
+
+        Color selectedColor = GameManager.Instance.GetPlayerColors()[colorIndex];
+        playerMovement.GetComponent<PlayerData>().SetPlayerColor(selectedColor);
     }
 
     public void StartGame()
