@@ -1,11 +1,12 @@
 using System.Collections.Generic;
-using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerModelManager : NetworkBehaviour
 {
+    static readonly int SilhouetteColorId = Shader.PropertyToID("_Silhouette_Color");
+
     [SerializeField] GameObject defaultVisuals;
     [SerializeField] float detectionRange;
     [SerializeField] LayerMask propLayer;
@@ -69,19 +70,24 @@ public class PlayerModelManager : NetworkBehaviour
             SetLayerRecursively(defaultVisuals, LayerMask.NameToLayer("Player Visuals"));
         }
 
-        UpdatePlayerModelSilhouetteRpc();
+        UpdateSilhouetteColor();
     }
 
-    [Rpc(SendTo.Everyone)]
-    public void UpdatePlayerModelSilhouetteRpc()
+    public void UpdateSilhouetteColor()
     {
-        Renderer[] defaultRenderers = defaultVisuals.GetComponentsInChildren<Renderer>();
-        foreach (Renderer renderer in defaultRenderers)
+        foreach (Renderer r in defaultVisuals.GetComponentsInChildren<Renderer>(true))
         {
-            UpdateSilhouette(renderer);
+            UpdateSilhouette(r);
+        }
+
+        if (currentPropModel != null)
+        {
+            foreach (Renderer r in currentPropModel.GetComponentsInChildren<Renderer>(true))
+            {
+                UpdateSilhouette(r);
+            }
         }
     }
-
     void SetupSpineBones()
     {
         // Humanoid rigs expose the bones through the animator, generic rigs have to be assigned in the inspector
@@ -242,25 +248,27 @@ public class PlayerModelManager : NetworkBehaviour
 
     void UpdateSilhouette(Renderer renderer)
     {
-        if (renderer != null && myData != null)
-        {
-            if (!renderer.materials.Contains(silhouetteMat))
-            {
-                List<Material> materials = renderer.materials.ToList();
-                materials.Add(silhouetteMat);
-                renderer.SetSharedMaterials(materials);
-            }
+        if (renderer == null || myData == null) { return; }
 
-            foreach (Material mat in renderer.materials)
+        // Checks by shader since the renderer holds copies of the materials, not the asset itself
+        List<Material> shared = new List<Material>();
+        renderer.GetSharedMaterials(shared);
+        if (!shared.Exists(m => m != null && m.shader == silhouetteMat.shader))
+        {
+            shared.Add(silhouetteMat);
+            renderer.SetSharedMaterials(shared);
+        }
+
+        foreach (Material mat in renderer.materials)
+        {
+            if (mat.shader == silhouetteMat.shader)
             {
-                if (mat.HasProperty("_Silhouette_Color"))
-                {
-                    mat.SetColor("_Silhouette_Color", myData.GetPlayerColor().Value);
-                }
-                else
-                {
-                    mat.renderQueue = 2002;
-                }
+                mat.SetColor(SilhouetteColorId, myData.GetPlayerColor().Value);
+                mat.renderQueue = 2001;
+            }
+            else
+            {
+                mat.renderQueue = 2002;
             }
         }
     }

@@ -41,7 +41,7 @@ public class PlayerData : NetworkBehaviour
         if (!IsOwner) { return; }
 
         myMovement.UpdateCamLogic(current);
-        myModelManager.UpdatePlayerModelSilhouetteRpc();
+        myModelManager.UpdateSilhouetteColor();
     }
 
     void OnColorChanged(Color previous, Color current)
