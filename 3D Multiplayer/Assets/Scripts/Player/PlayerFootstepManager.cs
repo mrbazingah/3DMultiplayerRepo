@@ -72,9 +72,9 @@ public class PlayerFootstepManager : NetworkBehaviour
                     {
                         mat.SetColor("_BaseColor", myData.GetPlayerColor().Value);
                     }
-                    if (mat.HasProperty("_Outline_Color"))
+                    if (mat.HasProperty("_Silhouette_Color"))
                     {
-                        mat.SetColor("_Outline_Color", myData.GetPlayerColor().Value);
+                        mat.SetColor("_Silhouette_Color", myData.GetPlayerColor().Value);
                     }
                 }
             }

@@ -19,9 +19,9 @@ public class PlayerData : NetworkBehaviour
 
         playerColor.OnValueChanged += OnColorChanged;
 
-        if (IsOwner)
+        if (IsServer)
         {
-            OnColorChanged(playerColor.Value, GameManager.Instance.GetPlayerColors()[0]);
+            playerColor.Value = GameManager.Instance.GetPlayerColors()[0];
         }
     }
 
@@ -50,7 +50,6 @@ public class PlayerData : NetworkBehaviour
 
     void OnColorChanged(Color previous, Color current)
     {
-        if (!IsOwner) { return; }
         myModelManager.UpdateSilhouetteColor();
     }
 

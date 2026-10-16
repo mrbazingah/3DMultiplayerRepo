@@ -121,9 +121,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuUIManager, Assembly-CSharp
-        m_MethodName: OnCodeSubmitButtonClicked
+      - m_Target: {fileID: 1688245444332466573}
+        m_TargetAssemblyTypeName: ConnectionManager, Assembly-CSharp
+        m_MethodName: CloseErrorMessage
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1067,7 +1067,7 @@ MonoBehaviour:
   errorMessageText: {fileID: 9041298067937448805}
   loadingScreenObject: {fileID: 2082144159597275109}
   loadingScreenText: {fileID: 7138955708607095284}
-  textDelay: 0.3
+  textDelay: 0.35
 --- !u!114 &2640554643795026296
 MonoBehaviour:
   m_ObjectHideFlags: 0
