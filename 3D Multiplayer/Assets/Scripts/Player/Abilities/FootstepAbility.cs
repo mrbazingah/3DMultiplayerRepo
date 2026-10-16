@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerFootstepAbility : NetworkBehaviour
+public class FootstepAbility : Ability
 {
     [SerializeField] GameObject footstepPrefab;
     [SerializeField] Transform spawnPoint;
@@ -18,13 +18,14 @@ public class PlayerFootstepAbility : NetworkBehaviour
     float currentFootstepTime;
 
     PlayerMovement myMovement;
-    PlayerData myData;
 
     public override void OnNetworkSpawn()
     {
-        myMovement = GetComponent<PlayerMovement>();
-        myData = GetComponent<PlayerData>();
+        base.OnNetworkSpawn();
 
+        myMovement = GetComponent<PlayerMovement>();
+
+        SetAbilityActive(false);
     }
 
     void Update()
@@ -32,6 +33,11 @@ public class PlayerFootstepAbility : NetworkBehaviour
         if (!IsOwner) { return; }
 
         HandleFootsteps();
+    }
+
+    public void SetAbilityActive(bool isActive)
+    {
+        abilityActive = isActive;
     }
 
     void HandleFootsteps()

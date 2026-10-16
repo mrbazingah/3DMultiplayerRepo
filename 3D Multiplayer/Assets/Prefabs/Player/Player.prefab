@@ -1004,7 +1004,9 @@ GameObject:
   - component: {fileID: 7201181107607869916}
   - component: {fileID: 3748187051975546965}
   - component: {fileID: -7886633999233391160}
+  - component: {fileID: 4758921692806444336}
   - component: {fileID: 3742388957930426497}
+  - component: {fileID: 2219695750188894955}
   - component: {fileID: 1154854785234064690}
   - component: {fileID: 1046686182426769148}
   - component: {fileID: -2791437134436670039}
@@ -1264,6 +1266,25 @@ MonoBehaviour:
   interactField: {fileID: 6778488384193359273}
   lockRotField: {fileID: 917052917055561108}
   pauseMenu: {fileID: 4137790468873687625}
+--- !u!114 &4758921692806444336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3338395985008094567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81211104bb140174a8c38f532aca81b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAbilityManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  abilitySlots: []
+  hunterAbilities:
+  - {fileID: 3742388957930426497}
+  propAbilities:
+  - {fileID: 2219695750188894955}
+  selectedAbilitySlot: 0
 --- !u!114 &3742388957930426497
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1273,22 +1294,41 @@ MonoBehaviour:
   m_GameObject: {fileID: 3338395985008094567}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 002f9ad539e2c414da5641e1da6d6ec0, type: 3}
+  m_Script: {fileID: 11500000, guid: 778c7169a6374804b9728e674a190459, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerFootstepManager
   ShowTopMostFoldoutHeaderGroup: 1
+  abilityName: Tracker Goggles
+  cooldown: 30
+  duration: 10
   footstepPrefab: {fileID: 7910787655364205364, guid: bd0ef3450075eaf499ed00e6a1ab5cee, type: 3}
   spawnPoint: {fileID: 5031376855116222794}
   offset: 0.01
   footstepTime: 0.36
-  maxFootstepCount: 20
-  maxVisableFootsteps: 7
+  maxFootstepCount: 15
+  maxVisableFootsteps: 5
   groundLayer:
     serializedVersion: 2
-    m_Bits: 768
+    m_Bits: 512
   maxGroundDistance: 10
-  abilityActive: 1
+  abilityActive: 0
   spawnedFootsteps: []
+--- !u!114 &2219695750188894955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3338395985008094567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0af299c93aa213a4d9ad4cc54302001c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InvisAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  abilityName: Invisible Potion
+  cooldown: 30
+  duration: 7
 --- !u!114 &1154854785234064690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1306,7 +1346,7 @@ MonoBehaviour:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 2
+    m_InternalValue: 1
   playerColor:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0

@@ -8,11 +8,13 @@ public class PlayerData : NetworkBehaviour
 
     PlayerMovement myMovement;
     PlayerModelManager myModelManager;
+    AbilityManager myAbilityManager;
 
     public override void OnNetworkSpawn()
     {
         myMovement = GetComponent<PlayerMovement>();
         myModelManager = GetComponent<PlayerModelManager>();
+        myAbilityManager = GetComponent<AbilityManager>();
 
         playerTeam.OnValueChanged += OnTeamChanged;
         OnTeamChanged(playerTeam.Value, playerTeam.Value);

@@ -66,7 +66,7 @@ public class PlayerShooting : NetworkBehaviour
         myAnimator.SetBool("gunEquipped", canShoot);
     }
 
-    public void OnUse(InputValue value)
+    public void OnShoot(InputValue value)
     {
         if (!IsOwner || !canShoot || myMovement.IsInputBlocked()) { return; }
         if (isShooting || isReloading.Value) { return; }
