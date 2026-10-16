@@ -151,6 +151,7 @@ public class PlayerMovement : NetworkBehaviour
         if (!newCanMove)
         {
             ClearHeldInput();
+            movementInput = Vector3.zero;
         }
     }
 
