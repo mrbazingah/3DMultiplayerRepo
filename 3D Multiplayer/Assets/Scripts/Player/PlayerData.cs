@@ -18,6 +18,11 @@ public class PlayerData : NetworkBehaviour
         OnTeamChanged(playerTeam.Value, playerTeam.Value);
 
         playerColor.OnValueChanged += OnColorChanged;
+
+        if (IsOwner)
+        {
+            OnColorChanged(playerColor.Value, GameManager.Instance.GetPlayerColors()[0]);
+        }
     }
 
     public void SetPlayerTeam(GameManager.Team newTeam)
@@ -41,12 +46,12 @@ public class PlayerData : NetworkBehaviour
         if (!IsOwner) { return; }
 
         myMovement.UpdateCamLogic(current);
-        myModelManager.UpdateSilhouetteColor();
     }
 
     void OnColorChanged(Color previous, Color current)
     {
         if (!IsOwner) { return; }
+        myModelManager.UpdateSilhouetteColor();
     }
 
     public NetworkVariable<GameManager.Team> GetPlayerTeam()
