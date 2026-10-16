@@ -141,14 +141,14 @@ public class PlayerMovement : NetworkBehaviour
         myModelManager.SetLayerRecursively(defaultVisuals, LayerMask.NameToLayer("Player Visuals"));
     }
 
-    public void SetCanMove(bool b)
+    public void SetCanMove(bool newCanMove)
     {
-        canMove = b;
+        canMove = newCanMove;
 
-        Cursor.lockState = b ? CursorLockMode.Locked : CursorLockMode.None;
-        Cursor.visible = !b;
+        Cursor.lockState = newCanMove ? CursorLockMode.Locked : CursorLockMode.None;
+        Cursor.visible = !newCanMove;
 
-        if (!b)
+        if (!newCanMove)
         {
             ClearHeldInput();
         }

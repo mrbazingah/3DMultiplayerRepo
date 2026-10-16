@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerFootstepManager : NetworkBehaviour
+public class PlayerFootstepAbility : NetworkBehaviour
 {
     [SerializeField] GameObject footstepPrefab;
     [SerializeField] Transform spawnPoint;
