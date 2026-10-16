@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -23,16 +24,23 @@ public class AbilityManager : NetworkBehaviour
 
     public void OnAbility1(InputValue value)
     {
-        if (!IsOwner) { return; }
+        if (!IsOwner || !value.isPressed || ability1Active) { return; }
 
         if (myData.GetPlayerTeam().Value == GameManager.Team.Hunters)
         {
+            List<FootstepAbility> propFootsteps = new List<FootstepAbility>();
+
             foreach (PlayerMovement player in GameManager.Instance.GetPlayerList())
             {
-                if (player.GetComponent<PlayerData>().GetPlayerTeam().Value != GameManager.Team.Props) { continue; }
+                if (player.GetComponent<PlayerData>().GetPlayerTeam().Value != GameManager.Team.Props || player == null) { continue; }
 
-                Ability1TimerRpc(player.NetworkObject);
+                if (player.TryGetComponent(out FootstepAbility footsteps))
+                {
+                    propFootsteps.Add(footsteps);
+                }
             }
+
+            StartCoroutine(Ability1Timer(propFootsteps));
 
             Debug.Log("Hunter Ability 1");
         }
@@ -42,23 +50,25 @@ public class AbilityManager : NetworkBehaviour
         }
     }
 
-    [Rpc(SendTo.Server)]
-    void Ability1TimerRpc(NetworkObjectReference footstepsRef)
-    {
-        if (!footstepsRef.TryGet(out NetworkObject footstepsNetObj)) { return; }
-        if (!footstepsNetObj.TryGetComponent(out FootstepAbility abilityScript)) { return; }
-
-        StartCoroutine(Ability1Timer(abilityScript));
-    }
-
-    IEnumerator Ability1Timer(FootstepAbility footsteps)
+    IEnumerator Ability1Timer(List<FootstepAbility> propFootsteps)
     {
         ability1Active = true;
-        footsteps.SetAbilityActive(ability1Active);
 
-        yield return new WaitForSeconds(footsteps.GetDuration());
+        foreach (FootstepAbility footsteps in propFootsteps)
+        {
+            footsteps.SetAbilityActive(true);
+        }
+
+        yield return new WaitForSeconds(hunterAbilities[0].GetDuration());
+
+        foreach (FootstepAbility footsteps in propFootsteps)
+        {
+            if (footsteps != null)
+            {
+                footsteps.SetAbilityActive(false);
+            }
+        }
 
         ability1Active = false;
-        footsteps.SetAbilityActive(ability1Active);
     }
 }

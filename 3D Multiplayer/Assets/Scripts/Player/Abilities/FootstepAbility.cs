@@ -38,8 +38,9 @@ public class FootstepAbility : Ability
     public void SetAbilityActive(bool isActive)
     {
         abilityActive = isActive;
+        RefreshVisibility();
     }
-
+    
     void HandleFootsteps()
     {
         if (myMovement == null || !myMovement.GetIsWalking()) { return; }
@@ -56,56 +57,48 @@ public class FootstepAbility : Ability
 
             currentFootstepTime = myMovement.GetIsRunning() ? footstepTime / speedMultiplier : footstepTime;
         }
-
-        UpdateFootstepVisibilityRpc();
-    }
-
-    [Rpc(SendTo.Everyone)]
-    void UpdateFootstepVisibilityRpc()
-    {
-        for (int i = 0; i < spawnedFootsteps.Count; i++)
-        {
-            bool isVisible = i + maxVisableFootsteps < spawnedFootsteps.Count && abilityActive;
-            spawnedFootsteps[i].SetActive(isVisible);
-
-            // Change color
-            MeshRenderer footstepRenderer = spawnedFootsteps[i].GetComponent<MeshRenderer>();
-            if (footstepRenderer != null && myData != null)
-            {
-                foreach (Material mat in footstepRenderer.materials)
-                {
-                    if (mat.HasProperty("_BaseColor"))
-                    {
-                        mat.SetColor("_BaseColor", myData.GetPlayerColor().Value);
-                    }
-                    if (mat.HasProperty("_Silhouette_Color"))
-                    {
-                        mat.SetColor("_Silhouette_Color", myData.GetPlayerColor().Value);
-                    }
-                }
-            }
-        }
     }
 
     [Rpc(SendTo.Everyone)]
     void SpawnFootstepRpc(Vector3 spawnPos, Quaternion spawnRot)
     {
-        if (!Physics.Raycast(spawnPos, Vector3.down, out RaycastHit hit, maxGroundDistance, groundLayer, QueryTriggerInteraction.Ignore)) { return; }
-
-        // Lifts it slightly off the surface so it doesn't flicker into the ground, and tilts it to match slopes
-        Vector3 position = hit.point + hit.normal * offset;
-        position.y += offset;
-        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * spawnRot;
-
-        GameObject spawned = Instantiate(footstepPrefab, position, rotation);
+        GameObject spawned = Instantiate(footstepPrefab, spawnPos, spawnRot);
+        SetFootstepColor(spawned);
         spawnedFootsteps.Add(spawned);
-
-        
 
         if (spawnedFootsteps.Count > maxFootstepCount)
         {
             Destroy(spawnedFootsteps[0]);
             spawnedFootsteps.RemoveAt(0);
+        }
+
+        RefreshVisibility();
+    }
+
+    void RefreshVisibility()
+    {
+        for (int i = 0; i < spawnedFootsteps.Count; i++)
+        {
+            bool isVisible = i + maxVisableFootsteps < spawnedFootsteps.Count && abilityActive;
+            spawnedFootsteps[i].SetActive(isVisible);
+        }
+    }
+
+    void SetFootstepColor(GameObject footstep)
+    {
+        MeshRenderer footstepRenderer = footstep.GetComponent<MeshRenderer>();
+        if (footstepRenderer == null || myData == null) { return; }
+
+        foreach (Material mat in footstepRenderer.materials)
+        {
+            if (mat.HasProperty("_BaseColor"))
+            {
+                mat.SetColor("_BaseColor", myData.GetPlayerColor().Value);
+            }
+            if (mat.HasProperty("_Silhouette_Color"))
+            {
+                mat.SetColor("_Silhouette_Color", myData.GetPlayerColor().Value);
+            }
         }
     }
 
