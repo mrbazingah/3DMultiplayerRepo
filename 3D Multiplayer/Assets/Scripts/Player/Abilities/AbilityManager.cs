@@ -25,10 +25,14 @@ public class AbilityManager : NetworkBehaviour
     {
         if (!IsOwner) { return; }
 
-        if (myData.GetPlayerTeam().Value == GameManager.Team.Hunters && hunterAbilities[0].TryGetComponent(out FootstepAbility footsteps))
+        if (myData.GetPlayerTeam().Value == GameManager.Team.Hunters)
         {
-            float time = footsteps.GetDuration(); 
-            Ability1TimerRpc(time, footsteps.GetComponent<NetworkObject>());
+            foreach (PlayerMovement player in GameManager.Instance.GetPlayerList())
+            {
+                if (player.GetComponent<PlayerData>().GetPlayerTeam().Value != GameManager.Team.Props) { continue; }
+
+                Ability1TimerRpc(player.NetworkObject);
+            }
 
             Debug.Log("Hunter Ability 1");
         }
@@ -39,20 +43,20 @@ public class AbilityManager : NetworkBehaviour
     }
 
     [Rpc(SendTo.Server)]
-    void Ability1TimerRpc(float time, NetworkObjectReference footstepsRef)
+    void Ability1TimerRpc(NetworkObjectReference footstepsRef)
     {
         if (!footstepsRef.TryGet(out NetworkObject footstepsNetObj)) { return; }
         if (!footstepsNetObj.TryGetComponent(out FootstepAbility abilityScript)) { return; }
 
-        StartCoroutine(Ability1Timer(time, abilityScript));
+        StartCoroutine(Ability1Timer(abilityScript));
     }
 
-    IEnumerator Ability1Timer(float time, FootstepAbility footsteps)
+    IEnumerator Ability1Timer(FootstepAbility footsteps)
     {
         ability1Active = true;
         footsteps.SetAbilityActive(ability1Active);
 
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSeconds(footsteps.GetDuration());
 
         ability1Active = false;
         footsteps.SetAbilityActive(ability1Active);

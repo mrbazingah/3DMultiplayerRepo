@@ -119,4 +119,9 @@ public class GameManager : NetworkBehaviour
     {
         return playerColors;
     }
+
+    public List<PlayerMovement> GetPlayerList()
+    {
+        return playerList;
+    }
 }

@@ -1100,7 +1100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 613867139
+  GlobalObjectIdHash: 3124374088
   InScenePlacedSourceGlobalObjectIdHash: 613867139
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -1329,6 +1329,7 @@ MonoBehaviour:
   abilityName: Invisible Potion
   cooldown: 30
   duration: 7
+  invisColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &1154854785234064690
 MonoBehaviour:
   m_ObjectHideFlags: 0
