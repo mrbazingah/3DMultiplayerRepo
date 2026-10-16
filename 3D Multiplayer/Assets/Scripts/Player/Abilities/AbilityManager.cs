@@ -32,7 +32,7 @@ public class AbilityManager : NetworkBehaviour
 
             foreach (PlayerMovement player in GameManager.Instance.GetPlayerList())
             {
-                if (player.GetComponent<PlayerData>().GetPlayerTeam().Value != GameManager.Team.Props || player == null) { continue; }
+                if (player == null || player.GetComponent<PlayerData>().GetPlayerTeam().Value != GameManager.Team.Props) { continue; }
 
                 if (player.TryGetComponent(out FootstepAbility footsteps))
                 {
@@ -40,17 +40,19 @@ public class AbilityManager : NetworkBehaviour
                 }
             }
 
-            StartCoroutine(Ability1Timer(propFootsteps));
+            StartCoroutine(FootstepTimer(propFootsteps));
 
             Debug.Log("Hunter Ability 1");
         }
-        else
+        else if (myData.GetPlayerTeam().Value == GameManager.Team.Props)
         {
+            StartCoroutine(InvisTimer());
+
             Debug.Log("Prop ability 1");
         }
     }
 
-    IEnumerator Ability1Timer(List<FootstepAbility> propFootsteps)
+    IEnumerator FootstepTimer(List<FootstepAbility> propFootsteps)
     {
         ability1Active = true;
 
@@ -70,5 +72,16 @@ public class AbilityManager : NetworkBehaviour
         }
 
         ability1Active = false;
+    }
+
+    IEnumerator InvisTimer()
+    {
+        ability1Active = true;
+        GetComponent<InvisAbility>().SetAbilityActive(true);
+
+        yield return new WaitForSeconds(propAbilities[0].GetDuration());
+
+        ability1Active = false;
+        GetComponent<InvisAbility>().SetAbilityActive(false);
     }
 }

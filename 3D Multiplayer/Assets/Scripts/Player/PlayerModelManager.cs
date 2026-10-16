@@ -88,6 +88,7 @@ public class PlayerModelManager : NetworkBehaviour
             }
         }
     }
+
     void SetupSpineBones()
     {
         // Humanoid rigs expose the bones through the animator, generic rigs have to be assigned in the inspector
@@ -248,7 +249,7 @@ public class PlayerModelManager : NetworkBehaviour
 
     void UpdateSilhouette(Renderer renderer)
     {
-        if (renderer == null || myData == null) { return; }
+        if (renderer == null || myData == null || IsOwner) { return; }
 
         // Checks by shader since the renderer holds copies of the materials, not the asset itself
         List<Material> shared = new List<Material>();
@@ -430,5 +431,10 @@ public class PlayerModelManager : NetworkBehaviour
     public GameObject GetDefaultVisuals()
     {
         return defaultVisuals;
+    }
+
+    public GameObject GetCurrentModel()
+    {
+        return currentPropModel != null ? currentPropModel : defaultVisuals;
     }
 }

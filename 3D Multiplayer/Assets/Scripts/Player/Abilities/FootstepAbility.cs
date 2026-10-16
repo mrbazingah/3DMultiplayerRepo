@@ -62,7 +62,12 @@ public class FootstepAbility : Ability
     [Rpc(SendTo.Everyone)]
     void SpawnFootstepRpc(Vector3 spawnPos, Quaternion spawnRot)
     {
-        GameObject spawned = Instantiate(footstepPrefab, spawnPos, spawnRot);
+        if (!Physics.Raycast(spawnPos, Vector3.down, out RaycastHit hit, maxGroundDistance, groundLayer, QueryTriggerInteraction.Ignore)) { return; }
+
+        Vector3 position = hit.point + hit.normal * offset;
+        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * spawnRot;
+
+        GameObject spawned = Instantiate(footstepPrefab, position, rotation);
         SetFootstepColor(spawned);
         spawnedFootsteps.Add(spawned);
 
