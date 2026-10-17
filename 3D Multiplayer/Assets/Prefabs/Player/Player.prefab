@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 904891973822976403}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.2, z: 0}
+  m_LocalPosition: {x: 0, y: -0.486, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1134,6 +1134,9 @@ MonoBehaviour:
   crouchHeight: 0.6
   defaultHeight: 1.05
   footstepSoundDelay: 0.36
+  footstepParticles: {fileID: 5994901362637249012, guid: 3502395dfcb94ff4391d2322ab4bd767, type: 3}
+  footstepSpawnPoint: {fileID: 5031376855116222794}
+  despawnDelay: 3
   jumpForce: 8
   groundLayer:
     serializedVersion: 2
@@ -1311,7 +1314,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   maxGroundDistance: 10
-  abilityActive: 0
   spawnedFootsteps: []
 --- !u!114 &2219695750188894955
 MonoBehaviour:

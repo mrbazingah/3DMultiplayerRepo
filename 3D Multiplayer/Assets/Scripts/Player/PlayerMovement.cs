@@ -13,6 +13,9 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] float crouchHeight;
     [SerializeField] float defaultHeight;
     [SerializeField] float footstepSoundDelay;
+    [SerializeField] GameObject footstepParticles;
+    [SerializeField] Transform footstepSpawnPoint;
+    [SerializeField] float despawnDelay;
 
     [Header("Jumping")]
     [SerializeField] float jumpForce;
@@ -216,7 +219,47 @@ public class PlayerMovement : NetworkBehaviour
 
     void Update()
     {
-        PlayFootstepSfxRpc();
+        FootstepEffects();
+    }
+
+    void FootstepEffects()
+    {
+        if (!isWalking) { return; }
+
+        float speedMultiplier = 1f;
+        if (isCrouching)
+        {
+            speedMultiplier = 1 - crouchSpeed / walkSpeed;
+        }
+        else if (isRunning)
+        {
+            speedMultiplier = (walkSpeed / runSpeed) + 1;
+        }
+
+        if (currentFootstepTime > 0)
+        {
+            currentFootstepTime -= Time.deltaTime;
+        }
+        else if (currentFootstepTime <= 0)
+        {
+            PlayFootstepSfxRpc();
+            SpawnFootstepParticlesRpc();
+
+            currentFootstepTime = footstepSoundDelay / speedMultiplier;
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    void PlayFootstepSfxRpc()
+    {
+        AudioManager.Instance.PlaySfx(AudioManager.Instance.GetFootstepSfx(), transform);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    void SpawnFootstepParticlesRpc()
+    {
+        GameObject spawned = Instantiate(footstepParticles, footstepSpawnPoint.position, Quaternion.identity);
+        Destroy(spawned, despawnDelay);
     }
 
     void FixedUpdate()
@@ -262,34 +305,6 @@ public class PlayerMovement : NetworkBehaviour
 
         // Keeps the current y velocity so gravity and jumping aren't overwritten
         myRigidbody.linearVelocity = new Vector3(targetVelocity.x, myRigidbody.linearVelocity.y, targetVelocity.z);
-    }
-
-    [Rpc(SendTo.Everyone)]
-    void PlayFootstepSfxRpc()
-    {
-        if (!isWalking) { return; }
-
-        float speedMultiplier = 1f;
-        if (isCrouching)
-        {
-            speedMultiplier = 1 - crouchSpeed / walkSpeed;
-        }
-        else if (isRunning)
-        {
-            speedMultiplier = (walkSpeed / runSpeed) + 1; 
-        }
-
-        if (currentFootstepTime > 0)
-        {
-            currentFootstepTime -= Time.deltaTime;
-        }
-        else if (currentFootstepTime <= 0)
-        {
-            AudioClip clip = AudioManager.Instance.GetFootstepSfx();
-            AudioManager.Instance.PlaySfx(clip, transform);
-
-            currentFootstepTime = footstepSoundDelay / speedMultiplier;
-        }
     }
 
     // Pass through input
