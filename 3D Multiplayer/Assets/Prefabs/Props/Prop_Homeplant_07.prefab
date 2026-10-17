@@ -105,7 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1799847929
+  GlobalObjectIdHash: 4156913340
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -156,4 +156,4 @@ CapsuleCollider:
   m_Radius: 0.1675801
   m_Height: 0.69266135
   m_Direction: 1
-  m_Center: {x: -0.09744002, y: 0.34633076, z: 0.009123802}
+  m_Center: {x: 0, y: 0.34633076, z: 0}

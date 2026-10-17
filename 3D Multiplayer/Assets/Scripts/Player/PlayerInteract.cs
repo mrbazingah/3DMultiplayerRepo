@@ -25,23 +25,25 @@ public class PlayerInteract : NetworkBehaviour
         if (!IsOwner) { return; }
 
         GameObject detectedObject = GetDetectedObject();
-        if (detectedObject != null && detectedObject.layer == LayerMask.NameToLayer("Door") && detectedObject.TryGetComponent(out Door door))
+        if (detectedObject == null) 
+        {
+            myUiManager.SetInteractField(false, "");
+            return; 
+        }
+
+        if (detectedObject.layer == LayerMask.NameToLayer("Door") && detectedObject.TryGetComponent(out Door door))
         {
             bool isOpen = door.GetIsOpen();
             string action = isOpen ? "Close" : "Open";
             myUiManager.SetInteractField(true, action);
         }
-        else if (detectedObject != null && detectedObject.layer == LayerMask.NameToLayer("Prop") && myData.GetPlayerTeam().Value == GameManager.Team.Props)
+        else if (detectedObject.layer == LayerMask.NameToLayer("Prop") && myData.GetPlayerTeam().Value == GameManager.Team.Props)
         {
             myUiManager.SetInteractField(true, "Swap");
         }
-        else if (detectedObject != null && detectedObject.layer == LayerMask.NameToLayer("LobbyUI"))
+        else if (detectedObject.layer == LayerMask.NameToLayer("LobbyUI"))
         {
             myUiManager.SetInteractField(true, "Interact");
-        }
-        else if (detectedObject == null)
-        {
-            myUiManager.SetInteractField(false, "");
         }
     }
 
