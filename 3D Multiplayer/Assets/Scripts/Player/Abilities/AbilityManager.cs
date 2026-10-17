@@ -77,11 +77,11 @@ public class AbilityManager : NetworkBehaviour
     IEnumerator InvisTimer()
     {
         ability1Active = true;
-        GetComponent<InvisAbility>().SetAbilityActive(true);
+        GetComponent<InvisAbility>().HandleInvisRpc(true);
 
         yield return new WaitForSeconds(propAbilities[0].GetDuration());
 
         ability1Active = false;
-        GetComponent<InvisAbility>().SetAbilityActive(false);
+        GetComponent<InvisAbility>().HandleInvisRpc(false);
     }
 }

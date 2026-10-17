@@ -19,13 +19,13 @@ public class InvisAbility : Ability
         myModelManger = GetComponent<PlayerModelManager>();
     }
 
-    public void SetAbilityActive(bool isActive)
+    [Rpc(SendTo.Everyone)]
+    public void HandleInvisRpc(bool isActive)
     {
-        HandleInvisRpc(isActive);
+        ApplyInvis(isActive);
     }
 
-    [Rpc(SendTo.Everyone)]
-    void HandleInvisRpc(bool isActive)
+    public void ApplyInvis(bool isActive)
     {
         abilityActive = isActive;
 

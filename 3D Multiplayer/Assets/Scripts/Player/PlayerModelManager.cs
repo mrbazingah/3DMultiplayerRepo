@@ -240,12 +240,12 @@ public class PlayerModelManager : NetworkBehaviour
             foreach (Renderer r in spawnedProp.GetComponentsInChildren<Renderer>(true))
             {
                 UpdateSilhouette(r);
+            }
 
-                InvisAbility invis = GetComponent<InvisAbility>();
-                if (invis.GetAbilityActive())
-                {
-                    invis.SetAbilityActive(true);
-                }
+            InvisAbility invis = GetComponent<InvisAbility>();
+            if (invis.GetAbilityActive())
+            {
+                invis.ApplyInvis(true);
             }
         }
     }
