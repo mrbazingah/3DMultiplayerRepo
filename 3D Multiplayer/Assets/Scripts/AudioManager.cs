@@ -9,7 +9,8 @@ public class AudioManager : MonoBehaviour
     [field:SerializeField] public AudioClip reloadSfx { get; private set; }
     [field:SerializeField] public AudioClip doorOpenSfx { get; private set; }
     [field:SerializeField] public AudioClip doorCloseSfx { get; private set; }
-    [field:SerializeField] public AudioClip swapPropSfx { get; private set; }
+    [field:SerializeField] public AudioClip propSwapSfx { get; private set; }
+    [field:SerializeField] public AudioClip propInvisSfx { get; private set; }
     
     [SerializeField] AudioClip[] footstepsSfx;
     [SerializeField] GameObject audioSourcePrefab;

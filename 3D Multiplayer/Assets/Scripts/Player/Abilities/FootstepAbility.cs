@@ -44,7 +44,15 @@ public class FootstepAbility : Ability
     {
         if (myMovement == null || !myMovement.GetIsWalking()) { return; }
 
-        float speedMultiplier = (myMovement.GetWalkSpeed() / myMovement.GetRunSpeed()) + 1;
+        float speedMultiplier = 1;
+        if (myMovement.GetIsCrouching())
+        {
+            speedMultiplier = (myMovement.GetCrouchSpeed() / myMovement.GetWalkSpeed());
+        }
+        else if (myMovement.GetIsRunning())
+        {
+            speedMultiplier = (myMovement.GetWalkSpeed() / myMovement.GetRunSpeed()) + 1;
+        }
 
         if (currentFootstepTime > 0)
         {
@@ -54,7 +62,7 @@ public class FootstepAbility : Ability
         {
             SpawnFootstepRpc(spawnPoint.position, transform.rotation);
 
-            currentFootstepTime = myMovement.GetIsRunning() ? footstepTime / speedMultiplier : footstepTime;
+            currentFootstepTime = footstepTime / speedMultiplier;
         }
     }
 

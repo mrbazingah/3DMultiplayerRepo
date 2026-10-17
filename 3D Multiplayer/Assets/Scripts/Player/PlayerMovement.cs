@@ -269,7 +269,15 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!isWalking) { return; }
 
-        float speedMultiplier = (walkSpeed / runSpeed) + 1f;
+        float speedMultiplier = 1f;
+        if (isCrouching)
+        {
+            speedMultiplier = 1 - crouchSpeed / walkSpeed;
+        }
+        else if (isRunning)
+        {
+            speedMultiplier = (walkSpeed / runSpeed) + 1; 
+        }
 
         if (currentFootstepTime > 0)
         {
@@ -280,7 +288,7 @@ public class PlayerMovement : NetworkBehaviour
             AudioClip clip = AudioManager.Instance.GetFootstepSfx();
             AudioManager.Instance.PlaySfx(clip, transform);
 
-            currentFootstepTime = isRunning ? footstepSoundDelay / speedMultiplier : footstepSoundDelay;
+            currentFootstepTime = footstepSoundDelay / speedMultiplier;
         }
     }
 
@@ -293,6 +301,9 @@ public class PlayerMovement : NetworkBehaviour
         isRunning = false;
 
         currentSpeed = isCrouching ? crouchSpeed : walkSpeed;
+
+        float speed = isCrouching ? defaultAnimatorSpeed - (1 - walkSpeed / runSpeed) : defaultAnimatorSpeed;
+        myAnimator.speed = speed;
 
         if (myData.GetPlayerTeam().Value == GameManager.Team.Hunters)
         {
@@ -479,6 +490,11 @@ public class PlayerMovement : NetworkBehaviour
         return spinePitch;
     }
 
+    public bool GetIsCrouching()
+    {
+        return isCrouching;
+    }
+
     public bool GetIsWalking()
     {
         return isWalking;
@@ -487,6 +503,11 @@ public class PlayerMovement : NetworkBehaviour
     public bool GetIsRunning()
     {
         return isRunning;
+    }
+
+    public float GetCrouchSpeed()
+    {
+        return crouchSpeed;
     }
 
     public float GetWalkSpeed()

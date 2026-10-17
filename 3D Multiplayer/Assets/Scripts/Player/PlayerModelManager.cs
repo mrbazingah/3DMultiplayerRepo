@@ -201,6 +201,10 @@ public class PlayerModelManager : NetworkBehaviour
             float yOffset = propRegistry.GetYOffset(currentPropType.Value);
             spawnedProp.transform.localPosition += new Vector3(0, yOffset, 0);
 
+            // Only done when a prop was spawned, spawnedProp is null when discarding
+            Collider propCollider = spawnedProp.GetComponent<Collider>();
+            propCollider.sharedMaterial = myCollider.sharedMaterial;
+
             defaultVisuals.SetActive(false);
             myCollider.enabled = false;
         }
@@ -214,15 +218,15 @@ public class PlayerModelManager : NetworkBehaviour
         Collider spawnedCollider = currentPropType.Value != Prop.PropType.None ? spawnedProp.GetComponent<Collider>() : myCollider;
         Collider previousCollider = currentPropModel != null ? currentPropModel.GetComponent<Collider>() : myCollider;
 
-        Collider propCollider = spawnedProp.GetComponent<Collider>();
-        propCollider.sharedMaterial = myCollider.sharedMaterial;
-
         AlignPlayerToGround(previousCollider, spawnedCollider);
 
         if (currentPropModel != null)
         {
             currentPropModel.SetActive(false);
             Destroy(currentPropModel);
+
+            // Destroy() only happens at the end of the frame, so the reference is cleared now for GetCurrentModel()
+            currentPropModel = null;
         }
 
         if (spawnedProp != null)
@@ -231,7 +235,11 @@ public class PlayerModelManager : NetworkBehaviour
             currentPropModel = spawnedProp;
             SetLayerRecursively(currentPropModel, LayerMask.NameToLayer("Player Prop"));
 
-            PlaySwapPropSfxRpc();
+            // ApplyPropModel() runs on every machine, so only the owner sends the sound RPC
+            if (IsOwner)
+            {
+                PlaySwapPropSfxRpc();
+            }
 
             Collider newCol = GetCurrentModelCollider();
             myMovement.SetPlayerCollider(newCol);
@@ -241,12 +249,12 @@ public class PlayerModelManager : NetworkBehaviour
             {
                 UpdateSilhouette(r);
             }
+        }
 
-            InvisAbility invis = GetComponent<InvisAbility>();
-            if (invis.GetAbilityActive())
-            {
-                invis.ApplyInvis(true);
-            }
+        InvisAbility invis = GetComponent<InvisAbility>();
+        if (invis.GetAbilityActive())
+        {
+            invis.ApplyInvis(true);
         }
     }
 
@@ -280,7 +288,7 @@ public class PlayerModelManager : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     void PlaySwapPropSfxRpc()
     {
-        AudioManager.Instance.PlaySfx(AudioManager.Instance.swapPropSfx, transform);
+        AudioManager.Instance.PlaySfx(AudioManager.Instance.propSwapSfx, transform);
     }
 
     // Sets layer on each child of an object

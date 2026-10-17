@@ -47,9 +47,16 @@ public class AbilityManager : NetworkBehaviour
         else if (myData.GetPlayerTeam().Value == GameManager.Team.Props)
         {
             StartCoroutine(InvisTimer());
+            PlayPropInvisSfxRpc();
 
             Debug.Log("Prop ability 1");
         }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    void PlayPropInvisSfxRpc()
+    {
+        AudioManager.Instance.PlaySfx(AudioManager.Instance.propInvisSfx, transform);
     }
 
     IEnumerator FootstepTimer(List<FootstepAbility> propFootsteps)
