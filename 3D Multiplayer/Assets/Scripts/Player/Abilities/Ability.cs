@@ -7,6 +7,8 @@ public class Ability : NetworkBehaviour
     [SerializeField] protected float cooldown;
     [SerializeField] protected float duration;
 
+    protected bool abilityActive;
+
     protected PlayerData myData;
 
     public override void OnNetworkSpawn()
@@ -17,5 +19,10 @@ public class Ability : NetworkBehaviour
     public float GetDuration()
     {
         return duration;
+    }
+
+    public bool GetAbilityActive()
+    {
+        return abilityActive;
     }
 }

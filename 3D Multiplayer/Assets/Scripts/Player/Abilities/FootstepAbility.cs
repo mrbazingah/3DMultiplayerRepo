@@ -12,7 +12,6 @@ public class FootstepAbility : Ability
     [SerializeField] float maxVisableFootsteps;
     [SerializeField] LayerMask groundLayer;
     [SerializeField] float maxGroundDistance = 10f;
-    [SerializeField] bool abilityActive;
     [SerializeField] List<GameObject> spawnedFootsteps = new List<GameObject>();
 
     float currentFootstepTime;

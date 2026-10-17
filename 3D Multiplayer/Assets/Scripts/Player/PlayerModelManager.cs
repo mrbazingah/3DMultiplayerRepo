@@ -236,14 +236,17 @@ public class PlayerModelManager : NetworkBehaviour
             Collider newCol = GetCurrentModelCollider();
             myMovement.SetPlayerCollider(newCol);
 
-            // Change silhouette color
-            Renderer modelRenderer = spawnedProp.GetComponent<Renderer>();
-            if (modelRenderer == null)
+            // Updates renderers
+            foreach (Renderer r in spawnedProp.GetComponentsInChildren<Renderer>(true))
             {
-                modelRenderer = spawnedProp.GetComponentInChildren<Renderer>();
-            }
+                UpdateSilhouette(r);
 
-            UpdateSilhouette(modelRenderer);
+                InvisAbility invis = GetComponent<InvisAbility>();
+                if (invis.GetAbilityActive())
+                {
+                    invis.SetAbilityActive(true);
+                }
+            }
         }
     }
 

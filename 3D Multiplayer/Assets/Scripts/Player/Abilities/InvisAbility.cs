@@ -10,8 +10,6 @@ public class InvisAbility : Ability
 
     readonly Dictionary<Renderer, Material[]> savedMats = new Dictionary<Renderer, Material[]>();
 
-    bool abilityActive;
-
     PlayerModelManager myModelManger;
 
     public override void OnNetworkSpawn()
@@ -23,22 +21,28 @@ public class InvisAbility : Ability
 
     public void SetAbilityActive(bool isActive)
     {
-        abilityActive = isActive;
-        HandleInvisRpc();
+        HandleInvisRpc(isActive);
     }
 
     [Rpc(SendTo.Everyone)]
-    void HandleInvisRpc()
+    void HandleInvisRpc(bool isActive)
     {
-        GameObject model = myModelManger.GetCurrentModel();
+        abilityActive = isActive;
 
+        GameObject model = myModelManger.GetCurrentModel();
         foreach (Renderer r in model.GetComponentsInChildren<Renderer>(true))
         {
+            if (!IsOwner)
+            {
+                r.enabled = !abilityActive;
+                continue;
+            }
+
             if (abilityActive)
             {
                 if (savedMats.ContainsKey(r)) { continue; }
                 savedMats[r] = r.sharedMaterials;
-                r.sharedMaterials = IsOwner ? new Material[] { depthMask, outlineMat } : new Material[] { depthMask };
+                r.sharedMaterials = new Material[] { depthMask, outlineMat };
                 r.shadowCastingMode = ShadowCastingMode.Off;
 
                 Debug.Log("Removed mat");
