@@ -5,19 +5,18 @@ using UnityEngine.InputSystem;
 public class PlayerInteract : NetworkBehaviour
 {
     [SerializeField] LayerMask interactLayer;
+    [SerializeField] LayerMask blockingLayer;
     [SerializeField] Transform camPivot;
     [SerializeField] float detectionRange;
 
     PlayerModelManager myModelManager;
     PlayerUIManager myUiManager;
-    PlayerMovement myMovement;
     PlayerData myData;
 
     public override void OnNetworkSpawn()
     {
         myModelManager = GetComponent<PlayerModelManager>();
         myUiManager = GetComponent<PlayerUIManager>();
-        myMovement = GetComponent<PlayerMovement>();
         myData = GetComponent<PlayerData>();
     }
 
@@ -36,7 +35,7 @@ public class PlayerInteract : NetworkBehaviour
         {
             myUiManager.SetInteractField(true, "Swap");
         }
-        else if (detectedObject != null && detectedObject.layer == LayerMask.NameToLayer("LobbyUI") && myData.GetPlayerTeam().Value == GameManager.Team.None)
+        else if (detectedObject != null && detectedObject.layer == LayerMask.NameToLayer("LobbyUI"))
         {
             myUiManager.SetInteractField(true, "Interact");
         }
@@ -67,9 +66,12 @@ public class PlayerInteract : NetworkBehaviour
 
     GameObject GetDetectedObject()
     {
-        if (Physics.Raycast(camPivot.position, camPivot.forward, out RaycastHit hit, detectionRange, interactLayer))
+        LayerMask rayMask = interactLayer | blockingLayer;
+
+        if (Physics.Raycast(camPivot.position, camPivot.forward, out RaycastHit hit, detectionRange, rayMask))
         {
-            return hit.collider.gameObject;
+            bool isInteractable = (interactLayer.value & (1 << hit.collider.gameObject.layer)) != 0;
+            return isInteractable ? hit.collider.gameObject : null;
         }
 
         return null;

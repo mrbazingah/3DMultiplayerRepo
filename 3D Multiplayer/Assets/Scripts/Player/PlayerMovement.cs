@@ -12,10 +12,14 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] float crouchSpeed;
     [SerializeField] float crouchHeight;
     [SerializeField] float defaultHeight;
+
+    [Header("Footsteps")]
     [SerializeField] float footstepSoundDelay;
     [SerializeField] GameObject footstepParticles;
     [SerializeField] Transform footstepSpawnPoint;
     [SerializeField] float despawnDelay;
+    [SerializeField] float maxGroundDistance;
+    [SerializeField] float offset;
 
     [Header("Jumping")]
     [SerializeField] float jumpForce;
@@ -224,7 +228,7 @@ public class PlayerMovement : NetworkBehaviour
 
     void FootstepEffects()
     {
-        if (!isWalking) { return; }
+        if (!isWalking || !IsGrounded()) { return; }
 
         float speedMultiplier = 1f;
         if (isCrouching)
@@ -243,7 +247,7 @@ public class PlayerMovement : NetworkBehaviour
         else if (currentFootstepTime <= 0)
         {
             PlayFootstepSfxRpc();
-            SpawnFootstepParticlesRpc();
+            SpawnFootstepParticlesRpc(footstepSpawnPoint.position, transform.rotation);
 
             currentFootstepTime = footstepSoundDelay / speedMultiplier;
         }
@@ -256,9 +260,14 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     [Rpc(SendTo.Everyone)]
-    void SpawnFootstepParticlesRpc()
+    void SpawnFootstepParticlesRpc(Vector3 spawnPos, Quaternion spawnRot)
     {
-        GameObject spawned = Instantiate(footstepParticles, footstepSpawnPoint.position, Quaternion.identity);
+        if (!Physics.Raycast(spawnPos, Vector3.down, out RaycastHit hit, maxGroundDistance, groundLayer, QueryTriggerInteraction.Ignore)) { return; }
+
+        Vector3 position = hit.point + hit.normal * offset;
+        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * spawnRot;
+
+        GameObject spawned = Instantiate(footstepParticles, position, rotation);
         Destroy(spawned, despawnDelay);
     }
 
