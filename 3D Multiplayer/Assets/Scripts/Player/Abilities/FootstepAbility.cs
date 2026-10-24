@@ -16,14 +16,8 @@ public class FootstepAbility : Ability
 
     float currentFootstepTime;
 
-    PlayerMovement myMovement;
-
-    public override void OnNetworkSpawn()
+    void Awake()
     {
-        base.OnNetworkSpawn();
-
-        myMovement = GetComponent<PlayerMovement>();
-
         SetAbilityActive(false);
     }
 

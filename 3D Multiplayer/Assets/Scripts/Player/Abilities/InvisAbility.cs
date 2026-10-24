@@ -10,15 +10,6 @@ public class InvisAbility : Ability
 
     readonly Dictionary<Renderer, Material[]> savedMats = new Dictionary<Renderer, Material[]>();
 
-    PlayerModelManager myModelManger;
-
-    public override void OnNetworkSpawn()
-    {
-        base.OnNetworkSpawn();
-
-        myModelManger = GetComponent<PlayerModelManager>();
-    }
-
     [Rpc(SendTo.Everyone)]
     public void HandleInvisRpc(bool isActive)
     {
@@ -29,7 +20,7 @@ public class InvisAbility : Ability
     {
         abilityActive = isActive;
 
-        GameObject model = myModelManger.GetCurrentModel();
+        GameObject model = myModelManager.GetCurrentModel();
         foreach (Renderer r in model.GetComponentsInChildren<Renderer>(true))
         {
             if (!IsOwner)

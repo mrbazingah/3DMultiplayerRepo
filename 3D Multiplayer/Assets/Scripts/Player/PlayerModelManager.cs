@@ -43,9 +43,8 @@ public class PlayerModelManager : NetworkBehaviour
     PlayerUIManager myUiManager;
     PlayerData myData;
 
-    public override void OnNetworkSpawn()
+    void Awake()
     {
-        propRegistry = FindFirstObjectByType<PropRegistry>();
         myMovement = GetComponent<PlayerMovement>();
         myHealth = GetComponent<PlayerHealth>();
         myCollider = GetComponent<Collider>();
@@ -54,23 +53,30 @@ public class PlayerModelManager : NetworkBehaviour
         myData = GetComponent<PlayerData>();
 
         SetupSpineBones();
+        UpdateSilhouetteColor();
+    }
 
+    public override void OnNetworkSpawn()
+    {
         // Subscribes to network variable changes
         currentPropType.OnValueChanged += OnCurrentPropTypeChanged;
         lockRotation.OnValueChanged += OnLockRotationChanged;
-
-        // Follows the team from PlayerMovement so canSwap stays correct on every client, and applies the current value for players who spawn with a team already set
-        NetworkVariable<GameManager.Team> team = myData.GetPlayerTeam();
-        team.OnValueChanged += OnTeamChanged;
-        SetCanSwap(team.Value == GameManager.Team.Props);
 
         if (IsOwner)
         {
             // Makes sure local player model has correct layer
             SetLayerRecursively(defaultVisuals, LayerMask.NameToLayer("Player Visuals"));
         }
+    }
 
-        UpdateSilhouetteColor();
+    void Start()
+    {
+        propRegistry = FindFirstObjectByType<PropRegistry>();
+
+        // Follows the team from PlayerMovement so canSwap stays correct on every client, and applies the current value for players who spawn with a team already set
+        NetworkVariable<GameManager.Team> team = myData.GetPlayerTeam();
+        team.OnValueChanged += OnTeamChanged;
+        SetCanSwap(team.Value == GameManager.Team.Props);
     }
 
     public void UpdateSilhouetteColor()
@@ -337,7 +343,7 @@ public class PlayerModelManager : NetworkBehaviour
 
     // Server RPC to toggle lock rotation and save the current rotation if locking
     [Rpc(SendTo.Server)]
-    void ToggleLockServerRpc(Quaternion currentRotation)
+    public void ToggleLockServerRpc(Quaternion currentRotation)
     {
         if (myData.GetPlayerTeam().Value != GameManager.Team.Props) { return; }
 
@@ -447,5 +453,10 @@ public class PlayerModelManager : NetworkBehaviour
     public GameObject GetCurrentModel()
     {
         return currentPropModel != null ? currentPropModel : defaultVisuals;
+    }
+
+    public bool GetLockRotation()
+    {
+        return lockRotation.Value;
     }
 }

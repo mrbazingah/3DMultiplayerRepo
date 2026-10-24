@@ -110,7 +110,7 @@ public class GameManager : NetworkBehaviour
         {
             if (player != null)
             {
-                player.TeleportTo(pos);
+                player.TeleportTo(pos, Quaternion.identity);
             }
         }
     }

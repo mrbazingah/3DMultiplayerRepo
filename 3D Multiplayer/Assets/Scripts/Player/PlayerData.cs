@@ -10,12 +10,15 @@ public class PlayerData : NetworkBehaviour
     PlayerModelManager myModelManager;
     AbilityManager myAbilityManager;
 
-    public override void OnNetworkSpawn()
+    void Awake()
     {
         myMovement = GetComponent<PlayerMovement>();
         myModelManager = GetComponent<PlayerModelManager>();
         myAbilityManager = GetComponent<AbilityManager>();
+    }
 
+    public override void OnNetworkSpawn()
+    {
         playerTeam.OnValueChanged += OnTeamChanged;
         OnTeamChanged(playerTeam.Value, playerTeam.Value);
 

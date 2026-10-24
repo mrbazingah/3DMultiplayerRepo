@@ -1007,6 +1007,7 @@ GameObject:
   - component: {fileID: 4758921692806444336}
   - component: {fileID: 3742388957930426497}
   - component: {fileID: 2219695750188894955}
+  - component: {fileID: -28013347410862029}
   - component: {fileID: 1154854785234064690}
   - component: {fileID: 1046686182426769148}
   - component: {fileID: -2791437134436670039}
@@ -1292,6 +1293,7 @@ MonoBehaviour:
   - {fileID: 3742388957930426497}
   propAbilities:
   - {fileID: 2219695750188894955}
+  - {fileID: -28013347410862029}
   selectedAbilitySlot: 0
 --- !u!114 &3742388957930426497
 MonoBehaviour:
@@ -1338,6 +1340,27 @@ MonoBehaviour:
   duration: 7
   outlineMat: {fileID: 2100000, guid: 26434570edd55914da9f8472232f3c08, type: 2}
   depthMask: {fileID: 2100000, guid: b6b8c122c0e8e694d92ee06a6114bc3d, type: 2}
+--- !u!114 &-28013347410862029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3338395985008094567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1b134dac0fd02940812431a88d015a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InstantSwapAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  abilityName: Instant Swap
+  cooldown: 60
+  duration: 0
+  swapRadius: 5
+  maxDistance: 5
+  propLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &1154854785234064690
 MonoBehaviour:
   m_ObjectHideFlags: 0

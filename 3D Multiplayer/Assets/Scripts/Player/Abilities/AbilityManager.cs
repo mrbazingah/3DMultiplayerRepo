@@ -16,10 +16,14 @@ public class AbilityManager : NetworkBehaviour
     bool ability3Active;
 
     PlayerData myData;
+    InvisAbility myInvis;
+    InstantSwapAbility myInstantSwap;
 
-    public override void OnNetworkSpawn()
+    void Awake()
     {
         myData = GetComponent<PlayerData>();
+        myInvis = GetComponent<InvisAbility>();
+        myInstantSwap = GetComponent<InstantSwapAbility>();
     }
 
     public void OnAbility1(InputValue value)
@@ -84,11 +88,28 @@ public class AbilityManager : NetworkBehaviour
     IEnumerator InvisTimer()
     {
         ability1Active = true;
-        GetComponent<InvisAbility>().HandleInvisRpc(true);
+        myInvis.HandleInvisRpc(true);
 
         yield return new WaitForSeconds(propAbilities[0].GetDuration());
 
         ability1Active = false;
-        GetComponent<InvisAbility>().HandleInvisRpc(false);
+        myInvis.HandleInvisRpc(false);
+    }
+
+    public void OnAbility2(InputValue value)
+    {
+        if (!IsOwner || !value.isPressed || ability2Active) { return; }
+
+        if (myData.GetPlayerTeam().Value == GameManager.Team.Hunters)
+        {
+
+        }
+        else if (myData.GetPlayerTeam().Value == GameManager.Team.Props)
+        {
+            PlayPropInvisSfxRpc();
+            myInstantSwap.SwapProp();
+
+            Debug.Log("Prop ability 2");
+        }
     }
 }

@@ -89,14 +89,17 @@ public class PlayerMovement : NetworkBehaviour
     PlayerData myData;
     #endregion
 
-    public override void OnNetworkSpawn()
+    void Awake()
     {
         myRigidbody = GetComponent<Rigidbody>();
         myAnimator = GetComponentInChildren<Animator>();
         myCollider = GetComponent<Collider>();
         myModelManager = GetComponent<PlayerModelManager>();
         myData = GetComponent<PlayerData>();
+    }
 
+    public override void OnNetworkSpawn()
+    {
         // Registers before the owner check since the server runs this for every player object and not just the ones it owns
         if (GameManager.Instance != null)
         {
@@ -127,7 +130,10 @@ public class PlayerMovement : NetworkBehaviour
             enabled = false;
             return;
         }
+    }
 
+    void Start()
+    {
         myRigidbody.isKinematic = false;
 
         // Set before SetCanMove() so clearing held input always has the real default to reset to
@@ -203,7 +209,7 @@ public class PlayerMovement : NetworkBehaviour
         currentCam = isHunter ? firstPersonCam : thirdPersonCam;
     }
 
-    public void TeleportTo(Vector3 pos)
+    public void TeleportTo(Vector3 pos, Quaternion rot)
     {
         // The owner has authority over its own rigidbody so the move happens here
         if (!IsOwner) { return; }
@@ -214,10 +220,12 @@ public class PlayerMovement : NetworkBehaviour
             myRigidbody.linearVelocity = Vector3.zero;
             myRigidbody.angularVelocity = Vector3.zero;
             myRigidbody.position = pos;
+            myRigidbody.rotation = rot;
         }
         else
         {
             transform.position = pos;
+            transform.rotation = rot;
         }
     }
 

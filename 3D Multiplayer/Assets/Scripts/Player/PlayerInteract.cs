@@ -13,7 +13,7 @@ public class PlayerInteract : NetworkBehaviour
     PlayerUIManager myUiManager;
     PlayerData myData;
 
-    public override void OnNetworkSpawn()
+    void Awake()
     {
         myModelManager = GetComponent<PlayerModelManager>();
         myUiManager = GetComponent<PlayerUIManager>();

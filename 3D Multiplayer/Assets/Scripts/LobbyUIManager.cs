@@ -14,11 +14,14 @@ public class LobbyUIManager : NetworkBehaviour
     RelayManager relayManager;
     PlayerMovement playerMovement;
 
+    void Awake()
+    {
+        uiCanvas.SetActive(isOpen);
+    }
+
     void Start()
     {
         relayManager = FindFirstObjectByType<RelayManager>();
-
-        uiCanvas.SetActive(isOpen);
 
         if (relayManager != null)
         {

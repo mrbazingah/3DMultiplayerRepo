@@ -26,7 +26,6 @@ public class PlayerUIManager : NetworkBehaviour
         myMovement = GetComponent<PlayerMovement>();
         interactFieldText = interactField.GetComponent<TextMeshProUGUI>();
         lockRotFieldText = lockRotField.GetComponent<TextMeshProUGUI>();
-        lobbyUIManager = FindFirstObjectByType<LobbyUIManager>();
 
         SetAmmoTextActive(false);
         SetHealthTextActive(false);
@@ -34,6 +33,11 @@ public class PlayerUIManager : NetworkBehaviour
         SetLockRotField(false, "");
 
         pauseMenu.SetActive(false);
+    }
+
+    void Start()
+    {
+        lobbyUIManager = FindFirstObjectByType<LobbyUIManager>();
     }
 
     public override void OnNetworkSpawn()

@@ -27,14 +27,17 @@ public class PlayerShooting : NetworkBehaviour
     Animator myAnimator;
     PlayerData myData;
 
-    public override void OnNetworkSpawn()
+    void Awake()
     {
         myMovement = GetComponent<PlayerMovement>();
         myUiManager = GetComponent<PlayerUIManager>();
         myModelManager = GetComponent<PlayerModelManager>();
         myAnimator = GetComponentInChildren<Animator>();
         myData = GetComponent<PlayerData>();
+    }
 
+    public override void OnNetworkSpawn()
+    {
         if (IsServer)
         {
             ammo.Value = maxAmmo;
@@ -43,7 +46,10 @@ public class PlayerShooting : NetworkBehaviour
         ammo.OnValueChanged += OnAmmoChanged;
         isReloading.OnValueChanged += OnReloadingChanged;
         OnAmmoChanged(0, ammo.Value);
+    }
 
+    void Start()
+    {
         // Applies the current team since OnValueChanged only fires on a change
         NetworkVariable<GameManager.Team> team = myData.GetPlayerTeam();
         team.OnValueChanged += OnTeamChanged;

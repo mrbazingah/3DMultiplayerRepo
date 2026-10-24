@@ -10,10 +10,14 @@ public class Ability : NetworkBehaviour
     protected bool abilityActive;
 
     protected PlayerData myData;
+    protected PlayerModelManager myModelManager;
+    protected PlayerMovement myMovement;
 
-    public override void OnNetworkSpawn()
+    void Awake()
     {
         myData = GetComponent<PlayerData>();
+        myModelManager = GetComponent<PlayerModelManager>();
+        myMovement = GetComponent<PlayerMovement>();
     }
 
     public float GetDuration()

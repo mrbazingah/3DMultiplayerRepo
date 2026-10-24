@@ -12,12 +12,15 @@ public class PlayerHealth : NetworkBehaviour
     PlayerMovement myMovement;
     PlayerData myData;
 
-    public override void OnNetworkSpawn()
+    void Awake()
     {
         myMovement = GetComponent<PlayerMovement>();
         uiManager = GetComponent<PlayerUIManager>();
         myData = GetComponent<PlayerData>();
+    }
 
+    public override void OnNetworkSpawn()
+    {
         if (IsServer)
         {
             maxHealth.Value = defaultMaxHealth;
@@ -25,7 +28,10 @@ public class PlayerHealth : NetworkBehaviour
         }
 
         health.OnValueChanged += OnHealthChanged;
+    }
 
+    void Start()
+    {
         NetworkVariable<GameManager.Team> team = myData.GetPlayerTeam();
         team.OnValueChanged += OnTeamChanged;
         OnTeamChanged(team.Value, team.Value);
