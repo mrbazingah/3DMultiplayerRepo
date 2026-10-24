@@ -1008,6 +1008,7 @@ GameObject:
   - component: {fileID: 3742388957930426497}
   - component: {fileID: 2219695750188894955}
   - component: {fileID: -28013347410862029}
+  - component: {fileID: -1871182730713673068}
   - component: {fileID: 1154854785234064690}
   - component: {fileID: 1046686182426769148}
   - component: {fileID: -2791437134436670039}
@@ -1291,6 +1292,7 @@ MonoBehaviour:
   abilitySlots: []
   hunterAbilities:
   - {fileID: 3742388957930426497}
+  - {fileID: -1871182730713673068}
   propAbilities:
   - {fileID: 2219695750188894955}
   - {fileID: -28013347410862029}
@@ -1356,11 +1358,32 @@ MonoBehaviour:
   abilityName: Instant Swap
   cooldown: 60
   duration: 0
-  swapRadius: 5
-  maxDistance: 5
+  swapRadius: 3
+  maxDistance: 3
   propLayer:
     serializedVersion: 2
     m_Bits: 256
+--- !u!114 &-1871182730713673068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3338395985008094567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1eefc05740e72c4f955e76960b687bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ForcedTauntAbility
+  ShowTopMostFoldoutHeaderGroup: 1
+  abilityName: Forced Taunt
+  cooldown: 45
+  duration: 0
+  playerDetectionRadius: 7
+  maxDistance: 7
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 1216
 --- !u!114 &1154854785234064690
 MonoBehaviour:
   m_ObjectHideFlags: 0

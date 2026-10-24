@@ -50,6 +50,7 @@ MonoBehaviour:
   <doorCloseSfx>k__BackingField: {fileID: 8300000, guid: b7cda0347a335a74f9568bb79c700de2, type: 3}
   <propSwapSfx>k__BackingField: {fileID: 8300000, guid: 0f06a4def32994c4ba193651afc20293, type: 3}
   <propInvisSfx>k__BackingField: {fileID: 8300000, guid: 9d6f547874ec8344c82741466e4caeea, type: 3}
+  <propTauntSfx>k__BackingField: {fileID: 8300000, guid: ddb8ebb4afede7e4bb0ffa3d8c40afbf, type: 3}
   footstepsSfx:
   - {fileID: 8300000, guid: 65ecd7285a549c94691667fe1c152bd2, type: 3}
   - {fileID: 8300000, guid: 26eaab38e2ffc4245b1c998a78666d7e, type: 3}
