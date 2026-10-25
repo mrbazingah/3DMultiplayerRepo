@@ -23,10 +23,7 @@ public class InstantSwapAbility : Ability
         
         DespawnPropRpc(propObj);
 
-        if (!myModelManager.GetLockRotation())
-        {
-            myModelManager.ToggleLockServerRpc(propRot);
-        }
+        myModelManager.ToggleLockServerRpc(propRot, !myModelManager.GetLockRotation());
 
         myMovement.TeleportTo(propPos, propRot);
     }

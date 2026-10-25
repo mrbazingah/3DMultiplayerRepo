@@ -343,11 +343,11 @@ public class PlayerModelManager : NetworkBehaviour
 
     // Server RPC to toggle lock rotation and save the current rotation if locking
     [Rpc(SendTo.Server)]
-    public void ToggleLockServerRpc(Quaternion currentRotation)
+    public void ToggleLockServerRpc(Quaternion currentRotation, bool changeState = true)
     {
         if (myData.GetPlayerTeam().Value != GameManager.Team.Props) { return; }
 
-        lockRotation.Value = !lockRotation.Value;
+        lockRotation.Value = changeState? !lockRotation.Value : lockRotation.Value;
 
         if (lockRotation.Value)
         {
