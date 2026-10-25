@@ -1363,6 +1363,7 @@ MonoBehaviour:
   propLayer:
     serializedVersion: 2
     m_Bits: 256
+  smokeParticles: {fileID: 104829970813648393, guid: d3015b7eea383f64d8b81f965cc466e7, type: 3}
 --- !u!114 &-1871182730713673068
 MonoBehaviour:
   m_ObjectHideFlags: 0

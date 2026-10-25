@@ -6,6 +6,7 @@ public class InstantSwapAbility : Ability
     [SerializeField] float swapRadius;
     [SerializeField] float maxDistance;
     [SerializeField] LayerMask propLayer;
+    [SerializeField] GameObject smokeParticles;
 
     public void SwapProp()
     {
@@ -15,28 +16,37 @@ public class InstantSwapAbility : Ability
         Prop prop = propObj.GetComponent<Prop>();
         myModelManager.SwapModel(prop);
 
+        SpawnSmokeParticlesRpc(transform.position);
+
         Vector3 propPos = propObj.transform.position;
         Quaternion propRot = propObj.transform.rotation;
-
-        propObj.SetActive(false);
+        
+        DespawnPropRpc(propObj);
 
         if (!myModelManager.GetLockRotation())
         {
             myModelManager.ToggleLockServerRpc(propRot);
         }
 
-        DespawnPropRpc(propObj);
         myMovement.TeleportTo(propPos, propRot);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    void SpawnSmokeParticlesRpc(Vector3 pos)
+    {
+        GameObject smoke = Instantiate(smokeParticles, pos, Quaternion.identity);
+        Destroy(smoke, 5f);
     }
 
     GameObject GetRandomProp()
     {
         RaycastHit[] hits = Physics.SphereCastAll(transform.position, swapRadius, transform.forward, maxDistance, propLayer);
+        if (hits.Length == 0) { return null; }
 
         int randomIndex = Random.Range(0, hits.Length);
-        GameObject randomProp = hits[randomIndex].transform.gameObject;
+        Prop prop = hits[randomIndex].collider.GetComponentInParent<Prop>();
 
-        return randomProp; 
+        return prop != null ? prop.gameObject : null;
     }
 
     [Rpc(SendTo.Server)]
@@ -44,6 +54,7 @@ public class InstantSwapAbility : Ability
     {
         if (!propRef.TryGet(out NetworkObject propNetObj)) { return; }
 
+        propNetObj.gameObject.SetActive(false);
         propNetObj.Despawn();
     }
 }

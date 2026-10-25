@@ -107,7 +107,6 @@ public class AbilityManager : NetworkBehaviour
             forcedTaunt.ForcePropTaunt();
 
             Debug.Log("Hunter Ability 2");
-
         }
         else if (myData.GetPlayerTeam().Value == GameManager.Team.Props)
         {
@@ -120,7 +119,7 @@ public class AbilityManager : NetworkBehaviour
 
     public void OnAbility3(InputValue value)
     {
-        if (!IsOwner || !value.isPressed || ability2Active) { return; }
+        if (!IsOwner || !value.isPressed || ability3Active) { return; }
 
         if (myData.GetPlayerTeam().Value == GameManager.Team.Hunters)
         {
