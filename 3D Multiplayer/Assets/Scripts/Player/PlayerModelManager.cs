@@ -455,6 +455,11 @@ public class PlayerModelManager : NetworkBehaviour
         return currentPropModel != null ? currentPropModel : defaultVisuals;
     }
 
+    public Prop.PropType GetCurrentPropType()
+    {
+        return currentPropType.Value;
+    }
+
     public bool GetLockRotation()
     {
         return lockRotation.Value;

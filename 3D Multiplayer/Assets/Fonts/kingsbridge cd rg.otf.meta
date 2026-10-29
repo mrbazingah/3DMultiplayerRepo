@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 64d8e4296dbe59e4f8870f7c85c43993
+guid: 194af5ed38267024a9e63e5841e15d7d
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Pixelta
+  - Kingsbridge
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

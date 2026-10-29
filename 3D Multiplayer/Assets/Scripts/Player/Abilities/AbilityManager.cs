@@ -16,16 +16,25 @@ public class AbilityManager : NetworkBehaviour
     bool ability3Active;
 
     PlayerData myData;
+    PlayerUIManager myUiManager;
     InvisAbility myInvis;
     InstantSwapAbility myInstantSwap;
-    ForcedTauntAbility forcedTaunt;
+    ForcedTauntAbility myForcedTaunt;
+    DecoyAbility myDecoyAbility;
 
     void Awake()
     {
         myData = GetComponent<PlayerData>();
+        myUiManager = GetComponent<PlayerUIManager>();
         myInvis = GetComponent<InvisAbility>();
         myInstantSwap = GetComponent<InstantSwapAbility>();
-        forcedTaunt = GetComponent<ForcedTauntAbility>();
+        myForcedTaunt = GetComponent<ForcedTauntAbility>();
+        myDecoyAbility = GetComponent<DecoyAbility>();
+    }
+
+    void Update()
+    {
+        myUiManager.SetTauntField(myData.GetPlayerTeam().Value == GameManager.Team.Props, "Taunt");
     }
 
     public void OnAbility1(InputValue value)
@@ -104,7 +113,7 @@ public class AbilityManager : NetworkBehaviour
         
         if (myData.GetPlayerTeam().Value == GameManager.Team.Hunters)
         {
-            forcedTaunt.ForcePropTaunt();
+            myForcedTaunt.ForcePropTaunt();
 
             Debug.Log("Hunter Ability 2");
         }
@@ -127,7 +136,8 @@ public class AbilityManager : NetworkBehaviour
         }
         else if (myData.GetPlayerTeam().Value == GameManager.Team.Props)
         {
-           
+            myDecoyAbility.SpawnDecoy();
+
             Debug.Log("Prop ability 3");
         }
     }

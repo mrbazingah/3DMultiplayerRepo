@@ -10,11 +10,13 @@ public class PlayerUIManager : NetworkBehaviour
     [SerializeField] GameObject playerCanvas;
     [SerializeField] GameObject interactField;
     [SerializeField] GameObject lockRotField;
+    [SerializeField] GameObject tauntField;
     [Space]
     [SerializeField] GameObject pauseMenu;
 
     TextMeshProUGUI interactFieldText;
     TextMeshProUGUI lockRotFieldText;
+    TextMeshProUGUI tauntFieldText;
 
     bool pauseMenuActive;
 
@@ -26,6 +28,7 @@ public class PlayerUIManager : NetworkBehaviour
         myMovement = GetComponent<PlayerMovement>();
         interactFieldText = interactField.GetComponent<TextMeshProUGUI>();
         lockRotFieldText = lockRotField.GetComponent<TextMeshProUGUI>();
+        tauntFieldText = tauntField.GetComponent<TextMeshProUGUI>();
 
         SetAmmoTextActive(false);
         SetHealthTextActive(false);
@@ -67,14 +70,23 @@ public class PlayerUIManager : NetworkBehaviour
 
     public void SetInteractField(bool isActive, string action)
     {
-        interactField.SetActive(isActive);
-        interactFieldText.text = "[E] " + action;
+        SetField(interactField, interactFieldText, "E", isActive, action);
     }
 
     public void SetLockRotField(bool isActive, string action)
     {
-        lockRotField.SetActive(isActive);
-        lockRotFieldText.text = "[R] " + action;
+        SetField(lockRotField, lockRotFieldText, "R", isActive, action);
+    }
+
+    public void SetTauntField(bool isActive, string action)
+    {
+        SetField(tauntField, tauntFieldText, "T", isActive, action);
+    }
+
+    void SetField(GameObject field, TextMeshProUGUI fieldText, string key, bool isActive, string action)
+    {
+        field.SetActive(isActive);
+        fieldText.text = $"[{key}] {action}";
     }
 
     public void OnEscape(InputValue value)

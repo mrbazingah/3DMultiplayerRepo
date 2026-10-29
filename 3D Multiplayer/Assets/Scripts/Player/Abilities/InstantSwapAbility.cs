@@ -18,9 +18,7 @@ public class InstantSwapAbility : Ability
 
         SpawnSmokeParticlesRpc(transform.position);
 
-        Vector3 propPos = propObj.transform.position;
-        Quaternion propRot = propObj.transform.rotation;
-        
+        propObj.transform.GetPositionAndRotation(out Vector3 propPos, out Quaternion propRot);
         DespawnPropRpc(propObj);
 
         myModelManager.ToggleLockServerRpc(propRot, !myModelManager.GetLockRotation());
