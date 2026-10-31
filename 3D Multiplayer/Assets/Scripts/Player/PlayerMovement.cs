@@ -473,7 +473,6 @@ public class PlayerMovement : NetworkBehaviour
 
     void CameraCollision()
     {
-        // Hunters are in first person so the camera sits on the pivot and has nothing to pull in
         if (myData.GetPlayerTeam().Value == GameManager.Team.Hunters) { return; }
 
         Vector3 direction = camPivot.TransformDirection(camOffsetDirection);
@@ -486,21 +485,17 @@ public class PlayerMovement : NetworkBehaviour
         // Sphere cast instead of a ray so the camera doesn't slip through corners and thin gaps that a thin ray would miss
         if (Physics.SphereCast(origin, camCollisionRadius, direction, out RaycastHit hit, desiredCamDistance + camCollisionRadius, camCollisionLayers, QueryTriggerInteraction.Ignore))
         {
-            // Subtracts the offset so the distance is measured from the pivot again and not from the shifted origin
             targetDistance = hit.distance - camCollisionRadius;
         }
 
-        // Never lets the camera collapse onto the pivot even when the cast is blocked right at the start
         targetDistance = Mathf.Max(minZoom, targetDistance);
 
         if (targetDistance < currentCamDistance)
         {
-            // Pulls in instantly, otherwise the camera would spend a few frames inside the wall
             currentCamDistance = targetDistance;
         }
         else
         {
-            // Pushes back out slowly so the camera doesn't snap when the obstacle clears
             currentCamDistance = Mathf.Lerp(currentCamDistance, targetDistance, camReturnSpeed * Time.deltaTime);
         }
 
