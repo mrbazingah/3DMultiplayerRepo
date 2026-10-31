@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -13,6 +14,9 @@ public class PlayerUIManager : NetworkBehaviour
     [SerializeField] GameObject tauntField;
     [Space]
     [SerializeField] GameObject pauseMenu;
+    [Space]
+    [SerializeField] Vector3 startPos;
+    [SerializeField] float yOffset;
 
     TextMeshProUGUI interactFieldText;
     TextMeshProUGUI lockRotFieldText;
@@ -20,15 +24,20 @@ public class PlayerUIManager : NetworkBehaviour
 
     bool pauseMenuActive;
 
+    List<RectTransform> keyFields;
+
     PlayerMovement myMovement;
     LobbyUIManager lobbyUIManager;
 
     void Awake()
     {
         myMovement = GetComponent<PlayerMovement>();
+
         interactFieldText = interactField.GetComponent<TextMeshProUGUI>();
         lockRotFieldText = lockRotField.GetComponent<TextMeshProUGUI>();
         tauntFieldText = tauntField.GetComponent<TextMeshProUGUI>();
+
+        keyFields = new List<RectTransform> {interactField.GetComponent<RectTransform>(), lockRotField.GetComponent<RectTransform>(), tauntField.GetComponent<RectTransform>() };
 
         SetAmmoTextActive(false);
         SetHealthTextActive(false);
@@ -87,6 +96,33 @@ public class PlayerUIManager : NetworkBehaviour
     {
         field.SetActive(isActive);
         fieldText.text = $"[{key}] {action}";
+    }
+
+    void Update()
+    {
+        SortFields();
+    }
+
+    void SortFields()
+    {
+        List<RectTransform> activeFields = new List<RectTransform>();
+        foreach (RectTransform rt in keyFields)
+        {
+            if (rt.gameObject.activeInHierarchy)
+            {
+                activeFields.Add(rt);
+            }
+            else
+            {
+                activeFields.Remove(rt);
+            }
+        }
+
+        for (int i = 0; i < activeFields.Count; i++)
+        {
+            Vector3 offset = new Vector3(0, i * -yOffset, 0);
+            activeFields[i].anchoredPosition = startPos + offset;
+        }
     }
 
     public void OnEscape(InputValue value)
