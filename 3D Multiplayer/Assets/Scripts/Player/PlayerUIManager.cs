@@ -108,6 +108,8 @@ public class PlayerUIManager : NetworkBehaviour
         List<RectTransform> activeFields = new List<RectTransform>();
         foreach (RectTransform rt in keyFields)
         {
+            if (rt == null) { continue; }
+
             if (rt.gameObject.activeInHierarchy)
             {
                 activeFields.Add(rt);
@@ -169,6 +171,11 @@ public class PlayerUIManager : NetworkBehaviour
 
         string sceneName = ConnectionManager.Instance.mainMenuSceneName;
         ConnectionManager.Instance.LeaveGame(sceneName);
+    }
+
+    public void OnMenu(GameObject menu)
+    {
+        menu.SetActive(!menu.activeSelf);
     }
 
     public void OnQuitButtonClicked()
