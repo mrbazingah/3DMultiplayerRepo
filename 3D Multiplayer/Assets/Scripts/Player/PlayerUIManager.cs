@@ -1,8 +1,10 @@
+using Newtonsoft.Json.Serialization;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerUIManager : NetworkBehaviour
 {
@@ -15,6 +17,10 @@ public class PlayerUIManager : NetworkBehaviour
     [Space]
     [SerializeField] GameObject pauseMenu;
     [Space]
+    [SerializeField] GameObject pausePanel;
+    [SerializeField] GameObject optionsPanel;
+    [SerializeField] GameObject controlsPanel;
+    [Space]
     [SerializeField] Vector3 startPos;
     [SerializeField] float yOffset;
 
@@ -25,6 +31,7 @@ public class PlayerUIManager : NetworkBehaviour
     bool pauseMenuActive;
 
     List<RectTransform> keyFields;
+    List<GameObject> menus;
 
     PlayerMovement myMovement;
     LobbyUIManager lobbyUIManager;
@@ -44,7 +51,15 @@ public class PlayerUIManager : NetworkBehaviour
         SetInteractField(false, "");
         SetLockRotField(false, "");
 
-        pauseMenu.SetActive(false);
+        menus = new List<GameObject> { pausePanel, optionsPanel, controlsPanel };
+        foreach (GameObject menu in menus)
+        {
+            if (menu == null || menu == pausePanel) { continue; }
+            menu.SetActive(false);
+        }
+
+        pauseMenu.SetActive(false); 
+        pausePanel.SetActive(true);
     }
 
     void Start()
@@ -130,6 +145,16 @@ public class PlayerUIManager : NetworkBehaviour
     public void OnEscape(InputValue value)
     {
         if (!IsOwner) { return; }
+
+        foreach (GameObject menu in menus)
+        {
+            if (menu == null) { continue; }
+            if (menu.activeSelf)
+            {
+                menu.transform.Find("Return Button").GetComponent<Button>().onClick.Invoke();
+                return;
+            }
+        }
 
         if (lobbyUIManager != null && lobbyUIManager.GetIsOpen())
         {

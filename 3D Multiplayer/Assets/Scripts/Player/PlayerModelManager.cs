@@ -42,6 +42,7 @@ public class PlayerModelManager : NetworkBehaviour
     Rigidbody myRigidbody;
     PlayerUIManager myUiManager;
     PlayerData myData;
+    DecoyAbility myDecoyAbility;
 
     void Awake()
     {
@@ -51,6 +52,7 @@ public class PlayerModelManager : NetworkBehaviour
         myRigidbody = GetComponent<Rigidbody>();
         myUiManager = GetComponent<PlayerUIManager>();
         myData = GetComponent<PlayerData>();
+        myDecoyAbility = GetComponent<DecoyAbility>();
 
         SetupSpineBones();
         UpdateSilhouetteColor();
@@ -162,6 +164,8 @@ public class PlayerModelManager : NetworkBehaviour
     public void SwapModel(Prop newDetectedProp)
     {
         if (!canSwap || myMovement.IsInputBlocked()) { return; }
+
+        myDecoyAbility.DespawnAllDecoys();
 
         detectedProp = newDetectedProp;
         SwapModelServerRpc(detectedProp.propType);
@@ -326,6 +330,7 @@ public class PlayerModelManager : NetworkBehaviour
         if (!IsOwner || !canSwap || myMovement.IsInputBlocked()) { return; }
 
         SwapModelServerRpc(Prop.PropType.None);
+        myDecoyAbility.DespawnAllDecoys();
 
         Debug.Log("Discarded prop");
     }

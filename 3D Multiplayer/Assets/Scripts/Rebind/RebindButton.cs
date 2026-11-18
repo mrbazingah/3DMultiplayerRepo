@@ -126,6 +126,7 @@ public class RebindButton : MonoBehaviour
     {
         if (bindingIndex < 0) { return; }
 
-        bindingText.text = action.GetBindingDisplayString(bindingIndex);
+        string path = action.bindings[bindingIndex].effectivePath;
+        bindingText.text = InputControlPath.ToHumanReadableString(path, InputControlPath.HumanReadableStringOptions.OmitDevice);
     }
 }
