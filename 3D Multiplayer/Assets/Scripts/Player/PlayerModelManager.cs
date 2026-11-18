@@ -171,14 +171,11 @@ public class PlayerModelManager : NetworkBehaviour
         SwapModelServerRpc(detectedProp.propType);
     }
 
-    // Server RPC to swap the player's model which triggers OnCurrentPropChanged() to update the model on all clients
     [Rpc(SendTo.Server)]
     void SwapModelServerRpc(Prop.PropType propType)
     {
-        // Checks the team on the server too since canSwap only exists on the client
         if (myData.GetPlayerTeam().Value != GameManager.Team.Props) { return; }
 
-        // Stops model swap if the prop prefab isn't found in the registry
         if (propRegistry.GetPrefab(propType) == null && propType != Prop.PropType.None) { return; }
 
         currentPropType.Value = propType;
@@ -197,9 +194,6 @@ public class PlayerModelManager : NetworkBehaviour
 
     void ApplyPropModel()
     {
-        Debug.Log("Applied prop model");
-
-        // Initializes prop model for player
         GameObject spawnedProp = null;
 
         if (currentPropType.Value != Prop.PropType.None)
@@ -211,7 +205,6 @@ public class PlayerModelManager : NetworkBehaviour
             float yOffset = propRegistry.GetYOffset(currentPropType.Value);
             spawnedProp.transform.localPosition += new Vector3(0, yOffset, 0);
 
-            // Only done when a prop was spawned, spawnedProp is null when discarding
             Collider propCollider = spawnedProp.GetComponent<Collider>();
             propCollider.sharedMaterial = myCollider.sharedMaterial;
 
@@ -241,18 +234,13 @@ public class PlayerModelManager : NetworkBehaviour
 
         if (spawnedProp != null)
         {
-            // Applies new prop model, sets layer and assigns new collider
             currentPropModel = spawnedProp;
             SetLayerRecursively(currentPropModel, LayerMask.NameToLayer("Player Prop"));
 
-            // ApplyPropModel() runs on every machine, so only the owner sends the sound RPC
             if (IsOwner)
             {
                 PlaySwapPropSfxRpc();
             }
-
-            Collider newCol = GetCurrentModelCollider();
-            myMovement.SetPlayerCollider(newCol);
 
             // Updates renderers
             foreach (Renderer r in spawnedProp.GetComponentsInChildren<Renderer>(true))
@@ -260,6 +248,9 @@ public class PlayerModelManager : NetworkBehaviour
                 UpdateSilhouette(r);
             }
         }
+
+        Collider newCol = GetCurrentModelCollider();
+        myMovement.SetPlayerCollider(newCol);
 
         InvisAbility invis = GetComponent<InvisAbility>();
         if (invis.GetAbilityActive())
@@ -322,7 +313,7 @@ public class PlayerModelManager : NetworkBehaviour
 
         float distance = previousLowPoint - newLowPoint;
 
-        myRigidbody.position += new Vector3(0, distance, 0);
+        myRigidbody.position += new Vector3(0, distance + 0.1f, 0);
     }
 
     public void OnDiscard(InputValue value)
@@ -330,6 +321,7 @@ public class PlayerModelManager : NetworkBehaviour
         if (!IsOwner || !canSwap || myMovement.IsInputBlocked()) { return; }
 
         SwapModelServerRpc(Prop.PropType.None);
+        ToggleLockServerRpc(myMovement.GetPlayerRotation(), false);
         myDecoyAbility.DespawnAllDecoys();
 
         Debug.Log("Discarded prop");
@@ -342,8 +334,6 @@ public class PlayerModelManager : NetworkBehaviour
         // Assigns prop's model or player's model before locking it
         Transform modelTransform = currentPropModel != null ? currentPropModel.transform : defaultVisuals.transform;
         ToggleLockServerRpc(modelTransform.rotation);
-
-        // The prompt text is updated in OnLockRotationChanged(), reading lockRotation here would give the value from before the toggle
     }
 
     // Server RPC to toggle lock rotation and save the current rotation if locking
@@ -381,7 +371,6 @@ public class PlayerModelManager : NetworkBehaviour
         ApplySpineLean();
     }
 
-    // Only reads the network variables and applies them to the local model, all writes go through ToggleLockServerRpc()
     void LockRotation()
     {
         // Uses the rotation assigned when locked or player's current rotation
