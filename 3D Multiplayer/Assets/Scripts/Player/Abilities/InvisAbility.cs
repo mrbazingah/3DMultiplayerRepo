@@ -35,15 +35,11 @@ public class InvisAbility : Ability
                 savedMats[r] = r.sharedMaterials;
                 r.sharedMaterials = new Material[] { depthMask, outlineMat };
                 r.shadowCastingMode = ShadowCastingMode.Off;
-
-                Debug.Log("Removed mat");
             }
             else if (savedMats.TryGetValue(r, out Material[] original))
             {
                 r.sharedMaterials = original;
                 r.shadowCastingMode = ShadowCastingMode.On;
-
-                Debug.Log("Applied mat");
             }
         }
 
