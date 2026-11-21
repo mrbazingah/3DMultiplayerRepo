@@ -8,16 +8,29 @@ public class InstantSwapAbility : Ability
     [SerializeField] LayerMask propLayer;
     [SerializeField] GameObject smokeParticles;
 
-    protected override void OnActivateOwner()
+    GameObject selectedProp;
+
+    protected override bool CanActivate()
     {
-        SwapProp();
+        selectedProp = GetRandomProp();
+        return selectedProp != null;
     }
 
-    public void SwapProp()
+    protected override void OnActivateServer()
     {
-        GameObject propObj = GetRandomProp();
-        if (propObj == null) { return; }
+        SwapPropOwnerRpc(selectedProp);
+    }
 
+    [Rpc(SendTo.Owner)]
+    void SwapPropOwnerRpc(NetworkObjectReference propRef)
+    {
+        if (!propRef.TryGet(out NetworkObject propNetObj)) { return; }
+
+        SwapProp(propNetObj.gameObject);
+    }
+
+    public void SwapProp(GameObject propObj)
+    {
         Prop prop = propObj.GetComponent<Prop>();
         myModelManager.SwapModel(prop);
 

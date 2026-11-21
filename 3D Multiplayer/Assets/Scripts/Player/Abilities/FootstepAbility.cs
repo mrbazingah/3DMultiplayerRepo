@@ -18,11 +18,11 @@ public class FootstepAbility : Ability
 
     readonly List<FootstepAbility> revealedFootsteps = new List<FootstepAbility>();
 
-    
-
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         SetAbilityActive(false);
+
     }
 
     protected override void OnActivateOwner()

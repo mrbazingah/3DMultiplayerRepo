@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,13 +9,24 @@ public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    [Header("Game Start")]
     [SerializeField] Transform mapSpawnTransform;
     [SerializeField] Transform lobbySpawnTransform;
     [SerializeField] int maxPlayerCount;
     [SerializeField] int hunterValue;
+    [SerializeField] float hideTime;
+    [SerializeField] float searchTime;
+    [SerializeField] List<PlayerData> props = new List<PlayerData>();
+    [SerializeField] List<PlayerData> hunters = new List<PlayerData>();
+    [Header("UI")]
+    [SerializeField] TextMeshProUGUI timerText;
+    [Space]
     [SerializeField] List<PlayerMovement> playerList = new List<PlayerMovement>();
     [SerializeField] Color[] playerColors;
 
+    float currentHideTime;
+    float currentSearchTime;
+    bool startHideTime;
     bool gameStarted;
 
     void Awake()
@@ -27,6 +40,8 @@ public class GameManager : NetworkBehaviour
             gameObject.SetActive(false);
             Destroy(gameObject);
         }
+
+        timerText.gameObject.SetActive(false);
     }
 
     void Update()
@@ -35,12 +50,14 @@ public class GameManager : NetworkBehaviour
         {
             Debug.LogError("No Network Manager found");
             SceneManager.LoadScene("Main Menu Scene");
-        }  
-        
+        }
+
         if (gameStarted)
         {
             // Do stuff
         }
+
+        HideDuration();
     }
 
     public enum Team
@@ -56,7 +73,6 @@ public class GameManager : NetworkBehaviour
 
         playerList.Add(player);
 
-        // Only position the player that just joined, everyone else stays put
         //player.TeleportTo(lobbySpawnTransform.position);
     }
 
@@ -70,13 +86,15 @@ public class GameManager : NetworkBehaviour
         if (!IsServer /*|| playerList.Count < 2*/) { return; }
 
         gameStarted = true;
-        
+
         AssignTeam();
-        SetPlayerPositionsRpc(mapSpawnTransform.position);
     }
 
     void AssignTeam()
     {
+        props.Clear();
+        hunters.Clear();
+
         // Randomise player list indexes
         for (int i = playerList.Count - 1; i > 0; i--)
         {
@@ -90,28 +108,68 @@ public class GameManager : NetworkBehaviour
         int hunterCount = Mathf.Max(1, playerList.Count / hunterValue);
         for (int i = 0; i < playerList.Count; i++)
         {
-            // Skip players that already have a team assigned for debugging
-            if (playerList[i].GetComponent<PlayerData>().GetPlayerTeam().Value != Team.None) { continue; }
+            PlayerData pd = playerList[i].GetComponent<PlayerData>();
 
-            playerList[i].GetComponent<PlayerData>().SetPlayerTeam(i < hunterCount ? Team.Hunters : Team.Props);
+            // Players that already have a team keep it for debugging, but still go in the right list
+            Team team = pd.GetPlayerTeam().Value;
+            if (team == Team.None)
+            {
+                team = i < hunterCount ? Team.Hunters : Team.Props;
+                pd.SetPlayerTeam(team);
+            }
+
+            if (team == Team.Hunters)
+            {
+                hunters.Add(pd);
+            }
+            else
+            {
+                props.Add(pd);
+            }
+        }
+
+        currentHideTime = hideTime;
+        startHideTime = true;
+
+        TeleportPlayers(props, mapSpawnTransform.position);
+    }
+
+    void HideDuration()
+    {
+        if (!startHideTime) { return; }
+
+        if (currentHideTime > 0)
+        {
+            currentHideTime -= Time.deltaTime;
+            UpdateTimerTextRpc("Hunters coming in: ", Mathf.RoundToInt(currentHideTime).ToString());
+        }
+        else
+        {
+            TeleportPlayers(hunters, mapSpawnTransform.position);
+            startHideTime = false;
         }
     }
 
     [Rpc(SendTo.Everyone)]
-    void SetPlayerPositionsRpc(Vector3 pos)
+    void UpdateTimerTextRpc(string text, string time)
     {
-        if (playerList.Count == 0)
+        timerText.gameObject.SetActive(true);
+        timerText.text = text + time;
+    }
+
+    void TeleportPlayers(List<PlayerData> players, Vector3 pos)
+    {
+        if (players.Count == 0)
         {
-            Debug.LogWarning("No players registered in GameManager.");
+            Debug.LogWarning("No players to teleport");
             return;
         }
 
-        foreach (PlayerMovement player in playerList)
+        foreach (PlayerData player in players)
         {
-            if (player != null)
-            {
-                player.TeleportTo(pos, Quaternion.identity);
-            }
+            if (player == null) { continue; }
+
+            player.GetComponent<PlayerMovement>().TeleportOwnerRpc(pos, Quaternion.identity);
         }
     }
 

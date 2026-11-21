@@ -209,6 +209,12 @@ public class PlayerMovement : NetworkBehaviour
         currentCam = isHunter ? firstPersonCam : thirdPersonCam;
     }
 
+    [Rpc(SendTo.Owner)]
+    public void TeleportOwnerRpc(Vector3 pos, Quaternion rot)
+    {
+        TeleportTo(pos, rot);
+    }
+
     public void TeleportTo(Vector3 pos, Quaternion rot)
     {
         // The owner has authority over its own rigidbody so the move happens here

@@ -25,6 +25,11 @@ public class DecoyAbility : Ability
         SpawnDecoy();
     }
 
+    protected override bool CanActivate()
+    {
+        return myModelManager.GetCurrentPropType() != Prop.PropType.None && decoyCount.Value < maxDecoys;
+    }
+
     void OnDecoyCountChanged(int previousCount, int newCount)
     {
         if (!IsOwner) { return; }
@@ -56,6 +61,15 @@ public class DecoyAbility : Ability
 
         spawnedDecoys.Add(decoyNetObj);
         decoyCount.Value++;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        decoyCount.OnValueChanged -= OnDecoyCountChanged;
+
+        if (NetworkManager.ShutdownInProgress) { return; }
+        
+        DespawnAllDecoys();
     }
 
     public void DespawnAllDecoys()

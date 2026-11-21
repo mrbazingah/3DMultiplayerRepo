@@ -54,8 +54,7 @@ public class PlayerModelManager : NetworkBehaviour
         myData = GetComponent<PlayerData>();
         myDecoyAbility = GetComponent<DecoyAbility>();
 
-        SetupSpineBones();
-        UpdateSilhouetteColor();
+       
     }
 
     public override void OnNetworkSpawn()
@@ -68,7 +67,12 @@ public class PlayerModelManager : NetworkBehaviour
         {
             // Makes sure local player model has correct layer
             SetLayerRecursively(defaultVisuals, LayerMask.NameToLayer("Player Visuals"));
+
+            RefreshAllSilhouettes();
         }
+
+        SetupSpineBones();
+        UpdateSilhouetteColor();
     }
 
     void Start()
@@ -94,6 +98,16 @@ public class PlayerModelManager : NetworkBehaviour
             {
                 UpdateSilhouette(r);
             }
+        }
+    }
+
+    void RefreshAllSilhouettes()
+    {
+        foreach (PlayerMovement player in GameManager.Instance.GetPlayerList())
+        {
+            if (player == null) { continue; }
+
+            player.GetComponent<PlayerModelManager>().UpdateSilhouetteColor();
         }
     }
 
@@ -153,6 +167,13 @@ public class PlayerModelManager : NetworkBehaviour
     void OnTeamChanged(GameManager.Team previousTeam, GameManager.Team newTeam)
     {
         SetCanSwap(newTeam == GameManager.Team.Props);
+
+        UpdateSilhouetteColor();
+
+        if (IsOwner)
+        {
+            RefreshAllSilhouettes();
+        }
     }
 
     public void SetGunModelsActive(bool ownerActive, bool clientActive)
@@ -263,10 +284,22 @@ public class PlayerModelManager : NetworkBehaviour
     {
         if (renderer == null || myData == null || IsOwner) { return; }
 
-        // Checks by shader since the renderer holds copies of the materials, not the asset itself
         List<Material> shared = new List<Material>();
         renderer.GetSharedMaterials(shared);
-        if (!shared.Exists(m => m != null && m.shader == silhouetteMat.shader))
+        int silhouetteIndex = shared.FindIndex(m => m != null && m.shader == silhouetteMat.shader);
+
+        if (!IsOnLocalPlayersTeam())
+        {
+            if (silhouetteIndex >= 0)
+            {
+                shared.RemoveAt(silhouetteIndex);
+                renderer.SetSharedMaterials(shared);
+            }
+
+            return;
+        }
+
+        if (silhouetteIndex < 0)
         {
             shared.Add(silhouetteMat);
             renderer.SetSharedMaterials(shared);
@@ -284,6 +317,15 @@ public class PlayerModelManager : NetworkBehaviour
                 mat.renderQueue = 2002;
             }
         }
+    }
+
+    bool IsOnLocalPlayersTeam()
+    {
+        NetworkObject localPlayer = NetworkManager.SpawnManager.GetLocalPlayerObject();
+        if (localPlayer == null) { return false; }
+
+        GameManager.Team localTeam = localPlayer.GetComponent<PlayerData>().GetPlayerTeam().Value;
+        return localTeam != GameManager.Team.None && localTeam == myData.GetPlayerTeam().Value;
     }
 
     [Rpc(SendTo.Everyone)]
@@ -321,7 +363,12 @@ public class PlayerModelManager : NetworkBehaviour
         if (!IsOwner || !canSwap || myMovement.IsInputBlocked()) { return; }
 
         SwapModelServerRpc(Prop.PropType.None);
-        ToggleLockServerRpc(myMovement.GetPlayerRotation(), false);
+
+        if (lockRotation.Value == true)
+        {
+            ToggleLockServerRpc(myMovement.GetPlayerRotation(), true);
+        }
+
         myDecoyAbility.DespawnAllDecoys();
 
         Debug.Log("Discarded prop");

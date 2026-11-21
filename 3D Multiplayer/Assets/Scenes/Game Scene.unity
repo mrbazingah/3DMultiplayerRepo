@@ -845,8 +845,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Room code:'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 25e2b2d11b1e8034eb894e0ae59bebcc, type: 2}
-  m_sharedMaterial: {fileID: -3020482060507020272, guid: 25e2b2d11b1e8034eb894e0ae59bebcc, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 312ef8adcb63fa04e855c9a0a06edd32, type: 2}
+  m_sharedMaterial: {fileID: -3426269026006859621, guid: 312ef8adcb63fa04e855c9a0a06edd32, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1149,7 +1149,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &478606993
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2242,8 +2242,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: WWWWWWt
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 25e2b2d11b1e8034eb894e0ae59bebcc, type: 2}
-  m_sharedMaterial: {fileID: -3020482060507020272, guid: 25e2b2d11b1e8034eb894e0ae59bebcc, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 312ef8adcb63fa04e855c9a0a06edd32, type: 2}
+  m_sharedMaterial: {fileID: -3426269026006859621, guid: 312ef8adcb63fa04e855c9a0a06edd32, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2381,8 +2381,8 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 25e2b2d11b1e8034eb894e0ae59bebcc, type: 2}
-  m_sharedMaterial: {fileID: -3020482060507020272, guid: 25e2b2d11b1e8034eb894e0ae59bebcc, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 312ef8adcb63fa04e855c9a0a06edd32, type: 2}
+  m_sharedMaterial: {fileID: -3426269026006859621, guid: 312ef8adcb63fa04e855c9a0a06edd32, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3958,13 +3958,33 @@ PrefabInstance:
       propertyPath: mapSpawnTransform
       value: 
       objectReference: {fileID: 1940903508}
-    - target: {fileID: 1477382102278075737, guid: b7ad3901fb0cf874090fe3d2cef9065f, type: 3}
-      propertyPath: playerColors.Array.data[0].a
-      value: 0
+    - target: {fileID: 1803599102451331905, guid: b7ad3901fb0cf874090fe3d2cef9065f, type: 3}
+      propertyPath: m_fontSize
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1803599102451331905, guid: b7ad3901fb0cf874090fe3d2cef9065f, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 2533637792143967358, guid: b7ad3901fb0cf874090fe3d2cef9065f, type: 3}
       propertyPath: m_Name
       value: GameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 3545281001129499806, guid: b7ad3901fb0cf874090fe3d2cef9065f, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3545281001129499806, guid: b7ad3901fb0cf874090fe3d2cef9065f, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3545281001129499806, guid: b7ad3901fb0cf874090fe3d2cef9065f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4384421352169604779, guid: b7ad3901fb0cf874090fe3d2cef9065f, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4934148290620396218, guid: b7ad3901fb0cf874090fe3d2cef9065f, type: 3}
       propertyPath: m_LocalPosition.x

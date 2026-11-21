@@ -20,7 +20,7 @@ public class Ability : NetworkBehaviour
 
     double ServerTime => NetworkManager.ServerTime.Time;
 
-    void Awake()
+    protected virtual void Awake()
     {
         myData = GetComponent<PlayerData>();
         myModelManager = GetComponent<PlayerModelManager>();
@@ -94,11 +94,6 @@ public class Ability : NetworkBehaviour
     public float GetCooldownRemaining()
     {
         return Mathf.Max(0f, (float)(cooldownUntil.Value - ServerTime));
-    }
-
-    public float GetDuration()
-    {
-        return duration;
     }
 
     public bool GetAbilityActive()
