@@ -16,9 +16,42 @@ public class FootstepAbility : Ability
 
     float currentFootstepTime;
 
+    readonly List<FootstepAbility> revealedFootsteps = new List<FootstepAbility>();
+
+    
+
     void Awake()
     {
         SetAbilityActive(false);
+    }
+
+    protected override void OnActivateOwner()
+    {
+        revealedFootsteps.Clear();
+
+        foreach (PlayerMovement player in GameManager.Instance.GetPlayerList())
+        {
+            if (player == null || player.GetComponent<PlayerData>().GetPlayerTeam().Value != GameManager.Team.Props) { continue; }
+
+            if (player.TryGetComponent(out FootstepAbility footsteps))
+            {
+                footsteps.SetAbilityActive(true);
+                revealedFootsteps.Add(footsteps);
+            }
+        }
+    }
+
+    protected override void OnEndOwner()
+    {
+        foreach (FootstepAbility footsteps in revealedFootsteps)
+        {
+            if (footsteps != null)
+            {
+                footsteps.SetAbilityActive(false);
+            }
+        }
+
+        revealedFootsteps.Clear();
     }
 
     void Update()

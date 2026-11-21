@@ -5783,7 +5783,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3124374088
+  GlobalObjectIdHash: 613867139
   InScenePlacedSourceGlobalObjectIdHash: 613867139
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -5983,6 +5983,7 @@ MonoBehaviour:
   propAbilities:
   - {fileID: 2219695750188894955}
   - {fileID: -28013347410862029}
+  - {fileID: 4567208540014908819}
   selectedAbilitySlot: 0
 --- !u!114 &3742388957930426497
 MonoBehaviour:
@@ -6000,6 +6001,7 @@ MonoBehaviour:
   abilityName: Tracker Goggles
   cooldown: 30
   duration: 10
+  requiredTeam: 0
   footstepPrefab: {fileID: 7910787655364205364, guid: bd0ef3450075eaf499ed00e6a1ab5cee, type: 3}
   spawnPoint: {fileID: 5031376855116222794}
   offset: 0.01
@@ -6027,6 +6029,7 @@ MonoBehaviour:
   abilityName: Invisible Potion
   cooldown: 30
   duration: 7
+  requiredTeam: 0
   outlineMat: {fileID: 2100000, guid: 26434570edd55914da9f8472232f3c08, type: 2}
   depthMask: {fileID: 2100000, guid: b6b8c122c0e8e694d92ee06a6114bc3d, type: 2}
 --- !u!114 &-28013347410862029
@@ -6045,6 +6048,7 @@ MonoBehaviour:
   abilityName: Instant Swap
   cooldown: 60
   duration: 0
+  requiredTeam: 0
   swapRadius: 3
   maxDistance: 3
   propLayer:
@@ -6067,6 +6071,7 @@ MonoBehaviour:
   abilityName: Forced Taunt
   cooldown: 45
   duration: 0
+  requiredTeam: 0
   playerDetectionRadius: 7
   maxDistance: 7
   playerLayer:
@@ -6088,6 +6093,7 @@ MonoBehaviour:
   abilityName: Decoy
   cooldown: 10
   duration: 0
+  requiredTeam: 0
   maxDecoys: 2
   decoyCount:
     UpdateTraits:

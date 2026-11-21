@@ -8,6 +8,11 @@ public class InstantSwapAbility : Ability
     [SerializeField] LayerMask propLayer;
     [SerializeField] GameObject smokeParticles;
 
+    protected override void OnActivateOwner()
+    {
+        SwapProp();
+    }
+
     public void SwapProp()
     {
         GameObject propObj = GetRandomProp();

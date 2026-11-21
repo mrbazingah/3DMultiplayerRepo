@@ -20,6 +20,11 @@ public class DecoyAbility : Ability
         propRegistry = FindFirstObjectByType<PropRegistry>();    
     }
 
+    protected override void OnActivateOwner()
+    {
+        SpawnDecoy();
+    }
+
     void OnDecoyCountChanged(int previousCount, int newCount)
     {
         if (!IsOwner) { return; }

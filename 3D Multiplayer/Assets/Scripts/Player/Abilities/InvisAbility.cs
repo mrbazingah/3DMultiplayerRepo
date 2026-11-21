@@ -10,6 +10,23 @@ public class InvisAbility : Ability
 
     readonly Dictionary<Renderer, Material[]> savedMats = new Dictionary<Renderer, Material[]>();
 
+    protected override void OnActivateServer()
+    {
+        HandleInvisRpc(true);
+        PlayInvisSfxRpc();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    void PlayInvisSfxRpc()
+    {
+        AudioManager.Instance.PlaySfx(AudioManager.Instance.propInvisSfx, transform);
+    }
+
+    protected override void OnEndServer()
+    {
+        HandleInvisRpc(false);
+    }
+
     [Rpc(SendTo.Everyone)]
     public void HandleInvisRpc(bool isActive)
     {

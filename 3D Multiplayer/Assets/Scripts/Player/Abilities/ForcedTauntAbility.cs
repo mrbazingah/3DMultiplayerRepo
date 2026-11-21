@@ -7,6 +7,11 @@ public class ForcedTauntAbility : Ability
     [SerializeField] float maxDistance;
     [SerializeField] LayerMask playerLayer;
 
+    protected override void OnActivateOwner()
+    {
+        ForcePropTaunt();
+    }
+
     public void ForcePropTaunt()
     {
         List<AbilityManager> abilityManagers = GetDetectedPlayers();
